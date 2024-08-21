@@ -21,12 +21,12 @@ resource "docker_image" "nextjs" {
     path       = "../"
     dockerfile = "Dockerfile"
   }
+  force_remove = true
 }
 
 resource "docker_container" "app-development" {
-  name  = "24uzr-terraform-development"
-  image = docker_image.nextjs.latest
-  #   image   = "24uzr-nextjs-development:latest"
+  name    = "24uzr-terraform-development"
+  image   = docker_image.nextjs.latest
   restart = "always"
   ports {
     internal = "3000"
