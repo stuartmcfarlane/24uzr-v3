@@ -5,3 +5,7 @@ output "nginx_ip" {
 output "api_ip" {
   value = docker_container.api.ip_address
 }
+
+output "web_ip" {
+  value = docker_container.web.ip_address
+}

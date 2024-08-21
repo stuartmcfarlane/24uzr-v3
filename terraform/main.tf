@@ -72,9 +72,6 @@ resource "docker_container" "nginx" {
   image = docker_image.nginx.name
   name  = "nginx"
 
-  #command          = ["rm -rf etc/nginx/conf.d/default.conf"]
-  #entrypoint       = ["/usr/sbin/nginx -g"]
-
   must_run          = true
   restart           = "always"
   publish_all_ports = false
@@ -82,13 +79,17 @@ resource "docker_container" "nginx" {
 
   ports {
     internal = 8080
-    external = 8888
+    external = 8080
     protocol = "tcp"
   }
+  networks_advanced {
+    name    = docker_network.backplane.name
+    aliases = ["backplane"]
+  }
+
 
   upload {
     content = file("../app/nginx.conf")
     file    = "/etc/nginx/nginx.conf"
   }
 }
-
