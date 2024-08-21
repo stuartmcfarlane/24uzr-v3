@@ -18,7 +18,7 @@ variable "web_client_port" {
 resource "docker_image" "nextjs" {
   name = "24uzr-nextjs-development"
   build {
-    path       = "../"
+    path       = "../web/"
     dockerfile = "Dockerfile"
   }
   force_remove = true
