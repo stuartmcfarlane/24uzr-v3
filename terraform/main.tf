@@ -28,6 +28,10 @@ resource "random_password" "mysql_root_password" {
   length = 16
 }
 
+resource "docker_volume" "db_volume" {
+  name = "db_volume"
+}
+
 resource "docker_network" "backplane" {
   name   = "24uzr-backplane"
   driver = "bridge"
@@ -77,7 +81,6 @@ resource "docker_container" "nginx" {
   name  = "nginx"
 
   must_run          = true
-  restart           = "always"
   publish_all_ports = false
   depends_on        = [docker_container.api]
 
@@ -111,8 +114,42 @@ resource "docker_container" "mysql" {
     internal = 3306
     external = 3306
   }
+  volumes {
+    container_path = "/var/lib/mysql/"
+    host_path      = abspath("../mysql/data/")
+  }
 }
 
-resource "mysql_database" "db" {
-  name = "db"
+resource "random_password" "user_password" {
+  length           = 24
+  special          = true
+  min_special      = 2
+  override_special = "!#$%^&*()-_=+[]{}<>:?"
+  keepers = {
+    password_version = var.password_version
+  }
+}
+
+resource "mysql_database" "user_db" {
+  provider = mysql.local
+  name     = var.database_name
+}
+
+resource "mysql_user" "user_id" {
+  provider           = mysql.local
+  user               = var.database_username
+  plaintext_password = random_password.user_password.result
+  host               = "%"
+  tls_option         = "NONE"
+}
+
+resource "mysql_grant" "user_id" {
+  provider   = mysql.local
+  user       = var.database_username
+  host       = "%"
+  database   = var.database_name
+  privileges = ["SELECT", "UPDATE"]
+  depends_on = [
+    mysql_user.user_id
+  ]
 }
