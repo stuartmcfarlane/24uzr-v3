@@ -9,3 +9,7 @@ output "api_ip" {
 output "web_ip" {
   value = docker_container.web.ip_address
 }
+
+output "mysql_ip" {
+  value = docker_container.mysql.ip_address
+}

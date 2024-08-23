@@ -20,9 +20,13 @@ resource "docker_image" "nginx" {
   name = "nginx:latest"
 }
 
-# resource "docker_image" "db" {
-#   name = "mysql:5.7"
-# }
+resource "docker_image" "mysql" {
+  name = "mysql:8"
+}
+
+resource "random_password" "mysql_root_password" {
+  length = 16
+}
 
 resource "docker_network" "backplane" {
   name   = "24uzr-backplane"
@@ -87,9 +91,28 @@ resource "docker_container" "nginx" {
     aliases = ["backplane"]
   }
 
-
   upload {
-    content = file("../app/nginx.conf")
+    content = file("../nginx/nginx.conf")
     file    = "/etc/nginx/nginx.conf"
   }
+}
+
+resource "docker_container" "mysql" {
+  name  = "mysql"
+  image = docker_image.mysql.latest
+  env = [
+    "MYSQL_ROOT_PASSWORD=${random_password.mysql_root_password.result}"
+  ]
+  networks_advanced {
+    name    = docker_network.backplane.name
+    aliases = ["backplane"]
+  }
+  ports {
+    internal = 3306
+    external = 3306
+  }
+}
+
+resource "mysql_database" "db" {
+  name = "db"
 }
