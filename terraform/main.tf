@@ -28,10 +28,6 @@ resource "random_password" "mysql_root_password" {
   length = 16
 }
 
-resource "docker_volume" "shared_volume" {
-  name = "shared_volume"
-}
-
 # resource "docker_volume" "db_volume" {
 #   name = "db_volume"
 # }
@@ -178,6 +174,7 @@ resource "docker_container" "mysql" {
   volumes {
     container_path = "/var/lib/mysql/"
     host_path      = abspath("../mysql/data/")
+    # volume_name    = docker_volume.db_volume.name
   }
 }
 
