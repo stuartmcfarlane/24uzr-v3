@@ -7,10 +7,10 @@ resource "docker_image" "nextjs" {
   force_remove = true
 }
 
-resource "docker_image" "node" {
-  name = "24uzr-node"
+resource "docker_image" "api" {
+  name = "24uzr-api"
   build {
-    path       = "../app/"
+    path       = "../api/"
     dockerfile = "Dockerfile"
   }
   force_remove = true
@@ -28,9 +28,13 @@ resource "random_password" "mysql_root_password" {
   length = 16
 }
 
-resource "docker_volume" "db_volume" {
-  name = "db_volume"
+resource "docker_volume" "shared_volume" {
+  name = "shared_volume"
 }
+
+# resource "docker_volume" "db_volume" {
+#   name = "db_volume"
+# }
 
 resource "docker_network" "backplane" {
   name   = "24uzr-backplane"
@@ -53,7 +57,7 @@ resource "docker_container" "web" {
 }
 
 resource "docker_container" "api" {
-  image = docker_image.node.name
+  image = docker_image.api.name
   name  = "24uzr-api"
   env   = ["NODE_PORT=3000"]
 
@@ -76,13 +80,44 @@ resource "docker_container" "api" {
   }
 }
 
+# data "local_file" "nginx_config" {
+#   filename = "/etc/nginx/nginx.conf"
+#   content  = <<EOF
+# events {
+#   worker_connections  1024;
+# }
+
+# http {
+# 	upstream api {
+# 	    server ${docker_container.api.ip_address}:3000;
+# 	}
+# 	upstream web {
+# 	    server ${docker_container.web.ip_address}:3000;
+# 	}
+
+# 	server {
+#         listen 8080;
+#         listen [::]:8080 ipv6only=on;
+
+# 	    location / {
+# 	        proxy_pass http://web;
+# 	    }
+# 	    location /api/ {
+# 	        proxy_pass http://api;
+# 	    }
+# 	}
+# }
+#   EOF
+# }
 resource "docker_container" "nginx" {
   image = docker_image.nginx.name
   name  = "nginx"
 
   must_run          = true
   publish_all_ports = false
-  depends_on        = [docker_container.api]
+  depends_on = [
+    docker_container.api
+  ]
 
   ports {
     internal = 8080
@@ -95,8 +130,34 @@ resource "docker_container" "nginx" {
   }
 
   upload {
-    content = file("../nginx/nginx.conf")
+    # content = data.local_file.nginx_config
     file    = "/etc/nginx/nginx.conf"
+    content = <<EOF
+events {
+  worker_connections  1024;
+}
+
+http {
+	upstream api {
+	    server ${docker_container.api.ip_address}:3000;
+	}
+	upstream web {
+	    server ${docker_container.web.ip_address}:3000;
+	}
+
+	server {
+        listen 8080;
+        listen [::]:8080 ipv6only=on;
+
+	    location / {
+	        proxy_pass http://web;
+	    }
+	    location /api/ {
+	        proxy_pass http://api;
+	    }
+	}
+}
+  EOF
   }
 }
 
