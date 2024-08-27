@@ -48,7 +48,6 @@ resource "docker_container" "web" {
   }
   ports {
     internal = "3000"
-    external = var.web_client_port
   }
 }
 
@@ -71,7 +70,6 @@ resource "docker_container" "api" {
 
   ports {
     internal = 3000
-    external = var.api_port
     protocol = "tcp"
   }
 }
@@ -145,11 +143,11 @@ http {
         listen 8080;
         listen [::]:8080 ipv6only=on;
 
-	    location / {
-	        proxy_pass http://web;
-	    }
 	    location /api/ {
-	        proxy_pass http://api;
+	        proxy_pass http://api/;
+	    }
+	    location / {
+	        proxy_pass http://web/;
 	    }
 	}
 }
