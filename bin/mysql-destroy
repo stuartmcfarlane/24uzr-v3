@@ -1,0 +1,14 @@
+#!/bin/bash
+
+project_path=$( cd "$(dirname "${BASH_SOURCE[0]}")/.." ; pwd -P )
+mysql_path="${project_path}/mysql"
+
+source "${project_path}/.env"
+
+echo "Destroying mysql in Docker"
+
+docker stop 24uzr-mysql
+docker rm 24uzr-mysql
+docker network rm 24uzr-network
+rm -rf "${mysql_path}/data"
+

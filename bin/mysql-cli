@@ -1,0 +1,15 @@
+#!/bin/bash
+
+project_path=$( cd "$(dirname "${BASH_SOURCE[0]}")/.." ; pwd -P )
+mysql_path="${project_path}/mysql"
+
+source "${project_path}/.env"
+
+echo "Starting mysql client"
+
+docker run -it \
+    --network 24uzr-network \
+    -e MYSQL_PWD=${MYSQL_ROOT_PASSWORD} \
+    --rm mysql:latest \
+    mysql -h 24uzr-mysql -u root
+# docker run -it --rm mysql mysql -hsome-mysql -u"${MYSQL_ROOT_USER}" -p

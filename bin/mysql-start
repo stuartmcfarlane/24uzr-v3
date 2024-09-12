@@ -1,0 +1,16 @@
+#!/bin/bash
+
+project_path=$( cd "$(dirname "${BASH_SOURCE[0]}")/.." ; pwd -P )
+mysql_path="${project_path}/mysql"
+
+source "${project_path}/.env"
+
+echo "Starting mysql in Docker"
+
+if docker ps | grep 24uzr-mysql
+then 
+    echo Already running
+    exit 0
+fi
+
+docker start 24uzr-mysql
