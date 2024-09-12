@@ -31,6 +31,13 @@ async function main() {
   })
 }
 
+process.on('SIGTERM', function onSigterm () {  
+  console.log('SIGTERM')
+})
+process.on('SIGINT', function onSigterm () {  
+  console.log('SIGINT')
+})
+
 export default function start() {
     main()
 }
