@@ -26,7 +26,7 @@ listeners.forEach((signal) => {
 
 async function main() {
   await app.listen({
-    port: 3000,
+    port: process.env.API_PORT,
     host: '0.0.0.0',
   })
 }
