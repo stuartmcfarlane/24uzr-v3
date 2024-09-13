@@ -1,21 +1,7 @@
 #!/bin/bash
 
-project_path=$( cd "$(dirname "${BASH_SOURCE[0]}")/.." ; pwd -P )
-mysql_path="${project_path}/mysql"
-
-source "${project_path}/.env"
+source lib
 
 echo "Starting mysql client"
-
-function runSql {
-    local sql="$@"
-    local cmd="mysql -h 24uzr-mysql -u ${MYSQL_USER} ${MYSQL_DB_NAME} \"${sql}\""
-    echo Running \"${cmd}\"
-    docker run -it \
-        --network 24uzr-network \
-        -e MYSQL_PWD=${MYSQL_PASSWORD} \
-        --rm mysql:latest \
-        ${cmd}
-}
 
 runSql "$@"

@@ -1,34 +1,8 @@
 #!/bin/bash
 
-project_path=$( cd "$(dirname "${BASH_SOURCE[0]}")/.." ; pwd -P )
-mysql_path="${project_path}/mysql"
-
-source "${project_path}/.env"
-
 source lib
 
 echo "Creating mysql installation in Docker mysql database"
-
-function createMysqlDockerContainer {
-    mkdir "${mysql_path}/data"
-    docker network create 24uzr-network
-
-    docker run \
-        --network 24uzr-network \
-        --name 24uzr-mysql \
-        -v ${mysql_path}/data:/var/lib/mysql \
-        -p ${DEV_MYSQL_PORT}:3306 \
-        -e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} \
-        -d mysql:latest
-}
-
-function waitForMysqlDockerContainer {
-    echo Waiting for the mysql container
-    while ! runSqlAsRoot "SELECT 1;" > /dev/null
-    do
-        sleep 1
-    done
-}
 
 createMysqlDockerContainer
 waitForMysqlDockerContainer
