@@ -26,7 +26,7 @@ listeners.forEach((signal) => {
 
 async function main() {
   await app.listen({
-    port: process.env.API_PORT,
+    port: parseInt(process.env.API_PORT || '3000'),
     host: '0.0.0.0',
   })
 }
@@ -34,7 +34,7 @@ async function main() {
 process.on('SIGTERM', function onSigterm () {  
   console.log('SIGTERM')
 })
-process.on('SIGINT', function onSigterm () {  
+process.on('SIGINT', function onSigint () {  
   console.log('SIGINT')
 })
 

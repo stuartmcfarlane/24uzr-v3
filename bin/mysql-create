@@ -5,15 +5,35 @@ mysql_path="${project_path}/mysql"
 
 source "${project_path}/.env"
 
+source lib
+
 echo "Creating mysql installation in Docker mysql database"
 
-mkdir "${mysql_path}/data"
-docker network create 24uzr-network
+function createMysqlDockerContainer {
+    mkdir "${mysql_path}/data"
+    docker network create 24uzr-network
 
-docker run \
-    --network 24uzr-network \
-    --name 24uzr-mysql \
-    -v ${mysql_path}/data:/var/lib/mysql \
-    -p ${DEV_MYSQL_PORT}:3306 \
-    -e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} \
-    -d mysql:latest
+    docker run \
+        --network 24uzr-network \
+        --name 24uzr-mysql \
+        -v ${mysql_path}/data:/var/lib/mysql \
+        -p ${DEV_MYSQL_PORT}:3306 \
+        -e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} \
+        -d mysql:latest
+}
+
+function waitForMysqlDockerContainer {
+    echo Waiting for the mysql container
+    while ! runSqlAsRoot "SELECT 1;" > /dev/null
+    do
+        sleep 1
+    done
+}
+
+createMysqlDockerContainer
+waitForMysqlDockerContainer
+
+runSqlAsRoot CREATE DATABASE ${MYSQL_DB_NAME};
+runSqlAsRoot CREATE USER \"${MYSQL_USER}\"@\"%\" IDENTIFIED BY \"${MYSQL_PASSWORD}\";
+runSqlAsRoot GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, INDEX, DROP, ALTER, CREATE TEMPORARY TABLES, LOCK TABLES \
+    ON ${MYSQL_DB_NAME}.* TO ${MYSQL_USER}@\"%\";

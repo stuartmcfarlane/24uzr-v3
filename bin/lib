@@ -1,0 +1,20 @@
+#!/bin/bash
+
+function runSqlAsRoot {
+    local sql="$@"
+    if [[ "" == "$sql" ]];
+    then
+        docker run -it \
+            --network 24uzr-network \
+            -e MYSQL_PWD=${MYSQL_ROOT_PASSWORD} \
+            --rm mysql:latest \
+            bash -c "mysql -h 24uzr-mysql -u root"
+    else
+    echo Running $sql
+        docker run -it \
+            --network 24uzr-network \
+            -e MYSQL_PWD=${MYSQL_ROOT_PASSWORD} \
+            --rm mysql:latest \
+            bash -c "mysql -h 24uzr-mysql -u root -e '$sql'"
+    fi
+}

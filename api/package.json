@@ -1,7 +1,7 @@
 {
   "name": "24uzr-api",
   "version": "3.0.0",
-   "engines": {
+  "engines": {
     "node": ">=20.0.0"
   },
   "main": "index.js",
@@ -25,7 +25,9 @@
   "devDependencies": {
     "@types/node": "^22.5.0",
     "concurrently": "^9.0.1",
+    "dotenv-cli": "^7.4.2",
     "nodemon": "^3.1.4",
+    "prisma": "^5.19.1",
     "typescript": "^5.5.4"
   }
 }
