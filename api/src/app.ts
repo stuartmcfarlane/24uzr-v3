@@ -1,42 +1,27 @@
-import Fastify from 'fastify'
-import { userRoutes } from './user.route'
-import { userSchemas } from './user.schema'
+import buildServer from "./server";
 
-const app = Fastify({ logger: true })
+const server = buildServer();
 
-for (let schema of [...userSchemas]) {
-  app.addSchema(schema)
-}
-
-// routes
-app.register(userRoutes, { prefix: 'users' })
-
-app.get('/healthcheck', (req, res) => {
-  res.send({ message: 'Success' })
-})
-
-// graceful shutdown
-const listeners = ['SIGINT', 'SIGTERM']
-listeners.forEach((signal) => {
-  process.on(signal, async () => {
-    await app.close()
-    process.exit(0)
-  })
-})
-
-async function main() {
-  await app.listen({
-    port: parseInt(process.env.API_PORT || '3000'),
-    host: '0.0.0.0',
-  })
-}
-
-process.on('SIGTERM', function onSigterm () {  
+process.on('SIGTERM', function onSigterm() {  
   console.log('SIGTERM')
 })
 process.on('SIGINT', function onSigint () {  
   console.log('SIGINT')
 })
+
+async function main() {
+  try {
+    await server.listen({
+    port: parseInt(process.env.API_PORT || '3000'),
+    host: '0.0.0.0',
+    });
+
+    console.log(`Server ready at http://localhost:3000`);
+  } catch (e) {
+    console.error(e);
+    process.exit(1);
+  }
+}
 
 export default function start() {
     main()

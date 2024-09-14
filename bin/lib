@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -o noglob
+
 project_path=$( cd "$(dirname "${BASH_SOURCE[0]}")/.." ; pwd -P )
 mysql_path="${project_path}/mysql"
 
@@ -13,7 +15,7 @@ function createMysqlDockerContainer {
         --network 24uzr-network \
         --name ${MYSQL_CONTAINER_NAME} \
         -v ${mysql_path}/data:/var/lib/mysql \
-        -p ${DEV_MYSQL_PORT}:3306 \
+        -p ${MYSQL_PORT}:3306 \
         -e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} \
         -d mysql:latest
 }
@@ -43,6 +45,13 @@ function runSqlAsRoot {
             --rm mysql:latest \
             bash -c "mysql -h ${MYSQL_CONTAINER_NAME} -u root -e '$sql'"
     fi
+    local result=$?
+    if [ $result -eq 0 ]; then
+        echo Success: $sql
+    else
+        echo FAILED: $sql
+    fi
+    return $result
 }
 
 function runSql {

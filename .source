@@ -3,3 +3,9 @@
 project_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
 export PATH=${project_path}/bin:${PATH}
+
+set -a
+source .env
+set +a
+
+nvm use v20
