@@ -68,3 +68,11 @@ export async function getUsersHandler() {
   
   return users;
 }
+
+export async function getUserHandler(
+  request: FastifyRequest,
+) {
+  const user = request.user
+  
+  return user;
+}
