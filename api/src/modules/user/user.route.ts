@@ -8,9 +8,13 @@ import { $ref } from "./user.schema";
 
 async function userRoutes(server: FastifyInstance) {
   server.post(
-    "/",
+    "/users",
     {
       schema: {
+        tags: ['user'],
+        // security: [
+        //   { BearerAuth: [] }
+        // ],
         body: $ref("createUserSchema"),
         response: {
           201: $ref("createUserResponseSchema"),
@@ -19,11 +23,12 @@ async function userRoutes(server: FastifyInstance) {
     },
     registerUserHandler
   );
-
+  
   server.post(
     "/login",
     {
       schema: {
+        tags: ['user'],
         body: $ref("loginSchema"),
         response: {
           200: $ref("loginResponseSchema"),
@@ -32,10 +37,18 @@ async function userRoutes(server: FastifyInstance) {
     },
     loginHandler
   );
-
+  
   server.get(
-    "/",
+    "/users",
     {
+      schema: {
+        tags: ['user'],
+        security: [
+          {
+            bearerAuth: [],
+          }
+        ],
+      },
       preHandler: [server.authenticate],
     },
     getUsersHandler

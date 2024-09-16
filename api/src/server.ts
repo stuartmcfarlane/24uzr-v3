@@ -1,13 +1,10 @@
 import Fastify, { FastifyRequest, FastifyReply } from "fastify";
 import fastifyJWT, { JWT } from "@fastify/jwt";
-import fastifySwagger from "@fastify/swagger";
+import fastifySwagger, { FastifyDynamicSwaggerOptions, FastifySwaggerOptions } from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
-import { withRefResolver } from "fastify-zod";
 import userRoutes from "./modules/user/user.route";
-// import productRoutes from "./modules/product/product.route";
 import { userSchemas } from "./modules/user/user.schema";
-// import { productSchemas } from "./modules/product/product.schema";
-import { version } from "../package.json";
+import { version } from '../package.json'
 
 declare module "fastify" {
   interface FastifyRequest {
@@ -29,7 +26,9 @@ declare module "@fastify/jwt" {
 }
 
 function buildServer() {
-  const server = Fastify();
+  const server = Fastify({
+    logger: true
+  });
   
   if (process.env.JWT_SECRET === undefined) throw new Error(`JWT_SECRET missing in the environment`)
     
@@ -61,21 +60,35 @@ function buildServer() {
     server.addSchema(schema);
   }
   
-  const swaggerOptions = {
-    swagger: {
+  const swaggerOptions: FastifyDynamicSwaggerOptions = {
+    openapi: {
+      openapi: '3.0.0',
       info: {
-        title: "My Title",
-        description: "My Description.",
-        version: "1.0.0",
+        title: "24uzr API",
+        description: "Optimise you 24 hour sailing race desicions.",
+        version,
       },
-      host: "localhost",
-      schemes: ["http", "https"],
-      consumes: ["application/json"],
-      produces: ["application/json"],
-      tags: [{ name: "Default", description: "Default" }],
+      servers: [
+        {
+          url: 'http://localhost:3000',
+          description: 'Development server'
+        }
+      ],
+      tags: [
+        { name: 'user', description: 'User related end-points' },
+      ],
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: "http",
+            scheme: "bearer",
+            bearerFormat: "JWT",
+          },
+        }
+      },
     },
   };
-  
+
   const swaggerUiOptions = {
     routePrefix: "/docs",
     exposeRoute: true,
@@ -84,8 +97,7 @@ function buildServer() {
   server.register(fastifySwagger, swaggerOptions);
   server.register(fastifySwaggerUi, swaggerUiOptions);
   
-  server.register(userRoutes, { prefix: "api/users" });
-  console.log(`registered /api/users`)
+  server.register(userRoutes, { prefix: "/api" });
   
   return server;
 }

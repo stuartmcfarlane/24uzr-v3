@@ -16,7 +16,6 @@ export async function registerUserHandler(
 
     return reply.code(201).send(user);
   } catch (e) {
-    console.log(e);
     return reply.code(500).send(e);
   }
 }
