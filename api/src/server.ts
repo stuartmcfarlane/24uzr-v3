@@ -41,15 +41,11 @@ function buildServer() {
   server.decorate(
     "authenticate",
     async (request: FastifyRequest, reply: FastifyReply) => {
-      console.log(`>authenticate`)
       try {
         const token = request.cookies.access_token
-        console.log(` authenticate token from cookie`, token)
         if (!token) {
-          console.log(` authenticate with request`)
           return await request.jwtVerify();
         }
-        console.log(` authenticate authenticate with token`)
         const decoded = request.jwt.verify<UserPayload>(token)
         request.user = decoded
 
