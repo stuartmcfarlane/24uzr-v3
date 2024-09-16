@@ -26,12 +26,14 @@ export async function loginHandler(
   }>,
   reply: FastifyReply
 ) {
+  console.log(`>loginHandler`)
   const body = request.body;
   
   // find a user by email
   const user = await findUserByEmail(body.email);
   
   if (!user) {
+    console.log(`<loginHandler data missing`)
     return reply.code(401).send({
       message: "Invalid email or password",
     });
@@ -49,12 +51,14 @@ export async function loginHandler(
     
     const token = request.jwt.sign(rest)
     
+    console.log(` loginHandler set cookie`, token)
     reply.setCookie('access_token', token, {
       path: '/',
       httpOnly: true,
-      secure: true,
+      // secure: true,
     })
     
+    console.log(`<loginHandler`)
     return { accessToken: token };
   }
   

@@ -1,9 +1,10 @@
 "use client"
 
 import { UserContext } from "@/context/UserContext"
-import { ReactEventHandler, useContext, useState } from "react"
+import { ReactEventHandler, useContext, useRef, useState } from "react"
 import { UserContextType } from '../../types/user';
 import { useRouter } from "next/navigation";
+import { getUser, login } from "../../services/api"
 
 enum MODE {
     LOGIN="LOGIN",
@@ -15,6 +16,7 @@ const LoginPage = () => {
 
     const router = useRouter()
 
+    const formRef = useRef<HTMLFormElement>(null)
     const [mode, setMode] = useState(MODE.LOGIN)
     const [username, setUsername]  = useState("")
     const [email, setEmail]  = useState("")
@@ -41,17 +43,36 @@ const LoginPage = () => {
         : ""
     )
 
-    const handleButton = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleLogin = async () => {
+        if (!formRef.current) {
+            router.push('/')
+            return
+        }
+        const formData = new FormData(formRef.current)
+        const email = formData.get('email') as string
+        const password = formData.get('password') as string
+    
+        console.log(`creds`, { email, password })
+        if (!email || !password) {
+            return
+        }
+
+        const success = await login({ email, password })
+        if (!success) return
+
+        const user = await getUser()
+        if (!user) return
+
+        setUser(user)
+        router.push('/profile')
+    }
+    const handleButton = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         console.log('click', mode)
         switch (mode) {
             case MODE.LOGIN:
+                await handleLogin()
                 console.log(`LOGIN`)
-                setUser({
-                    email: "stuart@mcfarlane.nl",
-                    fistName: "Stuart",
-                    lastName: "McFarlane",
-                })
                 break
             case MODE.REGISTER:
                 console.log(`REGISTER`)
@@ -70,7 +91,7 @@ const LoginPage = () => {
     }
     return (
         <div className="h-[calc(100vh-5rem)] px-4 md:px-8 lg:px16 xl:px-32 2xl:px-64 flex items-center justify-center">
-            <form className="flex flex-col gap-8">
+            <form ref={formRef}  className="flex flex-col gap-8">
                 <h1 className="text-2xl font-semibold">{formTitle}</h1>
                 {mode === MODE.REGISTER ? (
                     <div className="flex flex-col gap-2">
@@ -105,7 +126,7 @@ const LoginPage = () => {
                         <input
                             type="password"
                             name="password"
-                            placeholder="Enter your ppassword"
+                            placeholder="Enter your password"
                             autoComplete="password"
                             className="ring-2 ring-gray-300 rounded-md p-4" />
                     </div>

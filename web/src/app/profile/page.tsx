@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { useContext } from "react"
 
 const ProfilePage = () => {
+    console.log(`profile`)
     const router = useRouter()
     const { user } = useContext(UserContext) as UserContextType
     if (!user) {

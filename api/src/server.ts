@@ -3,6 +3,7 @@ import fastifyJWT, { JWT } from "@fastify/jwt";
 import fastifyCookie from '@fastify/cookie'
 import fastifySwagger, { FastifyDynamicSwaggerOptions, FastifySwaggerOptions } from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
+import cors from "@fastify/cors"
 import userRoutes from "./modules/user/user.route";
 import { userSchemas } from "./modules/user/user.schema";
 import { version } from '../package.json'
@@ -41,14 +42,18 @@ function buildServer() {
   server.decorate(
     "authenticate",
     async (request: FastifyRequest, reply: FastifyReply) => {
+      console.log(`>authenticate`)
       try {
         const token = request.cookies.access_token
         if (!token) {
-          return await request.jwtVerify();
+          const result = await request.jwtVerify();
+          console.log(`<authenticate from request`, result)
+          return result
         }
         const decoded = request.jwt.verify<UserPayload>(token)
         request.user = decoded
-
+        console.log(`<authenticate from cookie`, decoded)
+        return decoded
       } catch (e) {
         return reply.send(e);
       }
@@ -68,7 +73,12 @@ function buildServer() {
     secret: process.env.COOKIE_SECRET,
     hook: 'preHandler',
   })
-
+  
+  server.register(cors, {
+    origin: 'http://localhost',
+    credentials: true,
+  })
+  
   for (const schema of [ ...userSchemas, ]) {
     server.addSchema(schema);
   }
@@ -101,7 +111,7 @@ function buildServer() {
       },
     },
   };
-
+  
   const swaggerUiOptions = {
     routePrefix: "/docs",
     exposeRoute: true,
