@@ -10,10 +10,10 @@ export async function registerUserHandler(
   reply: FastifyReply
 ) {
   const body = request.body;
-
+  
   try {
     const user = await createUser(body);
-
+    
     return reply.code(201).send(user);
   } catch (e) {
     return reply.code(500).send(e);
@@ -27,29 +27,37 @@ export async function loginHandler(
   reply: FastifyReply
 ) {
   const body = request.body;
-
+  
   // find a user by email
   const user = await findUserByEmail(body.email);
-
+  
   if (!user) {
     return reply.code(401).send({
       message: "Invalid email or password",
     });
   }
-
+  
   // verify password
   const correctPassword = verifyPassword({
     candidatePassword: body.password,
     salt: user.salt,
     hash: user.password,
   });
-
+  
   if (correctPassword) {
     const { password, salt, ...rest } = user;
-    // generate access token
-    return { accessToken: request.jwt.sign(rest) };
+    
+    const token = request.jwt.sign(rest)
+    
+    reply.setCookie('access_token', token, {
+      path: '/',
+      httpOnly: true,
+      secure: true,
+    })
+    
+    return { accessToken: token };
   }
-
+  
   return reply.code(401).send({
     message: "Invalid email or password",
   });
@@ -57,6 +65,6 @@ export async function loginHandler(
 
 export async function getUsersHandler() {
   const users = await findUsers();
-
+  
   return users;
 }

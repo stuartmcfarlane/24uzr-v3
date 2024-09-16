@@ -1,5 +1,6 @@
 import Fastify, { FastifyRequest, FastifyReply } from "fastify";
 import fastifyJWT, { JWT } from "@fastify/jwt";
+import fastifyCookie from '@fastify/cookie'
 import fastifySwagger, { FastifyDynamicSwaggerOptions, FastifySwaggerOptions } from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
 import userRoutes from "./modules/user/user.route";
@@ -14,14 +15,15 @@ declare module "fastify" {
     authenticate: any;
   }
 }
+type UserPayload = {
+  id: string
+  email: string
+  name: string
+}
 
 declare module "@fastify/jwt" {
   interface FastifyJWT {
-    user: {
-      id: number;
-      email: string;
-      name: string;
-    };
+    user: UserPayload
   }
 }
 
@@ -39,8 +41,18 @@ function buildServer() {
   server.decorate(
     "authenticate",
     async (request: FastifyRequest, reply: FastifyReply) => {
+      console.log(`>authenticate`)
       try {
-        await request.jwtVerify();
+        const token = request.cookies.access_token
+        console.log(` authenticate token from cookie`, token)
+        if (!token) {
+          console.log(` authenticate with request`)
+          return await request.jwtVerify();
+        }
+        console.log(` authenticate authenticate with token`)
+        const decoded = request.jwt.verify<UserPayload>(token)
+        request.user = decoded
+
       } catch (e) {
         return reply.send(e);
       }
@@ -56,6 +68,11 @@ function buildServer() {
     return next();
   });
   
+  server.register(fastifyCookie, {
+    secret: process.env.COOKIE_SECRET,
+    hook: 'preHandler',
+  })
+
   for (const schema of [ ...userSchemas, ]) {
     server.addSchema(schema);
   }
