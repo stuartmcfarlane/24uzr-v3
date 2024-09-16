@@ -1,0 +1,87 @@
+#!/bin/bash
+
+set -o noglob
+
+project_path=$( cd "$(dirname "${BASH_SOURCE[0]}")/.." ; pwd -P )
+mysql_path="${project_path}/mysql"
+
+source "${project_path}/.env"
+
+function createMysqlDockerContainer {
+    mkdir "${mysql_path}/data"
+    docker network create 24uzr-network
+
+    docker run \
+        --network 24uzr-network \
+        --name ${MYSQL_CONTAINER_NAME} \
+        -v ${mysql_path}/data:/var/lib/mysql \
+        -p ${MYSQL_PORT}:3306 \
+        -e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} \
+        -d mysql:latest
+}
+
+function waitForMysqlDockerContainer {
+    echo Waiting for the mysql container
+    while ! runSqlAsRoot "SELECT 1;" > /dev/null
+    do
+        sleep 1
+    done
+}
+
+
+function runSqlAsRoot {
+    local sql="$@"
+    if [[ "" == "$sql" ]];
+    then
+        docker run -it \
+            --network 24uzr-network \
+            -e MYSQL_PWD=${MYSQL_ROOT_PASSWORD} \
+            --rm mysql:latest \
+            bash -c "mysql -h ${MYSQL_CONTAINER_NAME} -u root"
+    else
+        docker run -it \
+            --network 24uzr-network \
+            -e MYSQL_PWD=${MYSQL_ROOT_PASSWORD} \
+            --rm mysql:latest \
+            bash -c "mysql -h ${MYSQL_CONTAINER_NAME} -u root -e '$sql'"
+    fi
+    local result=$?
+    if [ $result -eq 0 ]; then
+        echo Success: $sql
+    else
+        echo FAILED: $sql
+    fi
+    return $result
+}
+
+function runSql {
+    local sql="$@"
+    if [[ "" == "$sql" ]];
+    then
+        docker run -it \
+            --network 24uzr-network \
+            -e MYSQL_PWD=${MYSQL_PASSWORD} \
+            --rm mysql:latest \
+            bash -c "mysql -h ${MYSQL_CONTAINER_NAME} -u ${MYSQL_USER} ${MYSQL_DB_NAME}"
+    else
+        docker run -it \
+            --network 24uzr-network \
+            -e MYSQL_PWD=${MYSQL_PASSWORD} \
+            --rm mysql:latest \
+            bash -c "mysql -h ${MYSQL_CONTAINER_NAME} -u ${MYSQL_USER} -e '$sql' ${MYSQL_DB_NAME}"
+    fi
+}
+
+function startMysqlDockerContainer {
+    if docker ps | grep ${MYSQL_CONTAINER_NAME}
+    then 
+        echo Already running
+        exit 0
+    fi
+
+    docker start ${MYSQL_CONTAINER_NAME}
+}
+
+function stopMysqlDockerContainer {
+    docker stop ${MYSQL_CONTAINER_NAME}
+}

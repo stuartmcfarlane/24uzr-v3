@@ -1,0 +1,11 @@
+#!/bin/bash
+
+source lib
+
+echo "Destroying mysql in Docker"
+
+docker stop ${MYSQL_CONTAINER_NAME}
+docker rm ${MYSQL_CONTAINER_NAME}
+docker network rm 24uzr-network
+rm -rf "${mysql_path}/data"
+

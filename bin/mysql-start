@@ -1,0 +1,7 @@
+#!/bin/bash
+
+source lib
+
+echo "Starting mysql in Docker"
+
+startMysqlDockerContainer

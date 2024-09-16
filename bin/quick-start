@@ -1,0 +1,14 @@
+#!/bin/bash
+
+source lib
+
+cd ${project_path}/web
+npm i
+cd -
+
+cd ${project_path}/api
+npm i
+cd -
+
+mysql-create
+

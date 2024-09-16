@@ -1,0 +1,12 @@
+#!/bin/bash
+
+source lib
+
+echo "Creating mysql installation in Docker mysql database"
+
+createMysqlDockerContainer
+waitForMysqlDockerContainer
+
+runSqlAsRoot CREATE DATABASE ${MYSQL_DB_NAME};
+runSqlAsRoot CREATE USER \"${MYSQL_USER}\"@\"%\" IDENTIFIED BY \"${MYSQL_PASSWORD}\";
+runSqlAsRoot GRANT ALL ON *.* TO ${MYSQL_USER}@\"%\" ;
