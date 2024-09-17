@@ -30,3 +30,11 @@ export async function findBouys() {
     return prisma.bouy.findMany({
     });
 }
+
+export async function findBouysByMapId(mapId: number) {
+    return prisma.bouy.findMany({
+        where: {
+            mapId
+        },
+    });
+}
