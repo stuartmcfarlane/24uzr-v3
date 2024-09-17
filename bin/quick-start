@@ -2,13 +2,15 @@
 
 source lib
 
+mysql-create
+
 cd ${project_path}/web
 npm i
 cd -
 
 cd ${project_path}/api
 npm i
+npx prisma generate
+npx prisma migrate dev
 cd -
-
-mysql-create
 
