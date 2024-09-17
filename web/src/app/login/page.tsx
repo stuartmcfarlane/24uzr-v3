@@ -52,7 +52,6 @@ const LoginPage = () => {
         const email = formData.get('email') as string
         const password = formData.get('password') as string
     
-        console.log(`creds`, { email, password })
         if (!email || !password) {
             return
         }
@@ -64,7 +63,7 @@ const LoginPage = () => {
         if (!user) return
 
         setUser(user)
-        router.push('/profile')
+        router.push('/dashboard')
     }
     const handleRegister = async () => {
         if (!formRef.current) {
@@ -87,30 +86,25 @@ const LoginPage = () => {
     }
     const handleButton = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
-        console.log('click', mode)
         switch (mode) {
             case MODE.LOGIN:
                 await handleLogin()
-                console.log(`LOGIN`)
                 break
             case MODE.REGISTER:
                 await handleRegister()
-                console.log(`REGISTER`)
                 break
             case MODE.RESET_PASSWORD:
-                console.log(`RESET_PASSWORD`)
                 break
             case MODE.EMAIL_VERIFICATION:
-                console.log(`EMAIL_VERIFICATION`)
                 break
             default:
         }
     }
     if (user) {
-        router.push("/")
+        router.push("/dashboard")
     }
     return (
-        <div className="h-[calc(100vh-5rem)] px-4 md:px-8 lg:px16 xl:px-32 2xl:px-64 flex items-center justify-center">
+        <div className="h-[calc(100vh-5rem)] px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 flex items-center justify-center">
             <form ref={formRef}  className="flex flex-col gap-8">
                 <h1 className="text-2xl font-semibold">{formTitle}</h1>
                 {mode === MODE.REGISTER ? (
