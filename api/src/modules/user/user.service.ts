@@ -1,6 +1,6 @@
 import { hashPassword } from "../../utils/hash";
 import prisma from "../../utils/prisma";
-import { CreateUserInput } from "./user.schema";
+import { CreateUserInput, UpdateUserInput } from "./user.schema";
 
 export async function createUser(input: CreateUserInput) {
   const { password, ...rest } = input;
@@ -19,6 +19,23 @@ export async function findUserByEmail(email: string) {
     where: {
       email,
     },
+  });
+}
+
+export async function findUser(id: number) {
+  return prisma.user.findUnique({
+    where: {
+      id,
+    },
+  });
+}
+
+export async function updateUser(id: number, user: UpdateUserInput ) {
+  return prisma.user.update({
+    where: {
+      id,
+    },
+    data: user
   });
 }
 

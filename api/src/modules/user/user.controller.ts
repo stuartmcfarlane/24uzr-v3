@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { verifyPassword } from "../../utils/hash";
-import { CreateUserInput, LoginInput } from "./user.schema";
-import { createUser, findUserByEmail, findUsers } from "./user.service";
+import { CreateUserInput, LoginInput, UpdateUserInput } from "./user.schema";
+import { createUser, findUserByEmail, findUsers, findUser, updateUser } from "./user.service";
 
 export async function registerUserHandler(
   request: FastifyRequest<{
@@ -26,14 +26,12 @@ export async function loginHandler(
   }>,
   reply: FastifyReply
 ) {
-  console.log(`>loginHandler`)
   const body = request.body;
   
   // find a user by email
   const user = await findUserByEmail(body.email);
   
   if (!user) {
-    console.log(`<loginHandler data missing`)
     return reply.code(401).send({
       message: "Invalid email or password",
     });
@@ -51,14 +49,12 @@ export async function loginHandler(
     
     const token = request.jwt.sign(rest)
     
-    console.log(` loginHandler set cookie`, token)
     reply.setCookie('access_token', token, {
       path: '/',
       httpOnly: true,
       // secure: true,
     })
     
-    console.log(`<loginHandler`)
     return { accessToken: token };
   }
   
@@ -76,7 +72,20 @@ export async function getUsersHandler() {
 export async function getUserHandler(
   request: FastifyRequest,
 ) {
-  const user = request.user
+  const { id } = request.user
+  const user = await findUser(id)
+  
+  return user;
+}
+
+export async function putUserHandler(
+  request: FastifyRequest<{
+    Body: UpdateUserInput;
+  }>,
+) {
+  const { id } = request.user
+  
+  const user = await updateUser(id, request.body)
   
   return user;
 }

@@ -4,12 +4,13 @@ import {
   registerUserHandler,
   getUsersHandler,
   getUserHandler,
+  putUserHandler,
 } from "./user.controller";
 import { $ref } from "./user.schema";
 
 async function userRoutes(server: FastifyInstance) {
   server.post(
-    "/users",
+    "/register",
     {
       schema: {
         tags: ['user'],
@@ -49,6 +50,22 @@ async function userRoutes(server: FastifyInstance) {
       preHandler: [server.authenticate],
     },
     getUserHandler
+  );
+
+  server.put(
+    "/user",
+    {
+      schema: {
+        tags: ['user'],
+        security: [ { bearerAuth: [] } ],
+        body: $ref("updateUserSchema"),
+        response: {
+          200: $ref("updateUserResponseSchema"),
+        },
+      },
+      preHandler: [server.authenticate],
+    },
+    putUserHandler
   );
 
   server.get(
