@@ -14,7 +14,17 @@ generator zod {
 model User {
   id       Int     @id @default(autoincrement())
   email    String  @unique
-  name     String?
-  password String
+  name     String? @db.VarChar(256)
+  password String  @db.VarChar(256)
   salt     String
+  ships    Ship[]
+}
+
+model Ship {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String   @db.VarChar(128)
+  owner     User     @relation(fields: [ownerId], references: [id])
+  ownerId   Int
 }

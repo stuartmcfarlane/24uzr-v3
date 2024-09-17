@@ -1,0 +1,17 @@
+-- AlterTable
+ALTER TABLE `User` MODIFY `name` VARCHAR(256) NULL,
+    MODIFY `password` VARCHAR(256) NOT NULL;
+
+-- CreateTable
+CREATE TABLE `Ship` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+    `name` VARCHAR(128) NOT NULL,
+    `ownerId` INTEGER NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `Ship` ADD CONSTRAINT `Ship_ownerId_fkey` FOREIGN KEY (`ownerId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

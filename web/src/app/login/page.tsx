@@ -4,7 +4,7 @@ import { UserContext } from "@/context/UserContext"
 import { ReactEventHandler, useContext, useRef, useState } from "react"
 import { UserContextType } from '../../types/user';
 import { useRouter } from "next/navigation";
-import { getUser, login } from "../../services/api"
+import { getUser, login, register } from "../../services/api"
 
 enum MODE {
     LOGIN="LOGIN",
@@ -18,7 +18,7 @@ const LoginPage = () => {
 
     const formRef = useRef<HTMLFormElement>(null)
     const [mode, setMode] = useState(MODE.LOGIN)
-    const [username, setUsername]  = useState("")
+    const [name, setName]  = useState("")
     const [email, setEmail]  = useState("")
     const [password, setPassword]  = useState("")
     const [emailCode, setEmailCode]  = useState("")
@@ -66,6 +66,25 @@ const LoginPage = () => {
         setUser(user)
         router.push('/profile')
     }
+    const handleRegister = async () => {
+        if (!formRef.current) {
+            router.push('/')
+            return
+        }
+        const formData = new FormData(formRef.current)
+        const email = formData.get('email') as string
+        const password = formData.get('password') as string
+        const name = formData.get('name') as string
+    
+        if (!email || !password) {
+            return
+        }
+
+        const success = await register({ email, password, name })
+        if (!success) return
+
+        setMode(MODE.LOGIN)
+    }
     const handleButton = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         console.log('click', mode)
@@ -75,6 +94,7 @@ const LoginPage = () => {
                 console.log(`LOGIN`)
                 break
             case MODE.REGISTER:
+                await handleRegister()
                 console.log(`REGISTER`)
                 break
             case MODE.RESET_PASSWORD:
@@ -95,12 +115,12 @@ const LoginPage = () => {
                 <h1 className="text-2xl font-semibold">{formTitle}</h1>
                 {mode === MODE.REGISTER ? (
                     <div className="flex flex-col gap-2">
-                        <label className="text-sm text-gray-700">Username</label>
+                        <label className="text-sm text-gray-700">Name</label>
                         <input
                             type="text"
-                            name="username"
+                            name="name"
                             placeholder="john"
-                            autoComplete="username"
+                            autoComplete="name"
                             className="ring-2 ring-gray-300 rounded-md p-4" />
                     </div>
                 ) : null}

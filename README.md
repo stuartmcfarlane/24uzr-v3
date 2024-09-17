@@ -58,3 +58,26 @@ Start a terminal for the web client and run the dev task. You can kill it with c
 cd web
 npm run dev
 ```
+
+## Migrations
+
+Database migrations are generated from the schema definition using the following command
+
+```bash
+cd api
+npx prisma migrate dev --name new-migration-name
+```
+
+Database migrations are applied with the following command
+
+```bash
+cd api
+npx prisma migrate dev
+```
+
+Schema type definitions will need to be (re)generated sometimes. Do this with
+
+```bash
+cd api
+npx prisma generate
+```
