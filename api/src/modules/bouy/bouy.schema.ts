@@ -5,6 +5,7 @@ const bouyInput = {
     name: z.string(),
     lat: z.number(),
     lng: z.number(),
+    mapId: z.number(),
 };
 
 const bouyGenerated = {
