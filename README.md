@@ -16,6 +16,21 @@ WEB_PORT=80
 API_PORT=3000
 ```
 
+The api and web servers also need a bit of environment to work properly. Make sure you
+have the following two files
+
+`api/.env`
+
+```env
+DATABASE_URL="mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB_NAME}"
+```
+
+`web/.env`
+
+```env
+PORT="${WEB_PORT}"
+```
+
 Now `npm i` all the things and create the database by executing the following
 
 ```bash

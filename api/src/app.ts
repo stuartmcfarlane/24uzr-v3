@@ -2,11 +2,11 @@ import buildServer from "./server";
 
 const server = buildServer();
 
-process.on('SIGTERM', function onSigterm() {  
-  console.log('SIGTERM')
-})
-process.on('SIGINT', function onSigint () {  
-  console.log('SIGINT')
+['SIGINT', 'SIGTERM'].forEach((signal) => {
+  process.on(signal, async () => {
+    await server.close()
+    process.exit(0)
+  })
 })
 
 async function main() {

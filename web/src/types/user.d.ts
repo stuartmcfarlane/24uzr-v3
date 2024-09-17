@@ -1,7 +1,7 @@
 export interface IUser {
+  id: number
   email: string
-  fistName: string
-  lastName: string
+  name: string
 }
 export type UserContextType = {
   user: IUser | undefined

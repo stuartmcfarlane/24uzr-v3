@@ -24,6 +24,11 @@ const createUserResponseSchema = z.object({
   ...userCore,
 });
 
+const getUserResponseSchema = z.object({
+  id: z.number(),
+  ...userCore,
+});
+
 const loginSchema = z.object({
   email: z
     .string({
@@ -47,4 +52,5 @@ export const { schemas: userSchemas, $ref } = buildJsonSchemas({
   createUserResponseSchema,
   loginSchema,
   loginResponseSchema,
+  getUserResponseSchema,
 });

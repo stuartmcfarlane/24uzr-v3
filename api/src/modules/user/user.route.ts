@@ -3,6 +3,7 @@ import {
   loginHandler,
   registerUserHandler,
   getUsersHandler,
+  getUserHandler,
 } from "./user.controller";
 import { $ref } from "./user.schema";
 
@@ -12,9 +13,6 @@ async function userRoutes(server: FastifyInstance) {
     {
       schema: {
         tags: ['user'],
-        // security: [
-        //   { BearerAuth: [] }
-        // ],
         body: $ref("createUserSchema"),
         response: {
           201: $ref("createUserResponseSchema"),
@@ -38,6 +36,21 @@ async function userRoutes(server: FastifyInstance) {
     loginHandler
   );
   
+  server.get(
+    "/user",
+    {
+      schema: {
+        tags: ['user'],
+        security: [ { bearerAuth: [] } ],
+        response: {
+          200: $ref("getUserResponseSchema"),
+        },
+      },
+      preHandler: [server.authenticate],
+    },
+    getUserHandler
+  );
+
   server.get(
     "/users",
     {
