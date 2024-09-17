@@ -28,3 +28,20 @@ model Ship {
   owner     User     @relation(fields: [ownerId], references: [id])
   ownerId   Int
 }
+
+model Map {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String   @db.VarChar(128)
+  Bouy      Bouy[]
+}
+
+model Bouy {
+  id    Int     @id @default(autoincrement())
+  name  String  @db.VarChar(128)
+  lat   Decimal @db.Decimal(10, 8)
+  lng   Decimal @db.Decimal(11, 8)
+  map   Map     @relation(fields: [mapId], references: [id])
+  mapId Int
+}

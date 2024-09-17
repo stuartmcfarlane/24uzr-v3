@@ -1,10 +1,31 @@
 import { z } from 'zod';
-import type { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 /////////////////////////////////////////
 // HELPER FUNCTIONS
 /////////////////////////////////////////
 
+// DECIMAL
+//------------------------------------------------------
+
+export const DecimalJsLikeSchema: z.ZodType<Prisma.DecimalJsLike> = z.object({
+  d: z.array(z.number()),
+  e: z.number(),
+  s: z.number(),
+  toFixed: z.function(z.tuple([]), z.string()),
+})
+
+export const DECIMAL_STRING_REGEX = /^(?:-?Infinity|NaN|-?(?:0[bB][01]+(?:\.[01]+)?(?:[pP][-+]?\d+)?|0[oO][0-7]+(?:\.[0-7]+)?(?:[pP][-+]?\d+)?|0[xX][\da-fA-F]+(?:\.[\da-fA-F]+)?(?:[pP][-+]?\d+)?|(?:\d+|\d*\.\d+)(?:[eE][-+]?\d+)?))$/;
+
+export const isValidDecimalInput =
+  (v?: null | string | number | Prisma.DecimalJsLike): v is string | number | Prisma.DecimalJsLike => {
+    if (v === undefined || v === null) return false;
+    return (
+      (typeof v === 'object' && 'd' in v && 'e' in v && 's' in v && 'toFixed' in v) ||
+      (typeof v === 'string' && DECIMAL_STRING_REGEX.test(v)) ||
+      typeof v === 'number'
+    )
+  };
 
 /////////////////////////////////////////
 // ENUMS
@@ -15,6 +36,10 @@ export const TransactionIsolationLevelSchema = z.enum(['ReadUncommitted','ReadCo
 export const UserScalarFieldEnumSchema = z.enum(['id','email','name','password','salt']);
 
 export const ShipScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','name','ownerId']);
+
+export const MapScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','name']);
+
+export const BouyScalarFieldEnumSchema = z.enum(['id','name','lat','lng','mapId']);
 
 export const SortOrderSchema = z.enum(['asc','desc']);
 
@@ -50,6 +75,33 @@ export const ShipSchema = z.object({
 })
 
 export type Ship = z.infer<typeof ShipSchema>
+
+/////////////////////////////////////////
+// MAP SCHEMA
+/////////////////////////////////////////
+
+export const MapSchema = z.object({
+  id: z.number().int(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  name: z.string(),
+})
+
+export type Map = z.infer<typeof MapSchema>
+
+/////////////////////////////////////////
+// BOUY SCHEMA
+/////////////////////////////////////////
+
+export const BouySchema = z.object({
+  id: z.number().int(),
+  name: z.string(),
+  lat: z.instanceof(Prisma.Decimal, { message: "Field 'lat' must be a Decimal. Location: ['Models', 'Bouy']"}),
+  lng: z.instanceof(Prisma.Decimal, { message: "Field 'lng' must be a Decimal. Location: ['Models', 'Bouy']"}),
+  mapId: z.number().int(),
+})
+
+export type Bouy = z.infer<typeof BouySchema>
 
 /////////////////////////////////////////
 // SELECT & INCLUDE
@@ -105,6 +157,57 @@ export const ShipSelectSchema: z.ZodType<Prisma.ShipSelect> = z.object({
   name: z.boolean().optional(),
   ownerId: z.boolean().optional(),
   owner: z.union([z.boolean(),z.lazy(() => UserArgsSchema)]).optional(),
+}).strict()
+
+// MAP
+//------------------------------------------------------
+
+export const MapIncludeSchema: z.ZodType<Prisma.MapInclude> = z.object({
+  Bouy: z.union([z.boolean(),z.lazy(() => BouyFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => MapCountOutputTypeArgsSchema)]).optional(),
+}).strict()
+
+export const MapArgsSchema: z.ZodType<Prisma.MapDefaultArgs> = z.object({
+  select: z.lazy(() => MapSelectSchema).optional(),
+  include: z.lazy(() => MapIncludeSchema).optional(),
+}).strict();
+
+export const MapCountOutputTypeArgsSchema: z.ZodType<Prisma.MapCountOutputTypeDefaultArgs> = z.object({
+  select: z.lazy(() => MapCountOutputTypeSelectSchema).nullish(),
+}).strict();
+
+export const MapCountOutputTypeSelectSchema: z.ZodType<Prisma.MapCountOutputTypeSelect> = z.object({
+  Bouy: z.boolean().optional(),
+}).strict();
+
+export const MapSelectSchema: z.ZodType<Prisma.MapSelect> = z.object({
+  id: z.boolean().optional(),
+  createdAt: z.boolean().optional(),
+  updatedAt: z.boolean().optional(),
+  name: z.boolean().optional(),
+  Bouy: z.union([z.boolean(),z.lazy(() => BouyFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => MapCountOutputTypeArgsSchema)]).optional(),
+}).strict()
+
+// BOUY
+//------------------------------------------------------
+
+export const BouyIncludeSchema: z.ZodType<Prisma.BouyInclude> = z.object({
+  map: z.union([z.boolean(),z.lazy(() => MapArgsSchema)]).optional(),
+}).strict()
+
+export const BouyArgsSchema: z.ZodType<Prisma.BouyDefaultArgs> = z.object({
+  select: z.lazy(() => BouySelectSchema).optional(),
+  include: z.lazy(() => BouyIncludeSchema).optional(),
+}).strict();
+
+export const BouySelectSchema: z.ZodType<Prisma.BouySelect> = z.object({
+  id: z.boolean().optional(),
+  name: z.boolean().optional(),
+  lat: z.boolean().optional(),
+  lng: z.boolean().optional(),
+  mapId: z.boolean().optional(),
+  map: z.union([z.boolean(),z.lazy(() => MapArgsSchema)]).optional(),
 }).strict()
 
 
@@ -241,6 +344,121 @@ export const ShipScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.ShipScal
   ownerId: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
 }).strict();
 
+export const MapWhereInputSchema: z.ZodType<Prisma.MapWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => MapWhereInputSchema),z.lazy(() => MapWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => MapWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => MapWhereInputSchema),z.lazy(() => MapWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  Bouy: z.lazy(() => BouyListRelationFilterSchema).optional()
+}).strict();
+
+export const MapOrderByWithRelationInputSchema: z.ZodType<Prisma.MapOrderByWithRelationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
+  Bouy: z.lazy(() => BouyOrderByRelationAggregateInputSchema).optional()
+}).strict();
+
+export const MapWhereUniqueInputSchema: z.ZodType<Prisma.MapWhereUniqueInput> = z.object({
+  id: z.number().int()
+})
+.and(z.object({
+  id: z.number().int().optional(),
+  AND: z.union([ z.lazy(() => MapWhereInputSchema),z.lazy(() => MapWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => MapWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => MapWhereInputSchema),z.lazy(() => MapWhereInputSchema).array() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  Bouy: z.lazy(() => BouyListRelationFilterSchema).optional()
+}).strict());
+
+export const MapOrderByWithAggregationInputSchema: z.ZodType<Prisma.MapOrderByWithAggregationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => MapCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => MapAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => MapMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => MapMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => MapSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const MapScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.MapScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => MapScalarWhereWithAggregatesInputSchema),z.lazy(() => MapScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => MapScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => MapScalarWhereWithAggregatesInputSchema),z.lazy(() => MapScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+}).strict();
+
+export const BouyWhereInputSchema: z.ZodType<Prisma.BouyWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => BouyWhereInputSchema),z.lazy(() => BouyWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => BouyWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => BouyWhereInputSchema),z.lazy(() => BouyWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  lat: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  lng: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  mapId: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  map: z.union([ z.lazy(() => MapRelationFilterSchema),z.lazy(() => MapWhereInputSchema) ]).optional(),
+}).strict();
+
+export const BouyOrderByWithRelationInputSchema: z.ZodType<Prisma.BouyOrderByWithRelationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
+  lat: z.lazy(() => SortOrderSchema).optional(),
+  lng: z.lazy(() => SortOrderSchema).optional(),
+  mapId: z.lazy(() => SortOrderSchema).optional(),
+  map: z.lazy(() => MapOrderByWithRelationInputSchema).optional()
+}).strict();
+
+export const BouyWhereUniqueInputSchema: z.ZodType<Prisma.BouyWhereUniqueInput> = z.object({
+  id: z.number().int()
+})
+.and(z.object({
+  id: z.number().int().optional(),
+  AND: z.union([ z.lazy(() => BouyWhereInputSchema),z.lazy(() => BouyWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => BouyWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => BouyWhereInputSchema),z.lazy(() => BouyWhereInputSchema).array() ]).optional(),
+  name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  lat: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  lng: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  mapId: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  map: z.union([ z.lazy(() => MapRelationFilterSchema),z.lazy(() => MapWhereInputSchema) ]).optional(),
+}).strict());
+
+export const BouyOrderByWithAggregationInputSchema: z.ZodType<Prisma.BouyOrderByWithAggregationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
+  lat: z.lazy(() => SortOrderSchema).optional(),
+  lng: z.lazy(() => SortOrderSchema).optional(),
+  mapId: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => BouyCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => BouyAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => BouyMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => BouyMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => BouySumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const BouyScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.BouyScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => BouyScalarWhereWithAggregatesInputSchema),z.lazy(() => BouyScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => BouyScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => BouyScalarWhereWithAggregatesInputSchema),z.lazy(() => BouyScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  lat: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  lng: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  mapId: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+}).strict();
+
 export const UserCreateInputSchema: z.ZodType<Prisma.UserCreateInput> = z.object({
   email: z.string(),
   name: z.string().optional().nullable(),
@@ -348,6 +566,108 @@ export const ShipUncheckedUpdateManyInputSchema: z.ZodType<Prisma.ShipUncheckedU
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ownerId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const MapCreateInputSchema: z.ZodType<Prisma.MapCreateInput> = z.object({
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  name: z.string(),
+  Bouy: z.lazy(() => BouyCreateNestedManyWithoutMapInputSchema).optional()
+}).strict();
+
+export const MapUncheckedCreateInputSchema: z.ZodType<Prisma.MapUncheckedCreateInput> = z.object({
+  id: z.number().int().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  name: z.string(),
+  Bouy: z.lazy(() => BouyUncheckedCreateNestedManyWithoutMapInputSchema).optional()
+}).strict();
+
+export const MapUpdateInputSchema: z.ZodType<Prisma.MapUpdateInput> = z.object({
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Bouy: z.lazy(() => BouyUpdateManyWithoutMapNestedInputSchema).optional()
+}).strict();
+
+export const MapUncheckedUpdateInputSchema: z.ZodType<Prisma.MapUncheckedUpdateInput> = z.object({
+  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  Bouy: z.lazy(() => BouyUncheckedUpdateManyWithoutMapNestedInputSchema).optional()
+}).strict();
+
+export const MapCreateManyInputSchema: z.ZodType<Prisma.MapCreateManyInput> = z.object({
+  id: z.number().int().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  name: z.string()
+}).strict();
+
+export const MapUpdateManyMutationInputSchema: z.ZodType<Prisma.MapUpdateManyMutationInput> = z.object({
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const MapUncheckedUpdateManyInputSchema: z.ZodType<Prisma.MapUncheckedUpdateManyInput> = z.object({
+  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const BouyCreateInputSchema: z.ZodType<Prisma.BouyCreateInput> = z.object({
+  name: z.string(),
+  lat: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  lng: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  map: z.lazy(() => MapCreateNestedOneWithoutBouyInputSchema)
+}).strict();
+
+export const BouyUncheckedCreateInputSchema: z.ZodType<Prisma.BouyUncheckedCreateInput> = z.object({
+  id: z.number().int().optional(),
+  name: z.string(),
+  lat: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  lng: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  mapId: z.number().int()
+}).strict();
+
+export const BouyUpdateInputSchema: z.ZodType<Prisma.BouyUpdateInput> = z.object({
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  lat: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  lng: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  map: z.lazy(() => MapUpdateOneRequiredWithoutBouyNestedInputSchema).optional()
+}).strict();
+
+export const BouyUncheckedUpdateInputSchema: z.ZodType<Prisma.BouyUncheckedUpdateInput> = z.object({
+  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  lat: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  lng: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  mapId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const BouyCreateManyInputSchema: z.ZodType<Prisma.BouyCreateManyInput> = z.object({
+  id: z.number().int().optional(),
+  name: z.string(),
+  lat: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  lng: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  mapId: z.number().int()
+}).strict();
+
+export const BouyUpdateManyMutationInputSchema: z.ZodType<Prisma.BouyUpdateManyMutationInput> = z.object({
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  lat: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  lng: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const BouyUncheckedUpdateManyInputSchema: z.ZodType<Prisma.BouyUncheckedUpdateManyInput> = z.object({
+  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  lat: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  lng: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  mapId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const IntFilterSchema: z.ZodType<Prisma.IntFilter> = z.object({
@@ -550,6 +870,115 @@ export const DateTimeWithAggregatesFilterSchema: z.ZodType<Prisma.DateTimeWithAg
   _max: z.lazy(() => NestedDateTimeFilterSchema).optional()
 }).strict();
 
+export const BouyListRelationFilterSchema: z.ZodType<Prisma.BouyListRelationFilter> = z.object({
+  every: z.lazy(() => BouyWhereInputSchema).optional(),
+  some: z.lazy(() => BouyWhereInputSchema).optional(),
+  none: z.lazy(() => BouyWhereInputSchema).optional()
+}).strict();
+
+export const BouyOrderByRelationAggregateInputSchema: z.ZodType<Prisma.BouyOrderByRelationAggregateInput> = z.object({
+  _count: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const MapCountOrderByAggregateInputSchema: z.ZodType<Prisma.MapCountOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const MapAvgOrderByAggregateInputSchema: z.ZodType<Prisma.MapAvgOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const MapMaxOrderByAggregateInputSchema: z.ZodType<Prisma.MapMaxOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const MapMinOrderByAggregateInputSchema: z.ZodType<Prisma.MapMinOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const MapSumOrderByAggregateInputSchema: z.ZodType<Prisma.MapSumOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const DecimalFilterSchema: z.ZodType<Prisma.DecimalFilter> = z.object({
+  equals: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  in: z.union([z.number().array(),z.string().array(),z.instanceof(Prisma.Decimal).array(),DecimalJsLikeSchema.array(),]).refine((v) => Array.isArray(v) && (v as any[]).every((v) => isValidDecimalInput(v)), { message: 'Must be a Decimal' }).optional(),
+  notIn: z.union([z.number().array(),z.string().array(),z.instanceof(Prisma.Decimal).array(),DecimalJsLikeSchema.array(),]).refine((v) => Array.isArray(v) && (v as any[]).every((v) => isValidDecimalInput(v)), { message: 'Must be a Decimal' }).optional(),
+  lt: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  lte: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  gt: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  gte: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  not: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NestedDecimalFilterSchema) ]).optional(),
+}).strict();
+
+export const MapRelationFilterSchema: z.ZodType<Prisma.MapRelationFilter> = z.object({
+  is: z.lazy(() => MapWhereInputSchema).optional(),
+  isNot: z.lazy(() => MapWhereInputSchema).optional()
+}).strict();
+
+export const BouyCountOrderByAggregateInputSchema: z.ZodType<Prisma.BouyCountOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
+  lat: z.lazy(() => SortOrderSchema).optional(),
+  lng: z.lazy(() => SortOrderSchema).optional(),
+  mapId: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const BouyAvgOrderByAggregateInputSchema: z.ZodType<Prisma.BouyAvgOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  lat: z.lazy(() => SortOrderSchema).optional(),
+  lng: z.lazy(() => SortOrderSchema).optional(),
+  mapId: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const BouyMaxOrderByAggregateInputSchema: z.ZodType<Prisma.BouyMaxOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
+  lat: z.lazy(() => SortOrderSchema).optional(),
+  lng: z.lazy(() => SortOrderSchema).optional(),
+  mapId: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const BouyMinOrderByAggregateInputSchema: z.ZodType<Prisma.BouyMinOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
+  lat: z.lazy(() => SortOrderSchema).optional(),
+  lng: z.lazy(() => SortOrderSchema).optional(),
+  mapId: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const BouySumOrderByAggregateInputSchema: z.ZodType<Prisma.BouySumOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  lat: z.lazy(() => SortOrderSchema).optional(),
+  lng: z.lazy(() => SortOrderSchema).optional(),
+  mapId: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const DecimalWithAggregatesFilterSchema: z.ZodType<Prisma.DecimalWithAggregatesFilter> = z.object({
+  equals: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  in: z.union([z.number().array(),z.string().array(),z.instanceof(Prisma.Decimal).array(),DecimalJsLikeSchema.array(),]).refine((v) => Array.isArray(v) && (v as any[]).every((v) => isValidDecimalInput(v)), { message: 'Must be a Decimal' }).optional(),
+  notIn: z.union([z.number().array(),z.string().array(),z.instanceof(Prisma.Decimal).array(),DecimalJsLikeSchema.array(),]).refine((v) => Array.isArray(v) && (v as any[]).every((v) => isValidDecimalInput(v)), { message: 'Must be a Decimal' }).optional(),
+  lt: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  lte: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  gt: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  gte: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  not: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NestedDecimalWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _avg: z.lazy(() => NestedDecimalFilterSchema).optional(),
+  _sum: z.lazy(() => NestedDecimalFilterSchema).optional(),
+  _min: z.lazy(() => NestedDecimalFilterSchema).optional(),
+  _max: z.lazy(() => NestedDecimalFilterSchema).optional()
+}).strict();
+
 export const ShipCreateNestedManyWithoutOwnerInputSchema: z.ZodType<Prisma.ShipCreateNestedManyWithoutOwnerInput> = z.object({
   create: z.union([ z.lazy(() => ShipCreateWithoutOwnerInputSchema),z.lazy(() => ShipCreateWithoutOwnerInputSchema).array(),z.lazy(() => ShipUncheckedCreateWithoutOwnerInputSchema),z.lazy(() => ShipUncheckedCreateWithoutOwnerInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => ShipCreateOrConnectWithoutOwnerInputSchema),z.lazy(() => ShipCreateOrConnectWithoutOwnerInputSchema).array() ]).optional(),
@@ -624,6 +1053,70 @@ export const UserUpdateOneRequiredWithoutShipsNestedInputSchema: z.ZodType<Prism
   upsert: z.lazy(() => UserUpsertWithoutShipsInputSchema).optional(),
   connect: z.lazy(() => UserWhereUniqueInputSchema).optional(),
   update: z.union([ z.lazy(() => UserUpdateToOneWithWhereWithoutShipsInputSchema),z.lazy(() => UserUpdateWithoutShipsInputSchema),z.lazy(() => UserUncheckedUpdateWithoutShipsInputSchema) ]).optional(),
+}).strict();
+
+export const BouyCreateNestedManyWithoutMapInputSchema: z.ZodType<Prisma.BouyCreateNestedManyWithoutMapInput> = z.object({
+  create: z.union([ z.lazy(() => BouyCreateWithoutMapInputSchema),z.lazy(() => BouyCreateWithoutMapInputSchema).array(),z.lazy(() => BouyUncheckedCreateWithoutMapInputSchema),z.lazy(() => BouyUncheckedCreateWithoutMapInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => BouyCreateOrConnectWithoutMapInputSchema),z.lazy(() => BouyCreateOrConnectWithoutMapInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => BouyCreateManyMapInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => BouyWhereUniqueInputSchema),z.lazy(() => BouyWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const BouyUncheckedCreateNestedManyWithoutMapInputSchema: z.ZodType<Prisma.BouyUncheckedCreateNestedManyWithoutMapInput> = z.object({
+  create: z.union([ z.lazy(() => BouyCreateWithoutMapInputSchema),z.lazy(() => BouyCreateWithoutMapInputSchema).array(),z.lazy(() => BouyUncheckedCreateWithoutMapInputSchema),z.lazy(() => BouyUncheckedCreateWithoutMapInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => BouyCreateOrConnectWithoutMapInputSchema),z.lazy(() => BouyCreateOrConnectWithoutMapInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => BouyCreateManyMapInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => BouyWhereUniqueInputSchema),z.lazy(() => BouyWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const BouyUpdateManyWithoutMapNestedInputSchema: z.ZodType<Prisma.BouyUpdateManyWithoutMapNestedInput> = z.object({
+  create: z.union([ z.lazy(() => BouyCreateWithoutMapInputSchema),z.lazy(() => BouyCreateWithoutMapInputSchema).array(),z.lazy(() => BouyUncheckedCreateWithoutMapInputSchema),z.lazy(() => BouyUncheckedCreateWithoutMapInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => BouyCreateOrConnectWithoutMapInputSchema),z.lazy(() => BouyCreateOrConnectWithoutMapInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => BouyUpsertWithWhereUniqueWithoutMapInputSchema),z.lazy(() => BouyUpsertWithWhereUniqueWithoutMapInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => BouyCreateManyMapInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => BouyWhereUniqueInputSchema),z.lazy(() => BouyWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => BouyWhereUniqueInputSchema),z.lazy(() => BouyWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => BouyWhereUniqueInputSchema),z.lazy(() => BouyWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => BouyWhereUniqueInputSchema),z.lazy(() => BouyWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => BouyUpdateWithWhereUniqueWithoutMapInputSchema),z.lazy(() => BouyUpdateWithWhereUniqueWithoutMapInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => BouyUpdateManyWithWhereWithoutMapInputSchema),z.lazy(() => BouyUpdateManyWithWhereWithoutMapInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => BouyScalarWhereInputSchema),z.lazy(() => BouyScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const BouyUncheckedUpdateManyWithoutMapNestedInputSchema: z.ZodType<Prisma.BouyUncheckedUpdateManyWithoutMapNestedInput> = z.object({
+  create: z.union([ z.lazy(() => BouyCreateWithoutMapInputSchema),z.lazy(() => BouyCreateWithoutMapInputSchema).array(),z.lazy(() => BouyUncheckedCreateWithoutMapInputSchema),z.lazy(() => BouyUncheckedCreateWithoutMapInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => BouyCreateOrConnectWithoutMapInputSchema),z.lazy(() => BouyCreateOrConnectWithoutMapInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => BouyUpsertWithWhereUniqueWithoutMapInputSchema),z.lazy(() => BouyUpsertWithWhereUniqueWithoutMapInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => BouyCreateManyMapInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => BouyWhereUniqueInputSchema),z.lazy(() => BouyWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => BouyWhereUniqueInputSchema),z.lazy(() => BouyWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => BouyWhereUniqueInputSchema),z.lazy(() => BouyWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => BouyWhereUniqueInputSchema),z.lazy(() => BouyWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => BouyUpdateWithWhereUniqueWithoutMapInputSchema),z.lazy(() => BouyUpdateWithWhereUniqueWithoutMapInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => BouyUpdateManyWithWhereWithoutMapInputSchema),z.lazy(() => BouyUpdateManyWithWhereWithoutMapInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => BouyScalarWhereInputSchema),z.lazy(() => BouyScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const MapCreateNestedOneWithoutBouyInputSchema: z.ZodType<Prisma.MapCreateNestedOneWithoutBouyInput> = z.object({
+  create: z.union([ z.lazy(() => MapCreateWithoutBouyInputSchema),z.lazy(() => MapUncheckedCreateWithoutBouyInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => MapCreateOrConnectWithoutBouyInputSchema).optional(),
+  connect: z.lazy(() => MapWhereUniqueInputSchema).optional()
+}).strict();
+
+export const DecimalFieldUpdateOperationsInputSchema: z.ZodType<Prisma.DecimalFieldUpdateOperationsInput> = z.object({
+  set: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  increment: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  decrement: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  multiply: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  divide: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional()
+}).strict();
+
+export const MapUpdateOneRequiredWithoutBouyNestedInputSchema: z.ZodType<Prisma.MapUpdateOneRequiredWithoutBouyNestedInput> = z.object({
+  create: z.union([ z.lazy(() => MapCreateWithoutBouyInputSchema),z.lazy(() => MapUncheckedCreateWithoutBouyInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => MapCreateOrConnectWithoutBouyInputSchema).optional(),
+  upsert: z.lazy(() => MapUpsertWithoutBouyInputSchema).optional(),
+  connect: z.lazy(() => MapWhereUniqueInputSchema).optional(),
+  update: z.union([ z.lazy(() => MapUpdateToOneWithWhereWithoutBouyInputSchema),z.lazy(() => MapUpdateWithoutBouyInputSchema),z.lazy(() => MapUncheckedUpdateWithoutBouyInputSchema) ]).optional(),
 }).strict();
 
 export const NestedIntFilterSchema: z.ZodType<Prisma.NestedIntFilter> = z.object({
@@ -762,6 +1255,33 @@ export const NestedDateTimeWithAggregatesFilterSchema: z.ZodType<Prisma.NestedDa
   _max: z.lazy(() => NestedDateTimeFilterSchema).optional()
 }).strict();
 
+export const NestedDecimalFilterSchema: z.ZodType<Prisma.NestedDecimalFilter> = z.object({
+  equals: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  in: z.union([z.number().array(),z.string().array(),z.instanceof(Prisma.Decimal).array(),DecimalJsLikeSchema.array(),]).refine((v) => Array.isArray(v) && (v as any[]).every((v) => isValidDecimalInput(v)), { message: 'Must be a Decimal' }).optional(),
+  notIn: z.union([z.number().array(),z.string().array(),z.instanceof(Prisma.Decimal).array(),DecimalJsLikeSchema.array(),]).refine((v) => Array.isArray(v) && (v as any[]).every((v) => isValidDecimalInput(v)), { message: 'Must be a Decimal' }).optional(),
+  lt: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  lte: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  gt: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  gte: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  not: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NestedDecimalFilterSchema) ]).optional(),
+}).strict();
+
+export const NestedDecimalWithAggregatesFilterSchema: z.ZodType<Prisma.NestedDecimalWithAggregatesFilter> = z.object({
+  equals: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  in: z.union([z.number().array(),z.string().array(),z.instanceof(Prisma.Decimal).array(),DecimalJsLikeSchema.array(),]).refine((v) => Array.isArray(v) && (v as any[]).every((v) => isValidDecimalInput(v)), { message: 'Must be a Decimal' }).optional(),
+  notIn: z.union([z.number().array(),z.string().array(),z.instanceof(Prisma.Decimal).array(),DecimalJsLikeSchema.array(),]).refine((v) => Array.isArray(v) && (v as any[]).every((v) => isValidDecimalInput(v)), { message: 'Must be a Decimal' }).optional(),
+  lt: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  lte: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  gt: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  gte: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  not: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NestedDecimalWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _avg: z.lazy(() => NestedDecimalFilterSchema).optional(),
+  _sum: z.lazy(() => NestedDecimalFilterSchema).optional(),
+  _min: z.lazy(() => NestedDecimalFilterSchema).optional(),
+  _max: z.lazy(() => NestedDecimalFilterSchema).optional()
+}).strict();
+
 export const ShipCreateWithoutOwnerInputSchema: z.ZodType<Prisma.ShipCreateWithoutOwnerInput> = z.object({
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -858,6 +1378,98 @@ export const UserUncheckedUpdateWithoutShipsInputSchema: z.ZodType<Prisma.UserUn
   salt: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
+export const BouyCreateWithoutMapInputSchema: z.ZodType<Prisma.BouyCreateWithoutMapInput> = z.object({
+  name: z.string(),
+  lat: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  lng: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' })
+}).strict();
+
+export const BouyUncheckedCreateWithoutMapInputSchema: z.ZodType<Prisma.BouyUncheckedCreateWithoutMapInput> = z.object({
+  id: z.number().int().optional(),
+  name: z.string(),
+  lat: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  lng: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' })
+}).strict();
+
+export const BouyCreateOrConnectWithoutMapInputSchema: z.ZodType<Prisma.BouyCreateOrConnectWithoutMapInput> = z.object({
+  where: z.lazy(() => BouyWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => BouyCreateWithoutMapInputSchema),z.lazy(() => BouyUncheckedCreateWithoutMapInputSchema) ]),
+}).strict();
+
+export const BouyCreateManyMapInputEnvelopeSchema: z.ZodType<Prisma.BouyCreateManyMapInputEnvelope> = z.object({
+  data: z.union([ z.lazy(() => BouyCreateManyMapInputSchema),z.lazy(() => BouyCreateManyMapInputSchema).array() ]),
+  skipDuplicates: z.boolean().optional()
+}).strict();
+
+export const BouyUpsertWithWhereUniqueWithoutMapInputSchema: z.ZodType<Prisma.BouyUpsertWithWhereUniqueWithoutMapInput> = z.object({
+  where: z.lazy(() => BouyWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => BouyUpdateWithoutMapInputSchema),z.lazy(() => BouyUncheckedUpdateWithoutMapInputSchema) ]),
+  create: z.union([ z.lazy(() => BouyCreateWithoutMapInputSchema),z.lazy(() => BouyUncheckedCreateWithoutMapInputSchema) ]),
+}).strict();
+
+export const BouyUpdateWithWhereUniqueWithoutMapInputSchema: z.ZodType<Prisma.BouyUpdateWithWhereUniqueWithoutMapInput> = z.object({
+  where: z.lazy(() => BouyWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => BouyUpdateWithoutMapInputSchema),z.lazy(() => BouyUncheckedUpdateWithoutMapInputSchema) ]),
+}).strict();
+
+export const BouyUpdateManyWithWhereWithoutMapInputSchema: z.ZodType<Prisma.BouyUpdateManyWithWhereWithoutMapInput> = z.object({
+  where: z.lazy(() => BouyScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => BouyUpdateManyMutationInputSchema),z.lazy(() => BouyUncheckedUpdateManyWithoutMapInputSchema) ]),
+}).strict();
+
+export const BouyScalarWhereInputSchema: z.ZodType<Prisma.BouyScalarWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => BouyScalarWhereInputSchema),z.lazy(() => BouyScalarWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => BouyScalarWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => BouyScalarWhereInputSchema),z.lazy(() => BouyScalarWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  lat: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  lng: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  mapId: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+}).strict();
+
+export const MapCreateWithoutBouyInputSchema: z.ZodType<Prisma.MapCreateWithoutBouyInput> = z.object({
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  name: z.string()
+}).strict();
+
+export const MapUncheckedCreateWithoutBouyInputSchema: z.ZodType<Prisma.MapUncheckedCreateWithoutBouyInput> = z.object({
+  id: z.number().int().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  name: z.string()
+}).strict();
+
+export const MapCreateOrConnectWithoutBouyInputSchema: z.ZodType<Prisma.MapCreateOrConnectWithoutBouyInput> = z.object({
+  where: z.lazy(() => MapWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => MapCreateWithoutBouyInputSchema),z.lazy(() => MapUncheckedCreateWithoutBouyInputSchema) ]),
+}).strict();
+
+export const MapUpsertWithoutBouyInputSchema: z.ZodType<Prisma.MapUpsertWithoutBouyInput> = z.object({
+  update: z.union([ z.lazy(() => MapUpdateWithoutBouyInputSchema),z.lazy(() => MapUncheckedUpdateWithoutBouyInputSchema) ]),
+  create: z.union([ z.lazy(() => MapCreateWithoutBouyInputSchema),z.lazy(() => MapUncheckedCreateWithoutBouyInputSchema) ]),
+  where: z.lazy(() => MapWhereInputSchema).optional()
+}).strict();
+
+export const MapUpdateToOneWithWhereWithoutBouyInputSchema: z.ZodType<Prisma.MapUpdateToOneWithWhereWithoutBouyInput> = z.object({
+  where: z.lazy(() => MapWhereInputSchema).optional(),
+  data: z.union([ z.lazy(() => MapUpdateWithoutBouyInputSchema),z.lazy(() => MapUncheckedUpdateWithoutBouyInputSchema) ]),
+}).strict();
+
+export const MapUpdateWithoutBouyInputSchema: z.ZodType<Prisma.MapUpdateWithoutBouyInput> = z.object({
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const MapUncheckedUpdateWithoutBouyInputSchema: z.ZodType<Prisma.MapUncheckedUpdateWithoutBouyInput> = z.object({
+  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
 export const ShipCreateManyOwnerInputSchema: z.ZodType<Prisma.ShipCreateManyOwnerInput> = z.object({
   id: z.number().int().optional(),
   createdAt: z.coerce.date().optional(),
@@ -883,6 +1495,33 @@ export const ShipUncheckedUpdateManyWithoutOwnerInputSchema: z.ZodType<Prisma.Sh
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const BouyCreateManyMapInputSchema: z.ZodType<Prisma.BouyCreateManyMapInput> = z.object({
+  id: z.number().int().optional(),
+  name: z.string(),
+  lat: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  lng: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' })
+}).strict();
+
+export const BouyUpdateWithoutMapInputSchema: z.ZodType<Prisma.BouyUpdateWithoutMapInput> = z.object({
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  lat: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  lng: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const BouyUncheckedUpdateWithoutMapInputSchema: z.ZodType<Prisma.BouyUncheckedUpdateWithoutMapInput> = z.object({
+  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  lat: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  lng: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const BouyUncheckedUpdateManyWithoutMapInputSchema: z.ZodType<Prisma.BouyUncheckedUpdateManyWithoutMapInput> = z.object({
+  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  lat: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  lng: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 /////////////////////////////////////////
@@ -1013,6 +1652,130 @@ export const ShipFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.ShipFindUniqueOrT
   where: ShipWhereUniqueInputSchema,
 }).strict() ;
 
+export const MapFindFirstArgsSchema: z.ZodType<Prisma.MapFindFirstArgs> = z.object({
+  select: MapSelectSchema.optional(),
+  include: MapIncludeSchema.optional(),
+  where: MapWhereInputSchema.optional(),
+  orderBy: z.union([ MapOrderByWithRelationInputSchema.array(),MapOrderByWithRelationInputSchema ]).optional(),
+  cursor: MapWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ MapScalarFieldEnumSchema,MapScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const MapFindFirstOrThrowArgsSchema: z.ZodType<Prisma.MapFindFirstOrThrowArgs> = z.object({
+  select: MapSelectSchema.optional(),
+  include: MapIncludeSchema.optional(),
+  where: MapWhereInputSchema.optional(),
+  orderBy: z.union([ MapOrderByWithRelationInputSchema.array(),MapOrderByWithRelationInputSchema ]).optional(),
+  cursor: MapWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ MapScalarFieldEnumSchema,MapScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const MapFindManyArgsSchema: z.ZodType<Prisma.MapFindManyArgs> = z.object({
+  select: MapSelectSchema.optional(),
+  include: MapIncludeSchema.optional(),
+  where: MapWhereInputSchema.optional(),
+  orderBy: z.union([ MapOrderByWithRelationInputSchema.array(),MapOrderByWithRelationInputSchema ]).optional(),
+  cursor: MapWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ MapScalarFieldEnumSchema,MapScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const MapAggregateArgsSchema: z.ZodType<Prisma.MapAggregateArgs> = z.object({
+  where: MapWhereInputSchema.optional(),
+  orderBy: z.union([ MapOrderByWithRelationInputSchema.array(),MapOrderByWithRelationInputSchema ]).optional(),
+  cursor: MapWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const MapGroupByArgsSchema: z.ZodType<Prisma.MapGroupByArgs> = z.object({
+  where: MapWhereInputSchema.optional(),
+  orderBy: z.union([ MapOrderByWithAggregationInputSchema.array(),MapOrderByWithAggregationInputSchema ]).optional(),
+  by: MapScalarFieldEnumSchema.array(),
+  having: MapScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const MapFindUniqueArgsSchema: z.ZodType<Prisma.MapFindUniqueArgs> = z.object({
+  select: MapSelectSchema.optional(),
+  include: MapIncludeSchema.optional(),
+  where: MapWhereUniqueInputSchema,
+}).strict() ;
+
+export const MapFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.MapFindUniqueOrThrowArgs> = z.object({
+  select: MapSelectSchema.optional(),
+  include: MapIncludeSchema.optional(),
+  where: MapWhereUniqueInputSchema,
+}).strict() ;
+
+export const BouyFindFirstArgsSchema: z.ZodType<Prisma.BouyFindFirstArgs> = z.object({
+  select: BouySelectSchema.optional(),
+  include: BouyIncludeSchema.optional(),
+  where: BouyWhereInputSchema.optional(),
+  orderBy: z.union([ BouyOrderByWithRelationInputSchema.array(),BouyOrderByWithRelationInputSchema ]).optional(),
+  cursor: BouyWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ BouyScalarFieldEnumSchema,BouyScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const BouyFindFirstOrThrowArgsSchema: z.ZodType<Prisma.BouyFindFirstOrThrowArgs> = z.object({
+  select: BouySelectSchema.optional(),
+  include: BouyIncludeSchema.optional(),
+  where: BouyWhereInputSchema.optional(),
+  orderBy: z.union([ BouyOrderByWithRelationInputSchema.array(),BouyOrderByWithRelationInputSchema ]).optional(),
+  cursor: BouyWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ BouyScalarFieldEnumSchema,BouyScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const BouyFindManyArgsSchema: z.ZodType<Prisma.BouyFindManyArgs> = z.object({
+  select: BouySelectSchema.optional(),
+  include: BouyIncludeSchema.optional(),
+  where: BouyWhereInputSchema.optional(),
+  orderBy: z.union([ BouyOrderByWithRelationInputSchema.array(),BouyOrderByWithRelationInputSchema ]).optional(),
+  cursor: BouyWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ BouyScalarFieldEnumSchema,BouyScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const BouyAggregateArgsSchema: z.ZodType<Prisma.BouyAggregateArgs> = z.object({
+  where: BouyWhereInputSchema.optional(),
+  orderBy: z.union([ BouyOrderByWithRelationInputSchema.array(),BouyOrderByWithRelationInputSchema ]).optional(),
+  cursor: BouyWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const BouyGroupByArgsSchema: z.ZodType<Prisma.BouyGroupByArgs> = z.object({
+  where: BouyWhereInputSchema.optional(),
+  orderBy: z.union([ BouyOrderByWithAggregationInputSchema.array(),BouyOrderByWithAggregationInputSchema ]).optional(),
+  by: BouyScalarFieldEnumSchema.array(),
+  having: BouyScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const BouyFindUniqueArgsSchema: z.ZodType<Prisma.BouyFindUniqueArgs> = z.object({
+  select: BouySelectSchema.optional(),
+  include: BouyIncludeSchema.optional(),
+  where: BouyWhereUniqueInputSchema,
+}).strict() ;
+
+export const BouyFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.BouyFindUniqueOrThrowArgs> = z.object({
+  select: BouySelectSchema.optional(),
+  include: BouyIncludeSchema.optional(),
+  where: BouyWhereUniqueInputSchema,
+}).strict() ;
+
 export const UserCreateArgsSchema: z.ZodType<Prisma.UserCreateArgs> = z.object({
   select: UserSelectSchema.optional(),
   include: UserIncludeSchema.optional(),
@@ -1093,4 +1856,86 @@ export const ShipUpdateManyArgsSchema: z.ZodType<Prisma.ShipUpdateManyArgs> = z.
 
 export const ShipDeleteManyArgsSchema: z.ZodType<Prisma.ShipDeleteManyArgs> = z.object({
   where: ShipWhereInputSchema.optional(),
+}).strict() ;
+
+export const MapCreateArgsSchema: z.ZodType<Prisma.MapCreateArgs> = z.object({
+  select: MapSelectSchema.optional(),
+  include: MapIncludeSchema.optional(),
+  data: z.union([ MapCreateInputSchema,MapUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const MapUpsertArgsSchema: z.ZodType<Prisma.MapUpsertArgs> = z.object({
+  select: MapSelectSchema.optional(),
+  include: MapIncludeSchema.optional(),
+  where: MapWhereUniqueInputSchema,
+  create: z.union([ MapCreateInputSchema,MapUncheckedCreateInputSchema ]),
+  update: z.union([ MapUpdateInputSchema,MapUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const MapCreateManyArgsSchema: z.ZodType<Prisma.MapCreateManyArgs> = z.object({
+  data: z.union([ MapCreateManyInputSchema,MapCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const MapDeleteArgsSchema: z.ZodType<Prisma.MapDeleteArgs> = z.object({
+  select: MapSelectSchema.optional(),
+  include: MapIncludeSchema.optional(),
+  where: MapWhereUniqueInputSchema,
+}).strict() ;
+
+export const MapUpdateArgsSchema: z.ZodType<Prisma.MapUpdateArgs> = z.object({
+  select: MapSelectSchema.optional(),
+  include: MapIncludeSchema.optional(),
+  data: z.union([ MapUpdateInputSchema,MapUncheckedUpdateInputSchema ]),
+  where: MapWhereUniqueInputSchema,
+}).strict() ;
+
+export const MapUpdateManyArgsSchema: z.ZodType<Prisma.MapUpdateManyArgs> = z.object({
+  data: z.union([ MapUpdateManyMutationInputSchema,MapUncheckedUpdateManyInputSchema ]),
+  where: MapWhereInputSchema.optional(),
+}).strict() ;
+
+export const MapDeleteManyArgsSchema: z.ZodType<Prisma.MapDeleteManyArgs> = z.object({
+  where: MapWhereInputSchema.optional(),
+}).strict() ;
+
+export const BouyCreateArgsSchema: z.ZodType<Prisma.BouyCreateArgs> = z.object({
+  select: BouySelectSchema.optional(),
+  include: BouyIncludeSchema.optional(),
+  data: z.union([ BouyCreateInputSchema,BouyUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const BouyUpsertArgsSchema: z.ZodType<Prisma.BouyUpsertArgs> = z.object({
+  select: BouySelectSchema.optional(),
+  include: BouyIncludeSchema.optional(),
+  where: BouyWhereUniqueInputSchema,
+  create: z.union([ BouyCreateInputSchema,BouyUncheckedCreateInputSchema ]),
+  update: z.union([ BouyUpdateInputSchema,BouyUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const BouyCreateManyArgsSchema: z.ZodType<Prisma.BouyCreateManyArgs> = z.object({
+  data: z.union([ BouyCreateManyInputSchema,BouyCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const BouyDeleteArgsSchema: z.ZodType<Prisma.BouyDeleteArgs> = z.object({
+  select: BouySelectSchema.optional(),
+  include: BouyIncludeSchema.optional(),
+  where: BouyWhereUniqueInputSchema,
+}).strict() ;
+
+export const BouyUpdateArgsSchema: z.ZodType<Prisma.BouyUpdateArgs> = z.object({
+  select: BouySelectSchema.optional(),
+  include: BouyIncludeSchema.optional(),
+  data: z.union([ BouyUpdateInputSchema,BouyUncheckedUpdateInputSchema ]),
+  where: BouyWhereUniqueInputSchema,
+}).strict() ;
+
+export const BouyUpdateManyArgsSchema: z.ZodType<Prisma.BouyUpdateManyArgs> = z.object({
+  data: z.union([ BouyUpdateManyMutationInputSchema,BouyUncheckedUpdateManyInputSchema ]),
+  where: BouyWhereInputSchema.optional(),
+}).strict() ;
+
+export const BouyDeleteManyArgsSchema: z.ZodType<Prisma.BouyDeleteManyArgs> = z.object({
+  where: BouyWhereInputSchema.optional(),
 }).strict() ;
