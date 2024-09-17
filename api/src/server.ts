@@ -5,7 +5,9 @@ import fastifySwagger, { FastifyDynamicSwaggerOptions, FastifySwaggerOptions } f
 import fastifySwaggerUi from "@fastify/swagger-ui";
 import cors from "@fastify/cors"
 import userRoutes from "./modules/user/user.route";
+import shipRoutes from "./modules/ship/ship.route";
 import { userSchemas } from "./modules/user/user.schema";
+import { shipSchemas } from "./modules/ship/ship.schema";
 import { version } from '../package.json'
 
 declare module "fastify" {
@@ -79,7 +81,7 @@ function buildServer() {
     credentials: true,
   })
   
-  for (const schema of [ ...userSchemas, ]) {
+  for (const schema of [ ...userSchemas, ...shipSchemas ]) {
     server.addSchema(schema);
   }
   
@@ -99,6 +101,7 @@ function buildServer() {
       ],
       tags: [
         { name: 'user', description: 'User related end-points' },
+        { name: 'ship', description: 'Ship related end-points' },
       ],
       components: {
         securitySchemes: {
@@ -121,6 +124,7 @@ function buildServer() {
   server.register(fastifySwaggerUi, swaggerUiOptions);
   
   server.register(userRoutes, { prefix: "/api" });
+  server.register(shipRoutes, { prefix: "/api" });
   
   return server;
 }
