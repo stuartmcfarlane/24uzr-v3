@@ -38,3 +38,11 @@ export async function findShips() {
         }
     });
 }
+
+export async function findShipsByOwnerId(ownerId: number) {
+    return prisma.ship.findMany({
+        where: {
+            ownerId
+        },
+    });
+}

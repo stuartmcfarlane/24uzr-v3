@@ -5,6 +5,7 @@ import {
   getUsersHandler,
   getUserHandler,
   putUserHandler,
+  getUserShipsHandler,
 } from "./user.controller";
 import { $ref } from "./user.schema";
 
@@ -82,6 +83,22 @@ async function userRoutes(server: FastifyInstance) {
       preHandler: [server.authenticate],
     },
     getUsersHandler
+  );
+
+  server.get(
+    "/user/ships",
+    {
+      schema: {
+        tags: ['user'],
+        security: [
+          {
+            bearerAuth: [],
+          }
+        ],
+      },
+      preHandler: [server.authenticate],
+    },
+    getUserShipsHandler
   );
 }
 

@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { verifyPassword } from "../../utils/hash";
 import { CreateUserInput, LoginInput, UpdateUserInput } from "./user.schema";
 import { createUser, findUserByEmail, findUsers, findUser, updateUser } from "./user.service";
+import { findShipsByOwnerId } from "../ship/ship.service";
 
 export async function registerUserHandler(
   request: FastifyRequest<{
@@ -89,3 +90,13 @@ export async function putUserHandler(
   
   return user;
 }
+
+export async function getUserShipsHandler(
+  request: FastifyRequest,
+) {
+  const { id } = request.user
+  const ships = await findShipsByOwnerId(id)
+  
+  return ships;
+}
+

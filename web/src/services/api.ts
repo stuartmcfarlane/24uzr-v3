@@ -1,5 +1,23 @@
 import { IUser } from "@/types/user"
 
+export const register = async ({
+    email,
+    password
+}: {
+    email: string,
+    password: string
+    }
+): Promise<boolean> => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: "include",
+        body: JSON.stringify({ email, password }),
+    })
+    
+    return response.ok
+}
+
 export const login = async ({
     email,
     password
