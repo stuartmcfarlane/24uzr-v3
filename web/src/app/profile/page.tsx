@@ -14,7 +14,8 @@ const ProfilePage = () => {
     }
     return (
         <div className="">
-            <div className="">{user?.fistName} {user?.lastName}</div>
+            <div className="">{user?.name}</div>
+            <div className="">{user?.email}</div>
         </div>
     )
 }

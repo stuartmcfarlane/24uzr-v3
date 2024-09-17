@@ -8,7 +8,6 @@ export const login = async ({
     password: string
     }
 ): Promise<boolean> => {
-    console.log(`>login ${process.env.NEXT_PUBLIC_API_URL}`, process.env)
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -20,7 +19,6 @@ export const login = async ({
 }
 
 export const getUser = async (): Promise<IUser> => {
-    console.log(`>getUser`)
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user`, {
         method: 'GET',
         credentials: "include",
