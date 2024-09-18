@@ -1,6 +1,6 @@
 "use client"
 
-import { createtMap } from "@/services/api"
+import { createMap } from "@/services/api"
 import { useRouter } from "next/navigation"
 import { FormEvent } from "react"
 
@@ -15,7 +15,7 @@ export const NewMapTool = () => {
         const formData = new FormData(event.currentTarget)
         const name = formData.get('name') as string
 
-        const map = await createtMap({name})
+        const map = await createMap({name})
         
         router.push(`/map/${map.id}`)
     }

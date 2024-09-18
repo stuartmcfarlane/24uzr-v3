@@ -1,54 +1,19 @@
-"use client"
+"use server"
 
-import { UserContext } from "@/context/UserContext"
-import { ReactEventHandler, useContext, useRef, useState } from "react"
-import { UserContextType } from '../../types/user';
-import { useRouter } from "next/navigation";
-import { getUser, login, register } from "../../services/api"
+import { setCookie } from "@/lib/setCookie";
+import { getUser, login } from "../../services/api"
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { NextResponse } from "next/server";
+import { getCookie } from "@/lib/getCookie";
+import { cookies } from "next/headers";
+import { getWebTokenCookie } from "@/lib/getWebTokenCookie";
 
-enum MODE {
-    LOGIN="LOGIN",
-    REGISTER="REGISTER",
-    RESET_PASSWORD="RESET_PASSWORD",
-    EMAIL_VERIFICATION="EMAIL_VERIFICATION",
-}
 const LoginPage = () => {
 
-    const router = useRouter()
+    const loginAction = async (formData: FormData) => {
+        "use server"
 
-    const formRef = useRef<HTMLFormElement>(null)
-    const [mode, setMode] = useState(MODE.LOGIN)
-    const [name, setName]  = useState("")
-    const [email, setEmail]  = useState("")
-    const [password, setPassword]  = useState("")
-    const [emailCode, setEmailCode]  = useState("")
-    const [isLoading, setIsLoading]  = useState(false)
-    const [error, setError]  = useState(false)
-    const [message, setMessage] = useState(false)
-
-    const {user, setUser} = useContext(UserContext) as UserContextType
-    
-    const formTitle = (
-        mode === MODE.LOGIN ? "Log in"
-        : mode === MODE.REGISTER ? "Register"
-        : mode === MODE.RESET_PASSWORD ? "Reset your password"
-        : mode === MODE.EMAIL_VERIFICATION ? "Verify your email"
-        : ""
-    )
-    const buttonTitle = (
-        mode === MODE.LOGIN ? "Login"
-        : mode === MODE.REGISTER ? "Register"
-        : mode === MODE.RESET_PASSWORD ? "Reset"
-        : mode === MODE.EMAIL_VERIFICATION ? "Verify"
-        : ""
-    )
-
-    const handleLogin = async () => {
-        if (!formRef.current) {
-            router.push('/')
-            return
-        }
-        const formData = new FormData(formRef.current)
         const email = formData.get('email') as string
         const password = formData.get('password') as string
     
@@ -56,69 +21,23 @@ const LoginPage = () => {
             return
         }
 
-        const success = await login({ email, password })
-        if (!success) return
+        const loginResult = await fetch(`${process.env.ROOT_URL}/api/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        })
 
-        const user = await getUser()
-        if (!user) return
-
-        setUser(user)
-        router.push('/dashboard')
-    }
-    const handleRegister = async () => {
-        if (!formRef.current) {
-            router.push('/')
-            return
-        }
-        const formData = new FormData(formRef.current)
-        const email = formData.get('email') as string
-        const password = formData.get('password') as string
-        const name = formData.get('name') as string
-    
-        if (!email || !password) {
-            return
+        const webTokenCookie = getWebTokenCookie(loginResult)
+        if (webTokenCookie) {
+            cookies().set(webTokenCookie);
         }
 
-        const success = await register({ email, password, name })
-        if (!success) return
-
-        setMode(MODE.LOGIN)
-    }
-    const handleButton = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault()
-        switch (mode) {
-            case MODE.LOGIN:
-                await handleLogin()
-                break
-            case MODE.REGISTER:
-                await handleRegister()
-                break
-            case MODE.RESET_PASSWORD:
-                break
-            case MODE.EMAIL_VERIFICATION:
-                break
-            default:
-        }
-    }
-    if (user) {
-        router.push("/dashboard")
+        redirect('/dashboard')
     }
     return (
         <div className="h-[calc(100vh-5rem)] px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 flex items-center justify-center">
-            <form ref={formRef} className="flex flex-col gap-8">
-                <h1 className="text-2xl font-semibold">{formTitle}</h1>
-                {mode === MODE.REGISTER ? (
-                    <div className="flex flex-col gap-2">
-                        <label className="text-sm text-gray-700">Name</label>
-                        <input
-                            type="text"
-                            name="name"
-                            placeholder="john"
-                            autoComplete="name"
-                            className="ring-2 ring-gray-300 rounded-md p-4" />
-                    </div>
-                ) : null}
-                {mode !== MODE.EMAIL_VERIFICATION ? (
+            <form action={loginAction} className="flex flex-col gap-8">
+                <h1 className="text-2xl font-semibold">Log in</h1>
                     <div className="flex flex-col gap-2">
                         <label className="text-sm text-gray-700">Email</label>
                         <input
@@ -128,13 +47,6 @@ const LoginPage = () => {
                             autoComplete="email"
                             className="ring-2 ring-gray-300 rounded-md p-4" />
                     </div>
-                ) : (
-                    <div className="flex flex-col gap-2">
-                        <label className="text-sm text-gray-700">Verification code</label>
-                        <input type="text" name="emailCode" placeholder="Code" className="ring-2 ring-gray-300 rounded-md p-4" />
-                    </div>                        
-                )}
-                {mode === MODE.REGISTER || mode === MODE.LOGIN ? (
                     <div className="flex flex-col gap-2">
                         <label className="text-sm text-gray-700">Password</label>
                         <input
@@ -144,27 +56,13 @@ const LoginPage = () => {
                             autoComplete="password"
                             className="ring-2 ring-gray-300 rounded-md p-4" />
                     </div>
-                ) : null}
-                {mode === MODE.LOGIN && (
-                    <div className="text-sm underline cursor-pointer" onClick={() => setMode(MODE.RESET_PASSWORD)}>Forgot your password? Reset.</div>
-                )}
-                <button disabled={isLoading}
+                    <Link href="/reset-password" className="text-sm underline cursor-pointer">Forgot your password? Reset.</Link>
+                <button
                     className="bg-24uzr text-white p-2 rounded-md disabled:bg-24uzr-disabled disabled:cursor-not-allowed"
-                    onClick={handleButton}
                 >
-                    {isLoading ? "Loading..." : buttonTitle}
+                    Log in
                 </button>
-                {error && <div className="text-red-600 ">{error}</div>}
-                {mode === MODE.LOGIN && (
-                    <div className="text-sm underline cursor-pointer" onClick={() => setMode(MODE.REGISTER)}>{"Don't"} have an account? Register.</div>
-                )}
-                {mode === MODE.REGISTER && (
-                    <div className="text-sm underline cursor-pointer" onClick={() => setMode(MODE.LOGIN)}>Have an account? Login.</div>
-                )}
-                {mode === MODE.RESET_PASSWORD && (
-                    <div className="text-sm underline cursor-pointer" onClick={() => setMode(MODE.LOGIN)}>Go back to login.</div>
-                )}
-                {message && <div className="text-green-600 text-sm">{message}</div>}
+                    <Link href="/signup" className="text-sm underline cursor-pointer">{"Don't"} have an account? Register.</Link>
             </form>
         </div>
     )

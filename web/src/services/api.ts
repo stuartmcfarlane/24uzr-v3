@@ -1,21 +1,54 @@
 import { IUser } from "@/types/user"
+import { getCookie } from '../lib/getCookie'
 
 const makeApiUrl = (uri: string) => `${process.env.NEXT_PUBLIC_API_URL || process.env.API_URL}${uri}`
 
 const get = async (uri: string) => {
-    return await fetch(makeApiUrl(uri), {
+    const webToken = getCookie('webToken') // cookies().get('webToken')
+    const options = {
         method: 'GET',
-        credentials: "include",
-    })
+        // credentials: "include",
+        headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${webToken}`,
+        }
+    }
+    console.log(`get ${uri}`, options)
+    return await fetch(makeApiUrl(uri), options)
+    // return await fetch(makeApiUrl(uri), {
+    //     method: 'GET',
+    //     credentials: "include",
+    //     headers: {
+    //         'Accept': 'application/json',
+    //         'Authorization': `Bearer ${webToken}`,
+    //     }
+    // })
 }
 
 const post = async (uri: string, data: object) => {
-    return await fetch(makeApiUrl(uri), {
+    const webToken = getCookie('webToken') // cookies().get('webToken')
+    const options = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: "include",
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${webToken}`,
+        },
+        // credentials: "include",
         body: JSON.stringify(data),
-    })
+    }
+    console.log(`post ${uri}`, options)
+    return await fetch(makeApiUrl(uri), options)
+    // return await fetch(makeApiUrl(uri), {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //         'Accept': 'application/json',
+    //         'Authorization': `Bearer ${webToken}`,
+    //     },
+    //     credentials: "include",
+    //     body: JSON.stringify(data),
+    // })
 }
 
 export const register = async ({
@@ -28,6 +61,7 @@ export const register = async ({
     name: string
     }
 ): Promise<boolean> => {
+    console.log(`>register`)
     const response = await post(`/api/register`, { email, password, name })
     
     return response.ok
@@ -40,13 +74,19 @@ export const login = async ({
     email: string,
     password: string
     }
-): Promise<boolean> => {
+) => {
+    console.log(`>login`)
     const response = await post(`/api/login`, { email, password })
-    
-    return response.ok
+    if (!response.ok) return {}
+    const json = await response.json()
+    console.log(` login`, json)
+    const { accessToken }: { accessToken: string } = json
+    console.log(`<login`, { accessToken })
+    return { accessToken }
 }
 
 export const getUser = async (): Promise<IUser> => {
+    console.log(`>getUser`)
     const response = await get(`/api/user`)
     
     if (!response.ok) throw Error("Not logged in")
@@ -56,6 +96,7 @@ export const getUser = async (): Promise<IUser> => {
 }
 
 export const getMaps = async () => {
+    console.log(`>getMaps`)
     const response = await get(`/api/maps`)
 
     if (!response.ok) return []
@@ -66,6 +107,7 @@ export const getMaps = async () => {
 }
 
 export const getMap = async (id: number) => {
+    console.log(`>getMap`)
     const response = await get(`/api/map/${id}`)
 
     if (!response.ok) return []
@@ -75,7 +117,7 @@ export const getMap = async (id: number) => {
     return  map
 }
 
-export const createtMap = async ({
+export const createMap = async ({
     name,
 }: {
     name: string

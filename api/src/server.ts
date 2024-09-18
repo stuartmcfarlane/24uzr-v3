@@ -52,6 +52,7 @@ function buildServer() {
       try {
         const token = request.cookies.access_token
         if (!token) {
+          console.log(` authenticate auth bearer`, request.headers)
           const result = await request.jwtVerify();
           console.log(`<authenticate from request`, result)
           return result
