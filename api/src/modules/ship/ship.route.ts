@@ -18,6 +18,7 @@ async function shipRoutes(server: FastifyInstance) {
                     201: $ref("shipResponseSchema"),
                 },
             },
+            preHandler: [server.authenticate],
         },
         createShipHandler
     );

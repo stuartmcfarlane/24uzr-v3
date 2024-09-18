@@ -24,8 +24,13 @@ const mapResponseSchema = z.object({
 
 const mapsResponseSchema = z.array(mapResponseSchema);
 
+export const MapIdParamSchema = z.object({
+    id: z.coerce.number(),
+}).strict()
+
 export type CreateMapInput = z.infer<typeof createMapSchema>;
 export type UpdateMapInput = z.infer<typeof updateMapSchema>;
+export type MapIdParamInput = z.infer<typeof MapIdParamSchema>;
 
 export const { schemas: mapSchemas, $ref } = buildJsonSchemas({
     createMapSchema,

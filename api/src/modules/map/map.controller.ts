@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { CreateMapInput, UpdateMapInput } from "./map.schema";
+import { CreateMapInput, MapIdParamInput, UpdateMapInput, $ref, MapIdParamSchema } from "./map.schema";
 import { createMap, findMap, findMaps, updateMap } from "./map.service";
 import { findBouysByMapId } from "../bouy/bouy.service";
 
@@ -28,10 +28,11 @@ export async function getMapsHandler() {
 
 export async function getMapHandler(
     request: FastifyRequest<{
-        Params: { id: number },
+        Params: MapIdParamInput,
     }>,
 ) {
-    const { id } = request.params
+    const { id } = MapIdParamSchema.parse(request.params)
+    console.log(`>getMapHandler`, {id})
     const map = await findMap(id)
     
     return map;
