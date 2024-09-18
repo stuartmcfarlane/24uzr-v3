@@ -30,6 +30,10 @@ const LoginPage = () => {
         const webTokenCookie = getWebTokenCookie(loginResult)
         if (webTokenCookie) {
             cookies().set(webTokenCookie);
+            cookies().set({
+                ...webTokenCookie,
+                name: 'access_token',
+            });
         }
 
         redirect('/dashboard')
