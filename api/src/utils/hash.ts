@@ -1,9 +1,9 @@
-import cryto from 'crypto'
+import crypto from 'crypto'
 
 export function hashPassword(password: string) {
 
-    const salt = cryto.randomBytes(16).toString("hex")
-    const hash = cryto.pbkdf2Sync(password, salt, 1000, 64, "sha512").toString("hex")
+    const salt = crypto.randomBytes(16).toString("hex")
+    const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, "sha512").toString("hex")
     return {
         hash,
         salt,
@@ -19,7 +19,7 @@ export function verifyPassword({
     salt: string,
     hash: string,
 }) {
-    const candidateHash = cryto.pbkdf2Sync(candidatePassword, salt, 1000, 64, "sha512").toString("hex")
+    const candidateHash = crypto.pbkdf2Sync(candidatePassword, salt, 1000, 64, "sha512").toString("hex")
 
     return candidateHash === hash
 }

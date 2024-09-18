@@ -63,11 +63,11 @@ export const login = async ({
     return { accessToken }
 }
 
-export const getUser = async (accessToken?: string): Promise<IUser> => {
+export const getUser = async (accessToken?: string): Promise<IUser | null> => {
     console.log(`>getUser`)
     const response = await get(`/api/user`, accessToken)
     
-    if (!response.ok) throw Error("Not logged in")
+    if (!response.ok) return null
     
     const user = await response.json()
     return user
