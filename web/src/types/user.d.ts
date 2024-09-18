@@ -9,3 +9,8 @@ export type UserContextType = {
   updateUser: (user: IUser) => void
   logout: () => void
 }
+
+export interface IMap {
+  id: number
+  name: string
+}
