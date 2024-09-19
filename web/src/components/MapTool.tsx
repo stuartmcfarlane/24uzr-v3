@@ -4,7 +4,7 @@ import { apiGetMaps} from "@/services/api"
 import { IApiMap } from "@/types/user"
 import Link from "next/link"
 import { NewMapTool } from "./NewMapTool"
-import { getSession } from "@/actions"
+import { getSession } from "@/actions/user"
 
 
 export const MapTool = async () => {

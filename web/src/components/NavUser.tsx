@@ -1,6 +1,6 @@
 import Link from "next/link"
 import LogoutForm from "./LogoutForm"
-import { getSession } from "@/actions"
+import { getSession } from "@/actions/user"
 
 const NavUser = async () => {
 
