@@ -33,7 +33,7 @@ export const isValidDecimalInput =
 
 export const TransactionIsolationLevelSchema = z.enum(['ReadUncommitted','ReadCommitted','RepeatableRead','Serializable']);
 
-export const UserScalarFieldEnumSchema = z.enum(['id','email','name','password','salt']);
+export const UserScalarFieldEnumSchema = z.enum(['id','email','name','password','salt','isAdmin']);
 
 export const ShipScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','name','ownerId']);
 
@@ -58,6 +58,7 @@ export const UserSchema = z.object({
   name: z.string().nullable(),
   password: z.string(),
   salt: z.string(),
+  isAdmin: z.boolean(),
 })
 
 export type User = z.infer<typeof UserSchema>
@@ -134,6 +135,7 @@ export const UserSelectSchema: z.ZodType<Prisma.UserSelect> = z.object({
   name: z.boolean().optional(),
   password: z.boolean().optional(),
   salt: z.boolean().optional(),
+  isAdmin: z.boolean().optional(),
   ships: z.union([z.boolean(),z.lazy(() => ShipFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => UserCountOutputTypeArgsSchema)]).optional(),
 }).strict()
@@ -224,6 +226,7 @@ export const UserWhereInputSchema: z.ZodType<Prisma.UserWhereInput> = z.object({
   name: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   password: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   salt: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  isAdmin: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   ships: z.lazy(() => ShipListRelationFilterSchema).optional()
 }).strict();
 
@@ -233,6 +236,7 @@ export const UserOrderByWithRelationInputSchema: z.ZodType<Prisma.UserOrderByWit
   name: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   password: z.lazy(() => SortOrderSchema).optional(),
   salt: z.lazy(() => SortOrderSchema).optional(),
+  isAdmin: z.lazy(() => SortOrderSchema).optional(),
   ships: z.lazy(() => ShipOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
@@ -257,6 +261,7 @@ export const UserWhereUniqueInputSchema: z.ZodType<Prisma.UserWhereUniqueInput> 
   name: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   password: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   salt: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  isAdmin: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   ships: z.lazy(() => ShipListRelationFilterSchema).optional()
 }).strict());
 
@@ -266,6 +271,7 @@ export const UserOrderByWithAggregationInputSchema: z.ZodType<Prisma.UserOrderBy
   name: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   password: z.lazy(() => SortOrderSchema).optional(),
   salt: z.lazy(() => SortOrderSchema).optional(),
+  isAdmin: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => UserCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => UserAvgOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => UserMaxOrderByAggregateInputSchema).optional(),
@@ -282,6 +288,7 @@ export const UserScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.UserScal
   name: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   password: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   salt: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  isAdmin: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
 }).strict();
 
 export const ShipWhereInputSchema: z.ZodType<Prisma.ShipWhereInput> = z.object({
@@ -464,6 +471,7 @@ export const UserCreateInputSchema: z.ZodType<Prisma.UserCreateInput> = z.object
   name: z.string().optional().nullable(),
   password: z.string(),
   salt: z.string(),
+  isAdmin: z.boolean().optional(),
   ships: z.lazy(() => ShipCreateNestedManyWithoutOwnerInputSchema).optional()
 }).strict();
 
@@ -473,6 +481,7 @@ export const UserUncheckedCreateInputSchema: z.ZodType<Prisma.UserUncheckedCreat
   name: z.string().optional().nullable(),
   password: z.string(),
   salt: z.string(),
+  isAdmin: z.boolean().optional(),
   ships: z.lazy(() => ShipUncheckedCreateNestedManyWithoutOwnerInputSchema).optional()
 }).strict();
 
@@ -481,6 +490,7 @@ export const UserUpdateInputSchema: z.ZodType<Prisma.UserUpdateInput> = z.object
   name: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   password: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   salt: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  isAdmin: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   ships: z.lazy(() => ShipUpdateManyWithoutOwnerNestedInputSchema).optional()
 }).strict();
 
@@ -490,6 +500,7 @@ export const UserUncheckedUpdateInputSchema: z.ZodType<Prisma.UserUncheckedUpdat
   name: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   password: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   salt: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  isAdmin: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   ships: z.lazy(() => ShipUncheckedUpdateManyWithoutOwnerNestedInputSchema).optional()
 }).strict();
 
@@ -498,7 +509,8 @@ export const UserCreateManyInputSchema: z.ZodType<Prisma.UserCreateManyInput> = 
   email: z.string(),
   name: z.string().optional().nullable(),
   password: z.string(),
-  salt: z.string()
+  salt: z.string(),
+  isAdmin: z.boolean().optional()
 }).strict();
 
 export const UserUpdateManyMutationInputSchema: z.ZodType<Prisma.UserUpdateManyMutationInput> = z.object({
@@ -506,6 +518,7 @@ export const UserUpdateManyMutationInputSchema: z.ZodType<Prisma.UserUpdateManyM
   name: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   password: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   salt: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  isAdmin: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const UserUncheckedUpdateManyInputSchema: z.ZodType<Prisma.UserUncheckedUpdateManyInput> = z.object({
@@ -514,6 +527,7 @@ export const UserUncheckedUpdateManyInputSchema: z.ZodType<Prisma.UserUncheckedU
   name: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   password: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   salt: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  isAdmin: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const ShipCreateInputSchema: z.ZodType<Prisma.ShipCreateInput> = z.object({
@@ -709,6 +723,11 @@ export const StringNullableFilterSchema: z.ZodType<Prisma.StringNullableFilter> 
   not: z.union([ z.string(),z.lazy(() => NestedStringNullableFilterSchema) ]).optional().nullable(),
 }).strict();
 
+export const BoolFilterSchema: z.ZodType<Prisma.BoolFilter> = z.object({
+  equals: z.boolean().optional(),
+  not: z.union([ z.boolean(),z.lazy(() => NestedBoolFilterSchema) ]).optional(),
+}).strict();
+
 export const ShipListRelationFilterSchema: z.ZodType<Prisma.ShipListRelationFilter> = z.object({
   every: z.lazy(() => ShipWhereInputSchema).optional(),
   some: z.lazy(() => ShipWhereInputSchema).optional(),
@@ -729,7 +748,8 @@ export const UserCountOrderByAggregateInputSchema: z.ZodType<Prisma.UserCountOrd
   email: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   password: z.lazy(() => SortOrderSchema).optional(),
-  salt: z.lazy(() => SortOrderSchema).optional()
+  salt: z.lazy(() => SortOrderSchema).optional(),
+  isAdmin: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const UserAvgOrderByAggregateInputSchema: z.ZodType<Prisma.UserAvgOrderByAggregateInput> = z.object({
@@ -741,7 +761,8 @@ export const UserMaxOrderByAggregateInputSchema: z.ZodType<Prisma.UserMaxOrderBy
   email: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   password: z.lazy(() => SortOrderSchema).optional(),
-  salt: z.lazy(() => SortOrderSchema).optional()
+  salt: z.lazy(() => SortOrderSchema).optional(),
+  isAdmin: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const UserMinOrderByAggregateInputSchema: z.ZodType<Prisma.UserMinOrderByAggregateInput> = z.object({
@@ -749,7 +770,8 @@ export const UserMinOrderByAggregateInputSchema: z.ZodType<Prisma.UserMinOrderBy
   email: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   password: z.lazy(() => SortOrderSchema).optional(),
-  salt: z.lazy(() => SortOrderSchema).optional()
+  salt: z.lazy(() => SortOrderSchema).optional(),
+  isAdmin: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const UserSumOrderByAggregateInputSchema: z.ZodType<Prisma.UserSumOrderByAggregateInput> = z.object({
@@ -804,6 +826,14 @@ export const StringNullableWithAggregatesFilterSchema: z.ZodType<Prisma.StringNu
   _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
   _min: z.lazy(() => NestedStringNullableFilterSchema).optional(),
   _max: z.lazy(() => NestedStringNullableFilterSchema).optional()
+}).strict();
+
+export const BoolWithAggregatesFilterSchema: z.ZodType<Prisma.BoolWithAggregatesFilter> = z.object({
+  equals: z.boolean().optional(),
+  not: z.union([ z.boolean(),z.lazy(() => NestedBoolWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedBoolFilterSchema).optional(),
+  _max: z.lazy(() => NestedBoolFilterSchema).optional()
 }).strict();
 
 export const DateTimeFilterSchema: z.ZodType<Prisma.DateTimeFilter> = z.object({
@@ -1001,6 +1031,10 @@ export const NullableStringFieldUpdateOperationsInputSchema: z.ZodType<Prisma.Nu
   set: z.string().optional().nullable()
 }).strict();
 
+export const BoolFieldUpdateOperationsInputSchema: z.ZodType<Prisma.BoolFieldUpdateOperationsInput> = z.object({
+  set: z.boolean().optional()
+}).strict();
+
 export const ShipUpdateManyWithoutOwnerNestedInputSchema: z.ZodType<Prisma.ShipUpdateManyWithoutOwnerNestedInput> = z.object({
   create: z.union([ z.lazy(() => ShipCreateWithoutOwnerInputSchema),z.lazy(() => ShipCreateWithoutOwnerInputSchema).array(),z.lazy(() => ShipUncheckedCreateWithoutOwnerInputSchema),z.lazy(() => ShipUncheckedCreateWithoutOwnerInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => ShipCreateOrConnectWithoutOwnerInputSchema),z.lazy(() => ShipCreateOrConnectWithoutOwnerInputSchema).array() ]).optional(),
@@ -1158,6 +1192,11 @@ export const NestedStringNullableFilterSchema: z.ZodType<Prisma.NestedStringNull
   not: z.union([ z.string(),z.lazy(() => NestedStringNullableFilterSchema) ]).optional().nullable(),
 }).strict();
 
+export const NestedBoolFilterSchema: z.ZodType<Prisma.NestedBoolFilter> = z.object({
+  equals: z.boolean().optional(),
+  not: z.union([ z.boolean(),z.lazy(() => NestedBoolFilterSchema) ]).optional(),
+}).strict();
+
 export const NestedIntWithAggregatesFilterSchema: z.ZodType<Prisma.NestedIntWithAggregatesFilter> = z.object({
   equals: z.number().optional(),
   in: z.number().array().optional(),
@@ -1228,6 +1267,14 @@ export const NestedIntNullableFilterSchema: z.ZodType<Prisma.NestedIntNullableFi
   gt: z.number().optional(),
   gte: z.number().optional(),
   not: z.union([ z.number(),z.lazy(() => NestedIntNullableFilterSchema) ]).optional().nullable(),
+}).strict();
+
+export const NestedBoolWithAggregatesFilterSchema: z.ZodType<Prisma.NestedBoolWithAggregatesFilter> = z.object({
+  equals: z.boolean().optional(),
+  not: z.union([ z.boolean(),z.lazy(() => NestedBoolWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedBoolFilterSchema).optional(),
+  _max: z.lazy(() => NestedBoolFilterSchema).optional()
 }).strict();
 
 export const NestedDateTimeFilterSchema: z.ZodType<Prisma.NestedDateTimeFilter> = z.object({
@@ -1336,7 +1383,8 @@ export const UserCreateWithoutShipsInputSchema: z.ZodType<Prisma.UserCreateWitho
   email: z.string(),
   name: z.string().optional().nullable(),
   password: z.string(),
-  salt: z.string()
+  salt: z.string(),
+  isAdmin: z.boolean().optional()
 }).strict();
 
 export const UserUncheckedCreateWithoutShipsInputSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutShipsInput> = z.object({
@@ -1344,7 +1392,8 @@ export const UserUncheckedCreateWithoutShipsInputSchema: z.ZodType<Prisma.UserUn
   email: z.string(),
   name: z.string().optional().nullable(),
   password: z.string(),
-  salt: z.string()
+  salt: z.string(),
+  isAdmin: z.boolean().optional()
 }).strict();
 
 export const UserCreateOrConnectWithoutShipsInputSchema: z.ZodType<Prisma.UserCreateOrConnectWithoutShipsInput> = z.object({
@@ -1368,6 +1417,7 @@ export const UserUpdateWithoutShipsInputSchema: z.ZodType<Prisma.UserUpdateWitho
   name: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   password: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   salt: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  isAdmin: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const UserUncheckedUpdateWithoutShipsInputSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutShipsInput> = z.object({
@@ -1376,6 +1426,7 @@ export const UserUncheckedUpdateWithoutShipsInputSchema: z.ZodType<Prisma.UserUn
   name: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   password: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   salt: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  isAdmin: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const BouyCreateWithoutMapInputSchema: z.ZodType<Prisma.BouyCreateWithoutMapInput> = z.object({

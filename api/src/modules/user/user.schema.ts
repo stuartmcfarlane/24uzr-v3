@@ -9,6 +9,7 @@ const userCore = {
     })
     .email(),
   name: z.string(),
+  isAdmin: z.boolean().optional().default(false),
 };
 
 const createUserSchema = z.object({
