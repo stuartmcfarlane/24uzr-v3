@@ -1,8 +1,8 @@
-import { IApiMapInput, IApiMapOutput, IApiUser } from "@/types/api"
+import { IApiMapInput, IApiMapOutput, IApiUser, IApiUserOutput } from "@/types/api"
 
 const makeApiUrl = (uri: string) => `${process.env.NEXT_PUBLIC_API_URL || process.env.API_URL}${uri}`
 
-const get = async (uri: string, accessToken?: string) => {
+const get = async (accessToken: string | undefined, uri: string) => {
     console.log(`>get ${uri}`, accessToken)
     const options = {
         method: 'GET',
@@ -15,7 +15,7 @@ const get = async (uri: string, accessToken?: string) => {
     return await fetch(makeApiUrl(uri), options)
 }
 
-const post = async (uri: string, data: object, accessToken?: string) => {
+const post = async (accessToken: string | undefined, uri: string, data: object) => {
     const options = {
         method: 'POST',
         headers: {
@@ -40,7 +40,7 @@ export const apiRegister = async ({
     }
 ): Promise<boolean> => {
     console.log(`>register`)
-    const response = await post(`/api/register`, { email, password, name })
+    const response = await post(undefined, `/api/register`, { email, password, name })
     
     return response.ok
 }
@@ -55,7 +55,7 @@ export const apiLogin = async ({
 ) => {
     console.log(`>login`)
 
-    const response = await post(`/api/login`, { email, password })
+    const response = await post(undefined, `/api/login`, { email, password })
 
     if (!response.ok) return {}
 
@@ -68,9 +68,23 @@ export const apiLogin = async ({
     return { accessToken }
 }
 
-export const apiGetUser = async (accessToken?: string): Promise<IApiUser | null> => {
+export const apiGetUsers = async (
+    accessToken: string
+): Promise<IApiUserOutput[] | null> => {
+
+    console.log(`>getUsers`)
+    const response = await get(accessToken, `/api/users`)
+
+    if (!response.ok) return []
+    
+    const users = await response.json()
+
+    return  users
+}
+
+export const apiGetUser = async (accessToken: string, id?: number): Promise<IApiUser | null> => {
     console.log(`>getUser`)
-    const response = await get(`/api/user`, accessToken)
+    const response = await get(accessToken, id ? `/api/user/${id}` : `/api/user`)
     
     if (!response.ok) return null
     
@@ -79,11 +93,11 @@ export const apiGetUser = async (accessToken?: string): Promise<IApiUser | null>
 }
 
 export const apiGetMaps = async (
-    accessToken?: string
+    accessToken: string
 ): Promise<IApiMapOutput[] | null> => {
 
     console.log(`>getMaps`)
-    const response = await get(`/api/maps`, accessToken)
+    const response = await get(accessToken, `/api/maps`)
 
     if (!response.ok) return []
     
@@ -93,12 +107,12 @@ export const apiGetMaps = async (
 }
 
 export const apiGetMap = async (
+    accessToken: string,
     id: number,
-    accessToken?: string
 ): Promise<IApiMapOutput | null> => {
 
     console.log(`>getMap`)
-    const response = await get(`/api/map/${id}`, accessToken)
+    const response = await get(accessToken, `/api/map/${id}`)
 
     if (!response.ok) return null
     
@@ -108,12 +122,12 @@ export const apiGetMap = async (
 }
 
 export const apiCreateMap = async (
+    accessToken: string,
     map: IApiMapInput,
-    accessToken?: string
 ): Promise<IApiMapOutput | null> => {
 
     console.log(`>createMap`)
-    const response = await post(`/api/map`, map, accessToken)
+    const response = await post(accessToken, `/api/map`, map)
 
     if (!response.ok) return null
     

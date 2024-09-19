@@ -1,10 +1,10 @@
 "use server"
 
 import { getSession } from "@/actions/session"
-import { apiGetMap } from "@/services/api"
+import { apiGetUser } from "@/services/api"
 import { redirect } from "next/navigation"
 
-const MapPage = async ({
+const UserPage = async ({
     params
 }: {
     params: { id: string }
@@ -15,12 +15,12 @@ const MapPage = async ({
     if (!session.isAdmin) {
         redirect('/')
     }
-    const map = await apiGetMap(session.apiToken!, id)
+    const user = await apiGetUser(session.apiToken!, id)
 
     return (
         <div className="">
-            Map {map?.name}
+            User {user?.name}
         </div>
     )
 }
-export default MapPage
+export default UserPage

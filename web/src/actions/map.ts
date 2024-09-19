@@ -14,10 +14,9 @@ export const createMap = async (formData: FormData): Promise<ActionError> => {
         return { error: "Name is missing" }
     }
     
-    const createdMap = await apiCreateMap(
-        {
-            name: formName,
-        }, session.apiToken
+    const createdMap = await apiCreateMap(session.apiToken!, {
+        name: formName,
+    }
     )
     if (!createdMap) return { error: "Failed to create map" }
 
