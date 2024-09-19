@@ -36,6 +36,11 @@ const getUserResponseSchema = z.object({
   ...userCore,
 });
 
+export const UserIdParamSchema = z.object({
+    id: z.coerce.number(),
+}).strict()
+
+
 const loginSchema = z.object({
   email: z
     .string({
@@ -56,8 +61,8 @@ const loginResponseSchema = z.object({
 
 export type CreateUserInput = z.infer<typeof createUserSchema>;
 export type UpdateUserInput = z.infer<typeof updateUserSchema>;
-
 export type LoginInput = z.infer<typeof loginSchema>;
+export type UserIdParamInput = z.infer<typeof UserIdParamSchema>;
 
 export const { schemas: userSchemas, $ref } = buildJsonSchemas({
   createUserSchema,

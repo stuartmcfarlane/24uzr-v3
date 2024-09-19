@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { verifyPassword } from "../../utils/hash";
-import { CreateUserInput, LoginInput, UpdateUserInput } from "./user.schema";
+import { CreateUserInput, LoginInput, UpdateUserInput, UserIdParamInput, UserIdParamSchema } from "./user.schema";
 import { createUser, findUserByEmail, findUsers, findUser, updateUser } from "./user.service";
 import { findShipsByOwnerId } from "../ship/ship.service";
 
@@ -63,22 +63,48 @@ export async function loginHandler(
   });
 }
 
-export async function getUsersHandler() {
+export async function getUsersHandler(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  console.log(`>getUserHandler ${request?.user?.isAdmin}`)
+  if (!request?.user?.isAdmin) {
+    return reply.code(403).send({ error: 'Forbidden' })
+  }
   const users = await findUsers();
   
   return users;
 }
 
-export async function getUserHandler(
-  request: FastifyRequest,
+export async function getCurrentUserHandler(
+    request: FastifyRequest
 ) {
-  const { id } = request.user
+  const id  = request.user.id
+
   const user = await findUser(id)
   
   return user;
 }
 
-export async function putUserHandler(
+export async function getUserHandler(
+    request: FastifyRequest<{
+        Params: UserIdParamInput
+    }>,
+    reply: FastifyReply
+) {
+  console.log(`>getUserHandler`, request.params.id)
+  const { id } = UserIdParamSchema.parse(request.params)
+  console.log(` getUserHandler ${id}`)
+
+  if (!request.user?.isAdmin && id !== request.user?.id) {
+    return reply.status(403).send({error: "Forbidden"})
+  }
+  const user = await findUser(id)
+  
+  return user;
+}
+
+export async function putCurrentUserHandler(
   request: FastifyRequest<{
     Body: UpdateUserInput;
   }>,
@@ -87,6 +113,24 @@ export async function putUserHandler(
   
   const user = await updateUser(id, request.body)
   
+  return user;
+}
+
+export async function putUserHandler(
+  request: FastifyRequest<{
+    Params: UserIdParamInput
+    Body: UpdateUserInput
+  }>,
+  reply: FastifyReply
+) {
+  const { id } = UserIdParamSchema.parse(request.params)
+
+  if (!request.user?.isAdmin && id !== request.user?.id) {
+    return reply.status(403).send({error: "Forbidden"})
+  }
+  
+  const user = await updateUser(id, request.body)
+
   return user;
 }
 

@@ -19,7 +19,7 @@ declare module "fastify" {
     jwt: JWT;
   }
   export interface FastifyInstance {
-    authenticate: any;
+    authenticate: any
   }
 }
 
@@ -27,6 +27,7 @@ type UserPayload = {
   id: number
   email: string
   name: string
+  isAdmin: boolean
 }
 
 declare module "@fastify/jwt" {

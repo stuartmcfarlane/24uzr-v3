@@ -6,6 +6,8 @@ import {
   getUserHandler,
   putUserHandler,
   getUserShipsHandler,
+  getCurrentUserHandler,
+  putCurrentUserHandler,
 } from "./user.controller";
 import { $ref } from "./user.schema";
 
@@ -48,13 +50,48 @@ async function userRoutes(server: FastifyInstance) {
           200: $ref("getUserResponseSchema"),
         },
       },
-      preHandler: [server.authenticate],
+      preHandler: [
+        server.authenticate,
+      ],
+    },
+    getCurrentUserHandler
+  );
+
+  server.get(
+    "/user/:id",
+    {
+      schema: {
+        tags: ['user'],
+        security: [ { bearerAuth: [] } ],
+        response: {
+          200: $ref("getUserResponseSchema"),
+        },
+      },
+      preHandler: [
+        server.authenticate,
+      ],
     },
     getUserHandler
   );
 
   server.put(
     "/user",
+    {
+      schema: {
+        tags: ['user'],
+        security: [ { bearerAuth: [] } ],
+        body: $ref("updateUserSchema"),
+        response: {
+          200: $ref("updateUserResponseSchema"),
+        },
+      },
+      preHandler: [server.authenticate],
+    },
+    putCurrentUserHandler
+  );
+
+  server.put(
+    "/user/:id",
     {
       schema: {
         tags: ['user'],
