@@ -22,6 +22,7 @@ declare module "fastify" {
     authenticate: any;
   }
 }
+
 type UserPayload = {
   id: number
   email: string

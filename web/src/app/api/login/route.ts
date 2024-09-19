@@ -3,9 +3,8 @@ import { setCookie } from "@/lib/setCookie"
 import { cookies } from 'next/headers'
 import { login } from "@/services/api"
 import { NextRequest, NextResponse } from "next/server"
-import { createSession, createSessionFromApiToken } from "@/lib/session"
+import { createSession, userIdFromAccessToken } from "@/lib/session"
 
- 
 // export async function POST(req: NextApiRequest, res: NextApiResponse) {
 export async function POST(req: NextRequest, res: NextResponse) {
     console.log(`>POST`)
@@ -16,10 +15,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
         if (!accessToken) {
             return NextResponse.json({ error: "login failed" })
         }
-        cookies().set('web_token', accessToken, {
-            path: '/',
-            httpOnly: true,
-        })
+
+        // const userId = await userIdFromAccessToken(accessToken)
+        await createSession(accessToken)
 
         return NextResponse.json({})
     }
@@ -31,11 +29,3 @@ export async function POST(req: NextRequest, res: NextResponse) {
         })
     }
 }
-
-// import { NextRequest } from "next/server"
-
-// export async function POST(request: NextRequest) {
-//     const body = await request.json()
-//     const response = await login(body)
-//     return Response.json({})
-// }

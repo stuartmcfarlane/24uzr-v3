@@ -2,15 +2,15 @@ import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 
 export function getWebTokenCookie(response: Response): ResponseCookie | null {
     const cookies = response.headers.getSetCookie()
-    const setWebTokenCookie = cookies.find(c => /web_token/.test(c))
-    const parsed = /^web_token=(.*)$/.exec(setWebTokenCookie || 'web_token=')
+    const setWebTokenCookie = cookies.find(c => /session/.test(c))
+    const parsed = /^session=(.*)$/.exec(setWebTokenCookie || 'session=')
     const parts = parsed && parsed[1].split(';')
     const webToken = parts && parts[0]
 
     if (!webToken) return null
 
     return {
-        name: 'web_token',
+        name: 'session',
         value: webToken,
         httpOnly: true,
         secure: true,

@@ -7,7 +7,8 @@ import { redirect } from "next/navigation";
 import { NextResponse } from "next/server";
 import { getCookie } from "@/lib/getCookie";
 import { cookies } from "next/headers";
-import { getWebTokenCookie } from "@/lib/getWebTokenCookie";
+import { recoverCookieDataFromThisRequest, recoverSessionCookieFromThisRequest } from "@/lib/session";
+// import { getWebTokenCookie } from "@/lib/makeSessionCookieFromAccessToken";
 
 const LoginPage = () => {
 
@@ -27,14 +28,22 @@ const LoginPage = () => {
             body: JSON.stringify({ email, password })
         })
 
-        const webTokenCookie = getWebTokenCookie(loginResult)
-        if (webTokenCookie) {
-            cookies().set(webTokenCookie);
-            cookies().set({
-                ...webTokenCookie,
-                name: 'access_token',
-            });
-        }
+        const session = await recoverCookieDataFromThisRequest('session', loginResult)
+        const accessToken = await recoverCookieDataFromThisRequest('access_cookie', loginResult)
+        cookies().set({
+            name: 'session',
+            value: session,
+            httpOnly: true,
+            secure: true,
+            path: "/",
+        });
+        cookies().set({
+            name: 'access_token',
+            value: accessToken,
+            httpOnly: true,
+            secure: true,
+            path: "/",
+        });
 
         redirect('/dashboard')
     }
