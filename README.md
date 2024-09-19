@@ -65,6 +65,7 @@ Database migrations are generated from the schema definition using the following
 
 ```bash
 cd api
+. ../.source
 npx prisma migrate dev --name new-migration-name
 ```
 
@@ -72,6 +73,7 @@ Database migrations are applied with the following command
 
 ```bash
 cd api
+. ../.source
 npx prisma migrate dev
 ```
 
@@ -79,5 +81,6 @@ Schema type definitions will need to be (re)generated sometimes. Do this with
 
 ```bash
 cd api
+. ../.source
 npx prisma generate
 ```
