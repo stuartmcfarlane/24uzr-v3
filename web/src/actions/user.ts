@@ -5,7 +5,7 @@ import { defaultSession, ISessionData, sessionOptions } from '../lib/session';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { IApiUser, IApiUserCredentials } from '../types/user';
-import { apiGetUser, apiLogin } from '../services/api';
+import { apiGetUser, apiLogin, apiRegister } from '../services/api';
 
 export const getSession = async () => {
     const session = await getIronSession<ISessionData>(cookies(), sessionOptions)
@@ -16,15 +16,6 @@ export const getSession = async () => {
     return session
 }
 
-let apiUsers: {[key: string]: IApiUser & IApiUserCredentials} = {
-    'stuart@mcfarlane.nl': {
-        id: 1,
-        email: 'stuart@mcfarlane.nl',
-        password: 'secret',
-        isAdmin: true,
-        name: "Stuart",
-    }
-}
 export const login = async (
     prevState: { error: undefined | string },
     formData: FormData
@@ -37,12 +28,6 @@ export const login = async (
     if (!formEmail || !formPassword) {
         return {error: "Missing credentials"}
     }
-    // verify user at API
-    // const apiUser = apiUsers[formEmail]
-
-    // if (!apiUser) {
-    //     return { error: "Bad credentials"}
-    // }
     const { accessToken } = await apiLogin({
         email: formEmail,
         password: formPassword,
@@ -73,6 +58,8 @@ export const logout = async () => {
     const session = await getIronSession<ISessionData>(cookies(), sessionOptions)
 
     session.destroy()
+
+    redirect('/login')
 }
 export const signup = async (
     prevState: { error: undefined | string },
@@ -88,29 +75,16 @@ export const signup = async (
     if (!formEmail || !formPassword) {
         return {error: "Missing credentials"}
     }
-    if (apiUsers[formEmail]) {
-        return { error: "Email already in use"}
-    }
 
-    const apiUser: IApiUser & IApiUserCredentials = {
-        id: Object.keys(apiUsers).length,
+    const registered = await apiRegister({
         email: formEmail,
         password: formPassword,
         name: formName,
-        isAdmin: false,
+    })
+
+    if (!registered) {
+        return { error: "Registration failed" }
     }
 
-    apiUsers[formEmail] = apiUser
-
-    session.userId = apiUser.id
-    session.email = apiUser.email
-    session.name = apiUser.name
-    session.isAdmin = apiUser.isAdmin
-    session.isLoggedIn = true
-    
-    await session.save()
-
-    console.log('users', apiUsers)
-
-    redirect('/profile')
+    redirect('/login')
 }
