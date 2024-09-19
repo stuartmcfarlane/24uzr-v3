@@ -1,6 +1,7 @@
 "use server"
 
 import { getSession } from "@/actions/session"
+import UserDetails from "@/components/UserDetails"
 import { apiGetUser } from "@/services/api"
 import { redirect } from "next/navigation"
 
@@ -18,8 +19,9 @@ const UserPage = async ({
     const user = await apiGetUser(session.apiToken!, id)
 
     return (
-        <div className="">
-            User {user?.name}
+        <div className="my-10">
+            <h1 className="text-2xl">User {user?.name}</h1>
+            <UserDetails user={user}/>
         </div>
     )
 }
