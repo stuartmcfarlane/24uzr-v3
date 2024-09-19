@@ -82,7 +82,7 @@ export const apiGetUsers = async (
     return  users
 }
 
-export const apiGetUser = async (accessToken: string, id?: number): Promise<IApiUser | null> => {
+export const apiGetUser = async (accessToken: string, id?: number): Promise<IApiUserOutput | null> => {
     console.log(`>getUser`)
     const response = await get(accessToken, id ? `/api/user/${id}` : `/api/user`)
     

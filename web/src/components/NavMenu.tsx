@@ -10,7 +10,6 @@ const NavMenu = async () => {
     return (
         <>
             <Link href="/dashboard">Dashboard</Link>
-            {session.isAdmin && <Link href="/maps">Maps</Link>}
         </>
     )
 }

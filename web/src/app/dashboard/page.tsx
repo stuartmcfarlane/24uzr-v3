@@ -6,12 +6,12 @@ const DashboardPage = async () => {
     const session = await getSession()
 
     return (
-        <div className="">
-            Dashboard page
+        <div className="my-10">
+            <h1 className="text-2xl">Dashboard page</h1>
             {session.isAdmin && (
-                <div className="grid grid-cols-2 md:grid-cols-6">
-                    <MapTool />
-                    <UserTool />
+                <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+                    <MapTool/>
+                    <UserTool/>
                 </div>
             )}
         </div>

@@ -18,8 +18,8 @@ const MapPage = async ({
     const map = await apiGetMap(session.apiToken!, id)
 
     return (
-        <div className="">
-            Map {map?.name}
+        <div className="my-10">
+            <h1 className="text-2xl">Map {map?.name}</h1>
         </div>
     )
 }

@@ -42,7 +42,7 @@ export const login = async (
     
     await session.save()
 
-    redirect('/profile')
+    redirect('/dashboard')
 }
 export const logout = async () => {
     const session = await getIronSession<ISessionData>(cookies(), sessionOptions)

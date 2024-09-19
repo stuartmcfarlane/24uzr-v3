@@ -10,8 +10,8 @@ export const UserTool = async () => {
     const session = await getSession()
     const users = await apiGetUsers(session.apiToken!)
     return (
-        <div className="grid-cols-1 gap-4 bg-slate-50 p-5">
-            <h2 className="t">Users</h2>
+        <div className="bg-slate-50 p-5">
+            <h2 className="text-xl border-b-2 pb-2">Users</h2>
             {(users || []).map((user) => (
                 <div key={user.id} className="my-2">
                     <Link href={`/user/${user.id}`}className="">{user.name}</Link>
