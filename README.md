@@ -5,15 +5,22 @@
 You'll need a `.env` file in the project root containing the following keys
 
 ```env
-MYSQL_ROOT_PASSWORD=realy-secret-thing
+MYSQL_ROOT_PASSWORD=evenmoresecret
 MYSQL_USER=24uzr
-MYSQL_PASSWORD=another-good-secret-thing
+MYSQL_PASSWORD=totallysecret
 MYSQL_HOST=localhost
 MYSQL_PORT=3306
 MYSQL_DB_NAME=24uzr
 MYSQL_CONTAINER_NAME=24uzr-mysql
+WEB_HOST=localhost
 WEB_PORT=80
 API_PORT=3000
+JWT_SECRET=supersecret
+COOKIE_SECRET=superdupersecret
+IRON_SESSION_PASSWORD=secretironsessionpassword-must-be-32-characters-long
+API_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=http://localhost:3000
+NODE_ENV=development
 ```
 
 The api and web servers also need a bit of environment to work properly. Make sure you
