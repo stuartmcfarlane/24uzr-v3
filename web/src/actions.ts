@@ -5,6 +5,7 @@ import { defaultSession, ISessionData, sessionOptions } from './lib/session';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { IApiUser, IApiUserCredentials } from './types/user';
+import { apiGetUser, apiLogin } from './services/api';
 
 export const getSession = async () => {
     const session = await getIronSession<ISessionData>(cookies(), sessionOptions)
@@ -37,12 +38,27 @@ export const login = async (
         return {error: "Missing credentials"}
     }
     // verify user at API
-    const apiUser = apiUsers[formEmail]
+    // const apiUser = apiUsers[formEmail]
 
-    if (!apiUser) {
+    // if (!apiUser) {
+    //     return { error: "Bad credentials"}
+    // }
+    const { accessToken } = await apiLogin({
+        email: formEmail,
+        password: formPassword,
+    })
+    if (!accessToken) {
         return { error: "Bad credentials"}
     }
-    
+
+    session.apiToken = accessToken
+
+    await session.save()
+
+    const apiUser = await apiGetUser(session.apiToken)
+    if (!apiUser) {
+        return { error: "Bad credentials"}
+    }    
     session.userId = apiUser.id
     session.email = apiUser.email
     session.name = apiUser.name

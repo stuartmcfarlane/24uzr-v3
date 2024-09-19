@@ -1,15 +1,16 @@
 "use server"
 
-import { getMaps } from "@/services/api"
+import { apiGetMaps} from "@/services/api"
 import { IApiMap } from "@/types/user"
 import Link from "next/link"
 import { NewMapTool } from "./NewMapTool"
-import { cookies } from "next/headers"
+import { getSession } from "@/actions"
 
 
 export const MapTool = async () => {
 
-    const maps = await getMaps(cookies().get('access_token')?.value)
+    const session = await getSession()
+    const maps = await apiGetMaps(session.apiToken)
     return (
         <div className="grid-cols-1 gap-4 bg-slate-50 p-5">
             <h2 className="">Maps</h2>

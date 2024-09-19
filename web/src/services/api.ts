@@ -29,7 +29,7 @@ const post = async (uri: string, data: object, accessToken?: string) => {
     return await fetch(makeApiUrl(uri), options)
 }
 
-export const register = async ({
+export const apiRegister = async ({
     email,
     password,
     name
@@ -45,7 +45,7 @@ export const register = async ({
     return response.ok
 }
 
-export const login = async ({
+export const apiLogin = async ({
     email,
     password
 }: {
@@ -54,16 +54,21 @@ export const login = async ({
     }
 ) => {
     console.log(`>login`)
+
     const response = await post(`/api/login`, { email, password })
+
     if (!response.ok) return {}
+
     const json = await response.json()
     console.log(` login`, json)
+
     const { accessToken }: { accessToken: string } = json
     console.log(`<login`, { accessToken })
+
     return { accessToken }
 }
 
-export const getUser = async (accessToken?: string): Promise<IApiUser | null> => {
+export const apiGetUser = async (accessToken?: string): Promise<IUser | null> => {
     console.log(`>getUser`)
     const response = await get(`/api/user`, accessToken)
     
@@ -73,7 +78,7 @@ export const getUser = async (accessToken?: string): Promise<IApiUser | null> =>
     return user
 }
 
-export const getMaps = async (accessToken?: string) => {
+export const apiGetMaps = async (accessToken?: string) => {
     console.log(`>getMaps`)
     const response = await get(`/api/maps`, accessToken)
 
@@ -84,7 +89,7 @@ export const getMaps = async (accessToken?: string) => {
     return  maps
 }
 
-export const getMap = async (id: number, accessToken?: string) => {
+export const apiGetMap = async (id: number, accessToken?: string) => {
     console.log(`>getMap`)
     const response = await get(`/api/map/${id}`, accessToken)
 
@@ -95,7 +100,7 @@ export const getMap = async (id: number, accessToken?: string) => {
     return  map
 }
 
-export const createMap = async ({
+export const apiCreateMap = async ({
     name,
 }: {
     name: string

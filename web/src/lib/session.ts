@@ -6,6 +6,7 @@ export interface ISessionData {
     name?: string
     email?: string
     isAdmin?: boolean
+    apiToken?: string
 }
 
 export const defaultSession: ISessionData = {
