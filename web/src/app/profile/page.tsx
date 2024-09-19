@@ -1,5 +1,5 @@
 
-import { getSession } from "@/actions/user"
+import { getSession } from "@/actions/session"
 import { redirect } from "next/navigation"
 
 const ProfilePage = async () => {

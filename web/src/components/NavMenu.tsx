@@ -1,4 +1,4 @@
-import { getSession } from "@/actions/user"
+import { getSession } from "@/actions/session"
 import Link from "next/link"
 
 const NavMenu = async () => {

@@ -4,17 +4,7 @@ import { getIronSession } from 'iron-session';
 import { defaultSession, ISessionData, sessionOptions } from '../lib/session';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { IApiUser, IApiUserCredentials } from '../types/user';
 import { apiGetUser, apiLogin, apiRegister } from '../services/api';
-
-export const getSession = async () => {
-    const session = await getIronSession<ISessionData>(cookies(), sessionOptions)
-
-    if (!session.isLoggedIn) {
-        session.isLoggedIn = defaultSession.isLoggedIn
-    }
-    return session
-}
 
 export const login = async (
     prevState: { error: undefined | string },
