@@ -53,7 +53,6 @@ export async function loginHandler(
     reply.setCookie('access_token', token, {
       path: '/',
       httpOnly: true,
-      // secure: true,
     })
     
     return { accessToken: token };

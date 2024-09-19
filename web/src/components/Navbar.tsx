@@ -1,7 +1,8 @@
 import Link from "next/link"
 import Menu from "./Menu"
 import SearchBar from "./SearchBar"
-import NavIcons from "./NavIcons"
+import NavUser from "./NavUser"
+import NavMenu from "./NavMenu"
 
 const Navbar = () => {
     return (
@@ -27,8 +28,9 @@ const Navbar = () => {
                 </div>
                 {/* RIGHT */}
                 <div className="w-3/2 flex items-center justify-between gap-8">
+                    <NavMenu/>
                     <SearchBar/>
-                    <NavIcons/>
+                    <NavUser/>
                 </div>
             </div>
         </div>

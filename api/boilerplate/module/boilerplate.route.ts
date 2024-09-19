@@ -18,6 +18,7 @@ async function boilerplateRoutes(server: FastifyInstance) {
                     201: $ref("boilerplateResponseSchema"),
                 },
             },
+            preHandler: [server.authenticate],
         },
         createBoilerplateHandler
     );

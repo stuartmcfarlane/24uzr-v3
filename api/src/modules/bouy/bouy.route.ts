@@ -18,6 +18,7 @@ async function bouyRoutes(server: FastifyInstance) {
                     201: $ref("bouyResponseSchema"),
                 },
             },
+            preHandler: [server.authenticate],
         },
         createBouyHandler
     );

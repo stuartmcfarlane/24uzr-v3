@@ -3,17 +3,16 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import UserProvider from "@/context/UserContext";
 import { ContentSection } from "@/components/ContentSection";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "24uzr",
-  description: "Optimise you 24 hour sailing race desicions.",
+  description: "Optimise you 24 hour sailing race decisions.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -22,13 +21,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <UserProvider>
-          <Navbar />
-          <ContentSection>
-            {children}
-          </ContentSection>
-          <Footer/>
-        </UserProvider>
+        <Navbar />
+        <ContentSection>
+          {children}
+        </ContentSection>
+        <Footer/>
       </body>
     </html>
   );

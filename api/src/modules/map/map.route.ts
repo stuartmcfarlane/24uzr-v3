@@ -19,6 +19,7 @@ async function mapRoutes(server: FastifyInstance) {
                     201: $ref("mapResponseSchema"),
                 },
             },
+            preHandler: [server.authenticate],
         },
         createMapHandler
     );
