@@ -3,9 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import UserProvider from "@/context/UserContext";
 import { ContentSection } from "@/components/ContentSection";
-import { getUser } from "@/lib/session";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,19 +18,14 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
 
-  const user = await getUser()
-  console.log(`RootLayout`, user)
-  
   return (
     <html lang="en">
       <body className={inter.className}>
-        <UserProvider>
-          <Navbar />
-          <ContentSection>
-            {children}
-          </ContentSection>
-          <Footer/>
-        </UserProvider>
+        <Navbar />
+        <ContentSection>
+          {children}
+        </ContentSection>
+        <Footer/>
       </body>
     </html>
   );

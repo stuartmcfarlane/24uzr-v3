@@ -1,4 +1,4 @@
-import { IUser } from "@/types/user"
+import { IApiUser } from "@/types/user"
 
 const makeApiUrl = (uri: string) => `${process.env.NEXT_PUBLIC_API_URL || process.env.API_URL}${uri}`
 
@@ -63,7 +63,7 @@ export const login = async ({
     return { accessToken }
 }
 
-export const getUser = async (accessToken?: string): Promise<IUser | null> => {
+export const getUser = async (accessToken?: string): Promise<IApiUser | null> => {
     console.log(`>getUser`)
     const response = await get(`/api/user`, accessToken)
     

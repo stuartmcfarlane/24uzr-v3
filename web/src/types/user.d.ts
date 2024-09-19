@@ -1,16 +1,14 @@
-export interface IUser {
+export interface IApiUserCredentials {
+  email: string
+  password: string
+}
+export interface IApiUser {
   id: number
+  isAdmin: boolean
   email: string
   name: string
 }
-export type UserContextType = {
-  user: IUser | undefined
-  setUser: (user: IUser) => void
-  updateUser: (user: IUser) => void
-  logout: () => void
-}
-
-export interface IMap {
+export interface IApiMap {
   id: number
   name: string
 }

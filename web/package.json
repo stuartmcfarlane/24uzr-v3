@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "iron-session": "^8.0.3",
     "jose": "^5.9.2",
     "next": "^14",
     "next-client-cookies": "^1.1.1",
