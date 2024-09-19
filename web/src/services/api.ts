@@ -1,4 +1,4 @@
-import { IApiUser } from "@/types/user"
+import { IApiMapInput, IApiMapOutput, IApiUser } from "@/types/api"
 
 const makeApiUrl = (uri: string) => `${process.env.NEXT_PUBLIC_API_URL || process.env.API_URL}${uri}`
 
@@ -68,7 +68,7 @@ export const apiLogin = async ({
     return { accessToken }
 }
 
-export const apiGetUser = async (accessToken?: string): Promise<IUser | null> => {
+export const apiGetUser = async (accessToken?: string): Promise<IApiUser | null> => {
     console.log(`>getUser`)
     const response = await get(`/api/user`, accessToken)
     
@@ -78,7 +78,10 @@ export const apiGetUser = async (accessToken?: string): Promise<IUser | null> =>
     return user
 }
 
-export const apiGetMaps = async (accessToken?: string) => {
+export const apiGetMaps = async (
+    accessToken?: string
+): Promise<IApiMapOutput[] | null> => {
+
     console.log(`>getMaps`)
     const response = await get(`/api/maps`, accessToken)
 
@@ -89,28 +92,32 @@ export const apiGetMaps = async (accessToken?: string) => {
     return  maps
 }
 
-export const apiGetMap = async (id: number, accessToken?: string) => {
+export const apiGetMap = async (
+    id: number,
+    accessToken?: string
+): Promise<IApiMapOutput | null> => {
+
     console.log(`>getMap`)
     const response = await get(`/api/map/${id}`, accessToken)
 
-    if (!response.ok) return []
+    if (!response.ok) return null
     
     const map = await response.json()
 
     return  map
 }
 
-export const apiCreateMap = async ({
-    name,
-}: {
-    name: string
-}, accessToken?: string) => {
-    console.log(`>createMap`)
-    const response = await post(`/api/map`, {name}, accessToken)
+export const apiCreateMap = async (
+    map: IApiMapInput,
+    accessToken?: string
+): Promise<IApiMapOutput | null> => {
 
-    if (!response.ok) throw new Error("Failed to create map")
+    console.log(`>createMap`)
+    const response = await post(`/api/map`, map, accessToken)
+
+    if (!response.ok) return null
     
-    const map = await response.json()
-    console.log(`<createMap`, map)
-    return map
+    const createdMap = await response.json()
+    console.log(`<createMap`, createdMap)
+    return createdMap
 }

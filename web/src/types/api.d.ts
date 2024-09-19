@@ -1,3 +1,4 @@
+import { IApiMap } from './api';
 export interface IApiUserCredentials {
   email: string
   password: string
@@ -8,7 +9,12 @@ export interface IApiUser {
   email: string
   name: string
 }
-export interface IApiMap {
+export interface IApiMapInput {
+  name: string
+}
+export interface IApiMapOutput {
   id: number
   name: string
 }
+
+export type IApiMap = IApiMapInput | IApiMapOutput

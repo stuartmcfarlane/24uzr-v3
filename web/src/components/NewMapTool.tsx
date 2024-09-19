@@ -1,28 +1,15 @@
 "use client"
 
-import { apiCreateMap } from "@/services/api"
+import { createMap } from "@/actions/map"
 import { useRouter } from "next/navigation"
-import { FormEvent } from "react"
 
 export const NewMapTool = () => {
     
     const router = useRouter()
     
-    async function onSubmit(event: FormEvent<HTMLFormElement>) {
-        console.log(`>onSubmit`)
-        event.preventDefault()
-        
-        const formData = new FormData(event.currentTarget)
-        const name = formData.get('name') as string
-
-        const map = await apiCreateMap({name})
-        
-        router.push(`/map/${map.id}`)
-    }
-    
     return (
         <div>
-            <form onSubmit={onSubmit}>
+            <form action={createMap}>
                 <input
                     type="text"
                     name="name"
