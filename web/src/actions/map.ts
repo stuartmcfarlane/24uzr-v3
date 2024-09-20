@@ -3,6 +3,7 @@
 import { getSession } from './session';
 import { apiCreateBuoy, apiCreateMap } from '@/services/api';
 import { ActionError } from '@/types/action';
+import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 export const createMap = async (formData: FormData): Promise<ActionError> => {
@@ -41,6 +42,8 @@ export const createBuoy = async (formData: FormData): Promise<ActionError> => {
         mapId: formMapId,
     })
     if (!createdBuoy) return { error: "Failed to create buoy" }
+
+    revalidatePath(`/map/${formMapId}`)
 
     return {}
 }

@@ -50,12 +50,13 @@ export async function putMapHandler(
 }
 
 export async function getMapBuoysHandler(
-  request: FastifyRequest<{
-        Params: { id: number },
+    request: FastifyRequest<{
+        Params: MapIdParamInput,
     }>,
 ) {
-  const { id } = request.params
-  const ships = await findBuoysByMapId(id)
-  
-  return ships;
+    const { id } = MapIdParamSchema.parse(request.params)
+    const buoys = await findBuoysByMapId(id)
+    console.log(`buoys`, buoys)
+    
+    return buoys;
 }

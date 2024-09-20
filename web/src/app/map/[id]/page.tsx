@@ -30,7 +30,7 @@ const MapPage = async ({
             </div>
             <div className="border flex-grow flex flex-col">
                 <div className="flex-1">
-                    <MapCanvas/>
+                    <MapCanvas map={map} />
                 </div>
             </div>
         </div>

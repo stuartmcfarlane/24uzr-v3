@@ -136,6 +136,12 @@ export const apiCreateMap = async (
     return createdMap
 }
 
+const withNumericLatLng = ({ lat, lng, ...rest }: MaybeLatLng): LatLng => ({
+    ...rest,
+    lat: typeof lat === 'string' ? parseFloat(lat) : lat,
+    lng: typeof lng === 'string' ? parseFloat(lng) : lng,
+})
+
 export const apiCreateBuoy = async (
     accessToken: string,
     buoy: IApiBuoyInput,
@@ -147,6 +153,23 @@ export const apiCreateBuoy = async (
     if (!response.ok) return null
     
     const createdBuoy = await response.json()
-    console.log(`<createBuoy`, createdBuoy)
-    return createdBuoy
+    const fixedBuoy = withNumericLatLng(createdBuoy)
+    console.log(`<createBuoy`, fixedBuoy)
+    return fixedBuoy
 }
+
+export const apiGetBuoys = async (
+    accessToken: string,
+    mapId: number,
+): Promise<IApiBuoyOutput[] | null> => {
+
+    console.log(`>getBuoys`)
+    const response = await get(accessToken, `/api/map/${mapId}/buoys`)
+
+    if (!response.ok) return null
+    
+    const buoys = await response.json()
+
+    return  buoys.map(withNumericLatLng)
+}
+
