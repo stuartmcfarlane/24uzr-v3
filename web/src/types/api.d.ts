@@ -20,9 +20,20 @@ export type IApiUser = IApiUserInput | IApiUserOutput
 export interface IApiMapInput {
   name: string
 }
-export interface IApiMapOutput {
+export interface IApiMapOutput extends IApiMapInput {
   id: number
-  name: string
 }
 
 export type IApiMap = IApiMapInput | IApiMapOutput
+
+export interface IApiBuoyInput {
+  name: string
+  mapId: number
+  lat: number
+  lng: number
+}
+export interface IApiBuoyOutput extends IApiBuoyInput{
+  id: number
+}
+
+export type IApiBuoy = IApiBuoyInput | IApiBuoyOutput

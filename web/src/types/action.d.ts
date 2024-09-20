@@ -1,1 +1,1 @@
-export type ActionError = { error: string | undefined }
+export type ActionError = { error: string } | {}

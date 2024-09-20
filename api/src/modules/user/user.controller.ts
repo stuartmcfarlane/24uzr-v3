@@ -67,7 +67,6 @@ export async function getUsersHandler(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
-  console.log(`>getUserHandler ${request?.user?.isAdmin}`)
   if (!request?.user?.isAdmin) {
     return reply.code(403).send({ error: 'Forbidden' })
   }
@@ -92,9 +91,7 @@ export async function getUserHandler(
     }>,
     reply: FastifyReply
 ) {
-  console.log(`>getUserHandler`, request.params.id)
   const { id } = UserIdParamSchema.parse(request.params)
-  console.log(` getUserHandler ${id}`)
 
   if (!request.user?.isAdmin && id !== request.user?.id) {
     return reply.status(403).send({error: "Forbidden"})

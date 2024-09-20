@@ -1,4 +1,4 @@
-import { IApiMapInput, IApiMapOutput, IApiUser, IApiUserOutput } from "@/types/api"
+import { IApiBuoyInput, IApiBuoyOutput, IApiMapInput, IApiMapOutput, IApiUser, IApiUserOutput } from "@/types/api"
 
 const makeApiUrl = (uri: string) => `${process.env.NEXT_PUBLIC_API_URL || process.env.API_URL}${uri}`
 
@@ -127,11 +127,26 @@ export const apiCreateMap = async (
 ): Promise<IApiMapOutput | null> => {
 
     console.log(`>createMap`)
-    const response = await post(accessToken, `/api/map`, map)
+    const response = await post(accessToken, `/api/maps`, map)
 
     if (!response.ok) return null
     
     const createdMap = await response.json()
     console.log(`<createMap`, createdMap)
     return createdMap
+}
+
+export const apiCreateBuoy = async (
+    accessToken: string,
+    buoy: IApiBuoyInput,
+): Promise<IApiBuoyOutput | null> => {
+
+    console.log(`>createBuoy`)
+    const response = await post(accessToken, `/api/buoys`, buoy)
+
+    if (!response.ok) return null
+    
+    const createdBuoy = await response.json()
+    console.log(`<createBuoy`, createdBuoy)
+    return createdBuoy
 }

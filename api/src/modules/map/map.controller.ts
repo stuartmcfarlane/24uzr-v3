@@ -32,7 +32,6 @@ export async function getMapHandler(
     }>,
 ) {
     const { id } = MapIdParamSchema.parse(request.params)
-    console.log(`>getMapHandler`, {id})
     const map = await findMap(id)
     
     return map;

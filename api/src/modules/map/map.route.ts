@@ -10,7 +10,7 @@ import { $ref } from "./map.schema";
 
 async function mapRoutes(server: FastifyInstance) {
     server.post(
-        "/map",
+        "/maps",
         {
             schema: {
                 tags: ['map'],
