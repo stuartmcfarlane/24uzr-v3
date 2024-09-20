@@ -1,64 +1,64 @@
 import { FastifyInstance } from "fastify";
 import {
-    createBouyHandler,
-    getBouyHandler,
-    getBouysHandler,
-    putBouyHandler,
-} from "./bouy.controller";
-import { $ref } from "./bouy.schema";
+    createBuoyHandler,
+    getBuoyHandler,
+    getBuoysHandler,
+    putBuoyHandler,
+} from "./buoy.controller";
+import { $ref } from "./buoy.schema";
 
-async function bouyRoutes(server: FastifyInstance) {
+async function buoyRoutes(server: FastifyInstance) {
     server.post(
-        "/bouys",
+        "/buoys",
         {
             schema: {
-                tags: ['bouy'],
-                body: $ref("createBouySchema"),
+                tags: ['buoy'],
+                body: $ref("createBuoySchema"),
                 response: {
-                    201: $ref("bouyResponseSchema"),
+                    201: $ref("buoyResponseSchema"),
                 },
             },
             preHandler: [server.authenticate],
         },
-        createBouyHandler
+        createBuoyHandler
     );
     
     server.get(
-        "/bouy/:id",
+        "/buoy/:id",
         {
             schema: {
-                tags: ['bouy'],
+                tags: ['buoy'],
                 security: [ { bearerAuth: [] } ],
                 response: {
-                    200: $ref("bouyResponseSchema"),
+                    200: $ref("buoyResponseSchema"),
                 },
             },
             preHandler: [server.authenticate],
         },
-        getBouyHandler
+        getBuoyHandler
     );
     
     server.put(
-        "/bouy/:id",
+        "/buoy/:id",
         {
             schema: {
-                tags: ['bouy'],
+                tags: ['buoy'],
                 security: [ { bearerAuth: [] } ],
-                body: $ref("updateBouySchema"),
+                body: $ref("updateBuoySchema"),
                 response: {
-                    200: $ref("bouyResponseSchema"),
+                    200: $ref("buoyResponseSchema"),
                 },
             },
             preHandler: [server.authenticate],
         },
-        putBouyHandler
+        putBuoyHandler
     );
     
     server.get(
-        "/bouys",
+        "/buoys",
         {
             schema: {
-                tags: ['bouy'],
+                tags: ['buoy'],
                 security: [
                     {
                         bearerAuth: [],
@@ -67,8 +67,8 @@ async function bouyRoutes(server: FastifyInstance) {
             },
             preHandler: [server.authenticate],
         },
-        getBouysHandler
+        getBuoysHandler
     );
 }
 
-export default bouyRoutes;
+export default buoyRoutes;

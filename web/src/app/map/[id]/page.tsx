@@ -2,7 +2,7 @@
 
 import { getSession } from "@/actions/session"
 import MapCanvas from "@/components/ MapCanvas"
-import AddBouyForm from "@/components/AddBouyForm"
+import AddBuoyForm from "@/components/AddBuoyForm"
 import { apiGetMap } from "@/services/api"
 import { redirect } from "next/navigation"
 
@@ -26,7 +26,7 @@ const MapPage = async ({
         <div className="flex-grow my-10 flex gap-4">
             <div className="">
                 <h1 className="text-2xl">Map {map?.name}</h1>
-                <AddBouyForm map={map} />
+                <AddBuoyForm map={map} />
             </div>
             <div className="border flex-grow flex flex-col">
                 <div className="flex-1">

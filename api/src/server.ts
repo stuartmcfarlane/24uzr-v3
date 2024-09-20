@@ -6,11 +6,11 @@ import fastifySwaggerUi from "@fastify/swagger-ui";
 import cors from "@fastify/cors"
 import userRoutes from "./modules/user/user.route";
 import shipRoutes from "./modules/ship/ship.route";
-import bouyRoutes from "./modules/bouy/bouy.route";
+import buoyRoutes from "./modules/buoy/buoy.route";
 import mapRoutes from "./modules/map/map.route";
 import { userSchemas } from "./modules/user/user.schema";
 import { shipSchemas } from "./modules/ship/ship.schema";
-import { bouySchemas } from "./modules/bouy/bouy.schema";
+import { buoySchemas } from "./modules/buoy/buoy.schema";
 import { mapSchemas } from "./modules/map/map.schema";
 import { version } from '../package.json'
 
@@ -91,7 +91,7 @@ function buildServer() {
   for (const schema of [
     ...userSchemas,
     ...shipSchemas,
-    ...bouySchemas,
+    ...buoySchemas,
     ...mapSchemas,
   ]) {
     server.addSchema(schema);
@@ -114,7 +114,7 @@ function buildServer() {
       tags: [
         { name: 'user', description: 'User related end-points' },
         { name: 'ship', description: 'Ship related end-points' },
-        { name: 'bouy', description: 'Bouy related end-points' },
+        { name: 'buoy', description: 'Buoy related end-points' },
         { name: 'map', description: 'Map related end-points' },
       ],
       components: {
@@ -139,7 +139,7 @@ function buildServer() {
   
   server.register(userRoutes, { prefix: "/api" });
   server.register(shipRoutes, { prefix: "/api" });
-  server.register(bouyRoutes, { prefix: "/api" });
+  server.register(buoyRoutes, { prefix: "/api" });
   server.register(mapRoutes, { prefix: "/api" });
   
   return server;

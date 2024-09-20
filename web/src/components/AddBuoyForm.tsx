@@ -1,9 +1,9 @@
 import { IApiMapOutput } from "@/types/api"
 
-type AddBouyFormProps = {
+type AddBuoyFormProps = {
     map: IApiMapOutput
 }
-const AddBouyForm = (props: AddBouyFormProps) => {
+const AddBuoyForm = (props: AddBuoyFormProps) => {
     const { map } = props
     return (
         <form className="flex flex-col gap-4 mt-4 border-t-2 pt-4">
@@ -15,4 +15,4 @@ const AddBouyForm = (props: AddBouyFormProps) => {
     )
 }
 
-export default AddBouyForm
+export default AddBuoyForm

@@ -35,10 +35,10 @@ model Map {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name      String   @db.VarChar(128)
-  Bouy      Bouy[]
+  Buoy      Buoy[]
 }
 
-model Bouy {
+model Buoy {
   id    Int     @id @default(autoincrement())
   name  String  @db.VarChar(128)
   lat   Decimal @db.Decimal(10, 8)

@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import {
     createMapHandler,
-    getMapBouysHandler,
+    getMapBuoysHandler,
     getMapHandler,
     getMapsHandler,
     putMapHandler,
@@ -72,7 +72,7 @@ async function mapRoutes(server: FastifyInstance) {
     );
 
   server.get(
-    "/map/:id/bouys",
+    "/map/:id/buoys",
     {
       schema: {
         tags: ['map'],
@@ -84,7 +84,7 @@ async function mapRoutes(server: FastifyInstance) {
       },
       preHandler: [server.authenticate],
     },
-    getMapBouysHandler
+    getMapBuoysHandler
   );
 }
 
