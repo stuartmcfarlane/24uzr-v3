@@ -1,19 +1,22 @@
+"use client"
 
-import { getSession } from "@/actions/session"
-import { apiGetBuoys } from "@/services/api"
-import { IApiMapOutput } from "@/types/api"
+import { IApiBuoyOutput, IApiMapOutput } from "@/types/api"
 import MapSvg from "./MapCanvas/MapSvg"
 
 type MapCanvasProps = {
     map: IApiMapOutput
+    buoys: IApiBuoyOutput[]
+    onSelectBuoy?: (buoy: IApiBuoyOutput) => void
 }
 
-const MapCanvas = async (props: MapCanvasProps) => {
-    const { map } = props
-    const session = await getSession()
-    const buoys = (await apiGetBuoys(session.apiToken!, map.id)) || []
+const MapCanvas = (props: MapCanvasProps) => {
+    const {
+        map,
+        buoys,
+        onSelectBuoy
+    } = props
 
-    return <MapSvg buoys={buoys} />
+    return <MapSvg buoys={buoys} onSelectBuoy={onSelectBuoy}/>
 }
 
 export default MapCanvas

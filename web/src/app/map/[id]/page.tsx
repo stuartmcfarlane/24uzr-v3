@@ -3,7 +3,8 @@
 import { getSession } from "@/actions/session"
 import MapCanvas from "@/components/ MapCanvas"
 import AddBuoyForm from "@/components/AddBuoyForm"
-import { apiGetMap } from "@/services/api"
+import MapPageClientFunctions from "@/components/MapPageFunctions"
+import { apiGetBuoys, apiGetMap } from "@/services/api"
 import { redirect } from "next/navigation"
 
 const MapPage = async ({
@@ -21,19 +22,10 @@ const MapPage = async ({
     if (!map) {
         redirect('/dashboard')
     }
+    const buoys = await apiGetBuoys(session.apiToken!, map.id)
 
     return (
-        <div className="flex-grow my-10 flex gap-4">
-            <div className="">
-                <h1 className="text-2xl">Map {map?.name}</h1>
-                <AddBuoyForm map={map} />
-            </div>
-            <div className="border flex-grow flex flex-col">
-                <div className="flex-1">
-                    <MapCanvas map={map} />
-                </div>
-            </div>
-        </div>
+        <MapPageClientFunctions map={map} buoys={buoys || []} />
     )
 }
 export default MapPage

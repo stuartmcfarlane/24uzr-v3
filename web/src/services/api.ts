@@ -26,6 +26,19 @@ const post = async (accessToken: string | undefined, uri: string, data: object) 
     return await fetch(makeApiUrl(uri), options)
 }
 
+const put = async (accessToken: string | undefined, uri: string, data: object) => {
+    const options = {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            ...(accessToken ? {'Authorization': `Bearer ${accessToken}`} : {}),
+        },
+        body: JSON.stringify(data),
+    }
+    return await fetch(makeApiUrl(uri), options)
+}
+
 export const apiRegister = async ({
     email,
     password,
@@ -138,8 +151,23 @@ export const apiCreateBuoy = async (
 
     if (!response.ok) return null
     
-    const createdBuoy = await response.json()
+    const createdBuoy = await response.json() as IApiBuoyOutput
     const fixedBuoy = withNumericLatLng(createdBuoy)
+    return fixedBuoy
+}
+
+export const apiUpdateBuoy = async (
+    accessToken: string,
+    id: number,
+    buoy: IApiBuoyInput,
+): Promise<IApiBuoyOutput | null> => {
+
+    const response = await put(accessToken, `/api/buoy/${id}`, buoy)
+
+    if (!response.ok) return null
+    
+    const updatedBuoy = await response.json() as IApiBuoyOutput
+    const fixedBuoy = withNumericLatLng(updatedBuoy)
     return fixedBuoy
 }
 

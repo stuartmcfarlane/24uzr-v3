@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { CreateBuoyInput, UpdateBuoyInput } from "./buoy.schema";
+import { BuoyIdParamInput, BuoyIdParamSchema, CreateBuoyInput, UpdateBuoyInput } from "./buoy.schema";
 import { createBuoy, findBuoy, findBuoys, updateBuoy } from "./buoy.service";
 
 export async function createBuoyHandler(
@@ -27,10 +27,10 @@ export async function getBuoysHandler() {
 
 export async function getBuoyHandler(
     request: FastifyRequest<{
-        Params: { id: number },
+        Params: BuoyIdParamInput,
     }>,
 ) {
-    const { id } = request.params
+    const { id } = BuoyIdParamSchema.parse(request.params)
     const buoy = await findBuoy(id)
     
     return buoy;
@@ -38,11 +38,11 @@ export async function getBuoyHandler(
 
 export async function putBuoyHandler(
     request: FastifyRequest<{
-        Params: { id: number },
         Body: UpdateBuoyInput,
+        Params: BuoyIdParamInput,
     }>,
 ) {
-    const { id } = request.params
+    const { id } = BuoyIdParamSchema.parse(request.params)
     const buoy = await updateBuoy(id, request.body)
     
     return buoy;

@@ -11,10 +11,14 @@ const DEBUG = false
 
 type MapSvgProps = {
     buoys: IApiBuoyOutput[]
+    onSelectBuoy?: (buoy: IApiBuoyOutput) => void
 }
 
 const MapSvg = (props: MapSvgProps) => {
-    const { buoys } = props
+    const {
+        buoys,
+        onSelectBuoy,
+    } = props
     const innerBoundingRect = points2boundingRect(
         buoys.map(latLng2canvas)
     )
@@ -68,7 +72,13 @@ const MapSvg = (props: MapSvgProps) => {
                 fill={'transparent'}
                 vectorEffect="non-scaling-stroke"
             />}
-            {(buoys || []).map(buoy => <MapBuoy key={buoy.id} buoy={buoy} viewBoxRect={boundingRect} />)}
+            {(buoys || []).map(buoy => (
+                <MapBuoy key={buoy.id}
+                    buoy={buoy}
+                    viewBoxRect={boundingRect}
+                    onSelect={onSelectBuoy}
+                />)
+            )}
         </svg>
     )
 }
