@@ -4,6 +4,26 @@ export const latLng2canvas = ({ lat, lng }: LatLng): Point => {
         y: lng * 1000,
     }
 }
+export const fmtUndefined = () => '<undefined>'
+export const fmtReal = (n: number) => n.toFixed(2)
+export const fmtPoint = (point?: Point) => (
+    point
+    ? `(${fmtReal(point.x)}, ${fmtReal(point.y)})`
+    : fmtUndefined()
+)
+export const fmtRect = (rect?: Rect) => (
+    rect
+    ? `<Rect ${fmtPoint(rectPoint(rect))} w ${fmtReal(rectWidth(rect))} h ${fmtReal(rectHeight(rect))}>`
+    : fmtUndefined()
+)
+export const rectPoint = ([point]: Rect): Point => point
+export const rectWidth = ([ { x: x1 },{ x: x2 } ]: Rect): number => x2 - x1
+export const rectHeight = ([{ y: y1, }, { y: y2, }]: Rect): number => y2 - y1
+export const rectAspectRatio = (rect?: Rect) => (
+    rect
+    ? rectWidth(rect) / rectHeight(rect)
+    : 1
+)
 
 export const points2boundingRect = (points: Point[]): Rect => {
     return points.reduce(
@@ -79,12 +99,87 @@ export const growRect = (maybeMargin: number | string, rect: Rect): Rect => {
         }
     ]
 }
-export const rect2viewBox = ([
-    {
-        x: x1,
-        y: y1,
-    },{
-        x: x2,
-        y: y2,
+export const fitToClient = (boundingRect: Rect, clientRect?: Rect): Rect => {
+    console.log(`>fitToClient ${fmtRect(boundingRect)}, ${fmtRect(clientRect)}`)
+    if (!clientRect) return boundingRect
+    const a = rectAspectRatio(boundingRect)
+    const A = rectAspectRatio(clientRect)
+    const [
+        {
+            x: x1,
+            y: y1,
+        },{
+            x: x2,
+            y: y2,
+        }
+    ] = boundingRect
+    console.log(` fitToClient α ${fmtReal(a)} ${fmtReal(A)}`)
+    if (a < A) {
+        console.log(` fitToClient fit to wider`)
+        const width = rectWidth(boundingRect)
+        const newWidth = width * A / a
+        const delta = (newWidth - width) / 2
+        return [
+            {
+                x: x1 - delta,
+                y: y1,
+            },{
+                x: x2 + delta,
+                y: y2,
+            }
+        ]
     }
-]: Rect): string => `${x1} ${y1} ${x2-x1} ${y2-y1}`
+    if (a > A) {
+        console.log(` fitToClient fit to higher`)
+        const height = rectHeight(boundingRect)
+        const newHeight = height * a / A
+        const delta = (newHeight - height) / 2
+        return [
+            {
+                x: x1,
+                y: y1 - delta,
+            },{
+                x: x2,
+                y: y2 + delta,
+            }
+        ]
+    }
+    return boundingRect
+}
+export const rect2viewBox = (rect?: Rect) => {
+    if (!rect) return ''
+    const [
+        {
+            x: x1,
+            y: y1,
+        }, {
+            x: x2,
+            y: y2,
+        }
+    ] = rect
+    return `${x1} ${y1} ${x2 - x1} ${y2 - y1}`
+}
+
+export const domRect2rect = (domRect?: DOMRect): Rect | undefined => {
+    if (!domRect) return undefined
+    const { x, y, width, height } = domRect
+    return [
+        {
+            x,
+            y,
+        }, {
+            x: x + width,
+            y: y + height,
+        }
+    ]
+}
+
+export const rect2SvgRect = (rect: Rect) => {
+    const point = rectPoint(rect)
+    return {
+        x: point.x,
+        y: point.y,
+        width: rectWidth(rect),
+        height: rectHeight(rect),
+    }
+}
