@@ -5,6 +5,7 @@ import { IApiBuoyOutput } from "@/types/api"
 import MapBuoy from "./MapBuoy"
 import { useEffect, useRef, useState } from "react"
 import { rect2SvgRect } from '../../lib/graph';
+import useClientDimensions from "@/hooks/useClientDimensions"
 
 type MapSvgProps = {
     buoys: IApiBuoyOutput[]
@@ -15,39 +16,44 @@ const MapSvg = (props: MapSvgProps) => {
     const innerBoundingRect = points2boundingRect(
         buoys.map(latLng2canvas)
     )
-    const boundingRect = growRect(
-        "10%",
-        points2boundingRect(
-            buoys.map(latLng2canvas)
-        )
-    )
     
     const svgRef = useRef<SVGSVGElement>(null)
     
-    const [fitRect, setFitRect] = useState<Rect|undefined>()
+    const [fitRect, setFitRect] = useState<Rect | undefined>()
+    const [boundingRect, setBoundingRect] = useState<Rect | undefined>()
+
+    const clientDimensions = useClientDimensions
+
+    useEffect(
+        () => {
+            const boundingRect = growRect(
+                "10%",
+                points2boundingRect(
+                    buoys.map(latLng2canvas)
+                )
+            )
+            setBoundingRect(boundingRect)
+        },
+        [ buoys ]
+    )
     useEffect(
         () => {
             if (!svgRef.current) return
-            console.log(`client rect`, svgRef.current.getBoundingClientRect())
+            if (!boundingRect) return
             const clientRect = domRect2rect(svgRef.current?.getBoundingClientRect())
             const fitRect = fitToClient(boundingRect, clientRect)
             setFitRect(fitRect)
-            console.log(`viewbox`, {
-                client: `α ${fmtReal(rectAspectRatio(clientRect))}${fmtRect(clientRect)}`,
-                bounding: `α ${fmtReal(rectAspectRatio(boundingRect))}${fmtRect(boundingRect)}`,
-                fit: `α ${fmtReal(rectAspectRatio(fitRect))}${fmtRect(fitRect)}`,
-            })
         },
-        []
+        [ boundingRect, clientDimensions ]
     )
     return (
         <svg ref={svgRef} className="w-full h-full" viewBox={rect2viewBox(fitRect)}>
-            <rect {...rect2SvgRect(boundingRect)}
+            {boundingRect && <rect {...rect2SvgRect(boundingRect)}
                 stroke={'black'}
                 strokeWidth={1}
                 fill={'transparent'}
                 vectorEffect="non-scaling-stroke"
-            />
+            />}
             <rect {...rect2SvgRect(innerBoundingRect)}
                 stroke={'green'}
                 strokeWidth={1}
