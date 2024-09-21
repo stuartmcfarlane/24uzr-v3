@@ -16,6 +16,7 @@ const config: Config = {
       colors: {
         "24uzr": "#0ea5e9",
         "24uzr-disabled": "#bae6fd",
+        "24uzr-red": "red",
       },
     },
   },

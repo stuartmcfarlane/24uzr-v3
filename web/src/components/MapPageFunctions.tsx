@@ -9,6 +9,7 @@ import EditBuoyForm from "./EditBuoyForm"
 type MapPageClientFunctionsProps = {
     map: IApiMapOutput
     buoys: IApiBuoyOutput[]
+    onSelectBuoy?: (buoy?: IApiBuoyOutput) => void
 }
 
 const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
@@ -17,9 +18,9 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
         buoys,
     } = props
 
-    const [selectedBuoy, setSelectedBuoy] = useState<IApiBuoyOutput | null>(null)
+    const [selectedBuoy, setSelectedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
 
-    const onSelectBuoy = (buoy: IApiBuoyOutput) => {
+    const onSelectBuoy = (buoy?: IApiBuoyOutput) => {
         setSelectedBuoy(buoy)
         console.log(`buoy selected`, buoy)
     }
@@ -28,7 +29,7 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
             {selectedBuoy ? (
                 <div className="">
                     <h1 className="text-2xl">Map {map?.name}</h1>
-                    <EditBuoyForm map={map} buoy={selectedBuoy} />
+                    <EditBuoyForm map={map} buoy={selectedBuoy} onSelectBuoy={onSelectBuoy} />
                 </div>
             ) : (
                 <div className="">
