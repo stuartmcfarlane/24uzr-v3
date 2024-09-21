@@ -56,7 +56,6 @@ export async function getMapBuoysHandler(
 ) {
     const { id } = MapIdParamSchema.parse(request.params)
     const buoys = await findBuoysByMapId(id)
-    console.log(`buoys`, buoys)
     
     return buoys;
 }

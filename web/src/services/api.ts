@@ -3,7 +3,6 @@ import { IApiBuoyInput, IApiBuoyOutput, IApiMapInput, IApiMapOutput, IApiUser, I
 const makeApiUrl = (uri: string) => `${process.env.NEXT_PUBLIC_API_URL || process.env.API_URL}${uri}`
 
 const get = async (accessToken: string | undefined, uri: string) => {
-    console.log(`>get ${uri}`, accessToken)
     const options = {
         method: 'GET',
         headers: {
@@ -11,7 +10,6 @@ const get = async (accessToken: string | undefined, uri: string) => {
             ...(accessToken ? {'Authorization': `Bearer ${accessToken}`} : {}),
         }
     }
-    console.log(` get ${uri}`, options)
     return await fetch(makeApiUrl(uri), options)
 }
 
@@ -25,7 +23,6 @@ const post = async (accessToken: string | undefined, uri: string, data: object) 
         },
         body: JSON.stringify(data),
     }
-    console.log(`post ${uri}`, options)
     return await fetch(makeApiUrl(uri), options)
 }
 
@@ -39,7 +36,6 @@ export const apiRegister = async ({
     name: string
     }
 ): Promise<boolean> => {
-    console.log(`>register`)
     const response = await post(undefined, `/api/register`, { email, password, name })
     
     return response.ok
@@ -53,17 +49,14 @@ export const apiLogin = async ({
     password: string
     }
 ) => {
-    console.log(`>login`)
 
     const response = await post(undefined, `/api/login`, { email, password })
 
     if (!response.ok) return {}
 
     const json = await response.json()
-    console.log(` login`, json)
 
     const { accessToken }: { accessToken: string } = json
-    console.log(`<login`, { accessToken })
 
     return { accessToken }
 }
@@ -72,7 +65,6 @@ export const apiGetUsers = async (
     accessToken: string
 ): Promise<IApiUserOutput[] | null> => {
 
-    console.log(`>getUsers`)
     const response = await get(accessToken, `/api/users`)
 
     if (!response.ok) return []
@@ -83,7 +75,6 @@ export const apiGetUsers = async (
 }
 
 export const apiGetUser = async (accessToken: string, id?: number): Promise<IApiUserOutput | null> => {
-    console.log(`>getUser`)
     const response = await get(accessToken, id ? `/api/user/${id}` : `/api/user`)
     
     if (!response.ok) return null
@@ -96,7 +87,6 @@ export const apiGetMaps = async (
     accessToken: string
 ): Promise<IApiMapOutput[] | null> => {
 
-    console.log(`>getMaps`)
     const response = await get(accessToken, `/api/maps`)
 
     if (!response.ok) return []
@@ -111,7 +101,6 @@ export const apiGetMap = async (
     id: number,
 ): Promise<IApiMapOutput | null> => {
 
-    console.log(`>getMap`)
     const response = await get(accessToken, `/api/map/${id}`)
 
     if (!response.ok) return null
@@ -126,13 +115,11 @@ export const apiCreateMap = async (
     map: IApiMapInput,
 ): Promise<IApiMapOutput | null> => {
 
-    console.log(`>createMap`)
     const response = await post(accessToken, `/api/maps`, map)
 
     if (!response.ok) return null
     
     const createdMap = await response.json()
-    console.log(`<createMap`, createdMap)
     return createdMap
 }
 
@@ -147,14 +134,12 @@ export const apiCreateBuoy = async (
     buoy: IApiBuoyInput,
 ): Promise<IApiBuoyOutput | null> => {
 
-    console.log(`>createBuoy`)
     const response = await post(accessToken, `/api/buoys`, buoy)
 
     if (!response.ok) return null
     
     const createdBuoy = await response.json()
     const fixedBuoy = withNumericLatLng(createdBuoy)
-    console.log(`<createBuoy`, fixedBuoy)
     return fixedBuoy
 }
 
@@ -163,7 +148,6 @@ export const apiGetBuoys = async (
     mapId: number,
 ): Promise<IApiBuoyOutput[] | null> => {
 
-    console.log(`>getBuoys`)
     const response = await get(accessToken, `/api/map/${mapId}/buoys`)
 
     if (!response.ok) return null

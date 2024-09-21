@@ -100,7 +100,6 @@ export const growRect = (maybeMargin: number | string, rect: Rect): Rect => {
     ]
 }
 export const fitToClient = (boundingRect: Rect, clientRect?: Rect): Rect => {
-    console.log(`>fitToClient ${fmtRect(boundingRect)}, ${fmtRect(clientRect)}`)
     if (!clientRect) return boundingRect
     const a = rectAspectRatio(boundingRect)
     const A = rectAspectRatio(clientRect)
@@ -113,9 +112,7 @@ export const fitToClient = (boundingRect: Rect, clientRect?: Rect): Rect => {
             y: y2,
         }
     ] = boundingRect
-    console.log(` fitToClient α ${fmtReal(a)} ${fmtReal(A)}`)
     if (a < A) {
-        console.log(` fitToClient fit to wider`)
         const width = rectWidth(boundingRect)
         const newWidth = width * A / a
         const delta = (newWidth - width) / 2
@@ -130,7 +127,6 @@ export const fitToClient = (boundingRect: Rect, clientRect?: Rect): Rect => {
         ]
     }
     if (a > A) {
-        console.log(` fitToClient fit to higher`)
         const height = rectHeight(boundingRect)
         const newHeight = height * a / A
         const delta = (newHeight - height) / 2
