@@ -47,7 +47,7 @@ const MapSvg = (props: MapSvgProps) => {
         [ boundingRect, clientDimensions ]
     )
     return (
-        <svg ref={svgRef} className="w-full h-full" viewBox={rect2viewBox(fitRect)}>
+        <svg ref={svgRef} className="w-full h-full" {...rect2viewBox(fitRect)}>
             {boundingRect && <rect {...rect2SvgRect(boundingRect)}
                 stroke={'black'}
                 strokeWidth={1}

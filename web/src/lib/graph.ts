@@ -143,7 +143,8 @@ export const fitToClient = (boundingRect: Rect, clientRect?: Rect): Rect => {
     return boundingRect
 }
 export const rect2viewBox = (rect?: Rect) => {
-    if (!rect) return ''
+    if (!rect) return {}
+    // if (!rect) return '0 0 100 100'
     const [
         {
             x: x1,
@@ -153,7 +154,7 @@ export const rect2viewBox = (rect?: Rect) => {
             y: y2,
         }
     ] = rect
-    return `${x1} ${y1} ${x2 - x1} ${y2 - y1}`
+    return { viewBox: `${x1} ${y1} ${x2 - x1} ${y2 - y1}` }
 }
 
 export const domRect2rect = (domRect?: DOMRect): Rect | undefined => {
