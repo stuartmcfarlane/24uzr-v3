@@ -3,7 +3,7 @@
 import { domRect2rect, fitToClient, fmtReal, fmtRect, growRect, latLng2canvas, makeScreen2svgFactor, points2boundingRect, rect2viewBox, rectAspectRatio, screenUnits2canvasUnits } from "@/lib/graph"
 import { IApiBuoyOutput } from "@/types/api"
 import MapBuoy from "./MapBuoy"
-import { useEffect, useRef, useState } from "react"
+import { MouseEvent, useEffect, useRef, useState } from "react"
 import { rect2SvgRect } from '../../lib/graph';
 import useClientDimensions from "@/hooks/useClientDimensions"
 import { useDebouncedCallback } from "use-debounce"
@@ -15,14 +15,17 @@ const MIN_MARGIN = 50
 
 type MapSvgProps = {
     buoys: IApiBuoyOutput[]
-    onSelectBuoy?: (buoy: IApiBuoyOutput) => void
+    selectedBuoy?: IApiBuoyOutput
+    onSelectBuoy?: (buoy?: IApiBuoyOutput) => void
 }
 
 const MapSvg = (props: MapSvgProps) => {
     const {
         buoys,
         onSelectBuoy,
+        selectedBuoy,
     } = props
+
     const innerBoundingRect = points2boundingRect(
         buoys.map(latLng2canvas)
     )
@@ -76,6 +79,9 @@ const MapSvg = (props: MapSvgProps) => {
         },
         [ viewBoxRect, clientRect ]
     )
+    const onClick = (e: MouseEvent<SVGSVGElement>) => {
+        if (e.target === svgRef?.current) onSelectBuoy && onSelectBuoy()
+    }
     return (
         <div ref={containerRef} className="w-full h-full relative" >
             <svg
@@ -84,6 +90,7 @@ const MapSvg = (props: MapSvgProps) => {
                 height={clientDimensions.height}
                 {...rect2viewBox(viewBoxRect)}
                 className="absolute"
+                onClick={onClick}
             >
                 {DEBUG && boundingRect && <rect {...rect2SvgRect(boundingRect)}
                     stroke={'black'}
@@ -109,6 +116,7 @@ const MapSvg = (props: MapSvgProps) => {
                         screen2svgFactor={screen2svgFactor}
                         viewBoxRect={boundingRect}
                         onSelect={onSelectBuoy}
+                        isSelected={buoy.id === selectedBuoy?.id}
                     />)
                 )}
             </svg>

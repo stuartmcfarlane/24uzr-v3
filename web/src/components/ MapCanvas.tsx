@@ -6,17 +6,19 @@ import MapSvg from "./MapCanvas/MapSvg"
 type MapCanvasProps = {
     map: IApiMapOutput
     buoys: IApiBuoyOutput[]
-    onSelectBuoy?: (buoy: IApiBuoyOutput) => void
+    selectedBuoy?: IApiBuoyOutput
+    onSelectBuoy?: (buoy?: IApiBuoyOutput) => void
 }
 
 const MapCanvas = (props: MapCanvasProps) => {
     const {
         map,
         buoys,
+        selectedBuoy,
         onSelectBuoy
     } = props
 
-    return <MapSvg buoys={buoys} onSelectBuoy={onSelectBuoy}/>
+    return <MapSvg buoys={buoys} onSelectBuoy={onSelectBuoy} selectedBuoy={selectedBuoy}/>
 }
 
 export default MapCanvas

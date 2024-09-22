@@ -4,12 +4,13 @@ import { curry } from "@/lib/fp"
 import { latLng2canvas, makePoint, screenUnits2canvasUnits } from "@/lib/graph"
 import { vectorAdd } from "@/lib/vector"
 import { IApiBuoyOutput } from "@/types/api"
-import { MouseEvent, useCallback, useRef, useState } from "react"
+import { MouseEvent, useCallback, useEffect, useRef, useState } from "react"
 
 type MapBuoyProps = {
     buoy: IApiBuoyOutput
     onSelect?: (buoy: IApiBuoyOutput) => void
     screen2svgFactor?: number
+    isSelected?: boolean
 }
 
 const CLICK_RADIUS = 15
@@ -22,6 +23,7 @@ const MapBuoy = (props: MapBuoyProps & ScaleToViewBoxProps) => {
         buoy,
         onSelect,
         screen2svgFactor,
+        isSelected,
     } = props
     const { x, y } = latLng2canvas(buoy)
 
@@ -40,13 +42,14 @@ const MapBuoy = (props: MapBuoyProps & ScaleToViewBoxProps) => {
     const onClick = () => onSelect && onSelect(buoy)
     const onMouseEnter = () => setHover(() => true)
     const onMouseLeave = () => setHover(() => false)
+
     return (
         <>
             <circle
                 cx={x}
                 cy={y}
                 r={radius}
-                fill={'yellow'}
+                fill={isSelected ? 'red' : 'yellow'}
                 stroke={'black'}
                 strokeWidth={hover ? 2 : 1}
                 vectorEffect="non-scaling-stroke"

@@ -38,7 +38,12 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
             )}
             <div className="border flex-grow flex flex-col">
                 <div className="flex-1">
-                    <MapCanvas map={map} buoys={buoys} onSelectBuoy={onSelectBuoy}/>
+                    <MapCanvas
+                        map={map}
+                        buoys={buoys}
+                        selectedBuoy={selectedBuoy} 
+                        onSelectBuoy={onSelectBuoy}
+                    />
                 </div>
             </div>
         </div>
