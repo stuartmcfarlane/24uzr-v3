@@ -1,13 +1,17 @@
 "use client"
 
-import { domRect2rect, fitToClient, fmtReal, fmtRect, growRect, latLng2canvas, makeScreen2svgFactor, points2boundingRect, rect2viewBox, rectAspectRatio } from "@/lib/graph"
+import { domRect2rect, fitToClient, fmtReal, fmtRect, growRect, latLng2canvas, makeScreen2svgFactor, points2boundingRect, rect2viewBox, rectAspectRatio, screenUnits2canvasUnits } from "@/lib/graph"
 import { IApiBuoyOutput } from "@/types/api"
 import MapBuoy from "./MapBuoy"
 import { useEffect, useRef, useState } from "react"
 import { rect2SvgRect } from '../../lib/graph';
 import useClientDimensions from "@/hooks/useClientDimensions"
+import { useDebouncedCallback } from "use-debounce"
+import { realEq } from "@/lib/math"
 
 const DEBUG = false
+
+const MIN_MARGIN = 50
 
 type MapSvgProps = {
     buoys: IApiBuoyOutput[]
@@ -34,16 +38,16 @@ const MapSvg = (props: MapSvgProps) => {
     const clientDimensions = useClientDimensions(containerRef)
 
     useEffect(
-        () => {
+        useDebouncedCallback(() => {
             const boundingRect = growRect(
-                "10%,10",
+                `10%,${screenUnits2canvasUnits(screen2svgFactor, MIN_MARGIN)}`,
                 points2boundingRect(
                     buoys.map(latLng2canvas)
                 )
             )
             setBoundingRect(boundingRect)
-        },
-        [ buoys ]
+        }, 50),
+        [ buoys, screen2svgFactor ]
     )
     useEffect(
         () => {
@@ -65,8 +69,10 @@ const MapSvg = (props: MapSvgProps) => {
     useEffect(
         () => {
             if (!viewBoxRect || !clientRect) return
-            const screen2svgFactor = makeScreen2svgFactor(viewBoxRect, clientRect)
-            setScreen2svgFactor(screen2svgFactor)
+            const newFactor = makeScreen2svgFactor(viewBoxRect, clientRect)
+            // when the factor is small is can converge slowly so we stop when the delta is small
+            if (realEq(0.1)(newFactor, screen2svgFactor)) return
+            setScreen2svgFactor(newFactor)
         },
         [ viewBoxRect, clientRect ]
     )

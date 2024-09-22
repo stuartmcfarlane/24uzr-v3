@@ -1,7 +1,12 @@
+export const makePoint = (x: number, y: number) => ({ x, y })
+export const makeRect = (x: number, y: number, width: number, height: number) => [
+    makePoint(x, y),
+    makePoint(x + width, y + height),
+]
 export const latLng2canvas = ({ lat, lng }: LatLng): Point => {
     return {
         x: lat * 10,
-        y: lng * 10,
+        y: lng * -10,
     }
 }
 export const fmtUndefined = () => '<undefined>'
@@ -60,7 +65,7 @@ export const points2boundingRect = (points: Point[]): Rect => {
         ]
     )
 }
-const PERCENT_MARGIN_REGEX = /^(\d+)%(?:,(\d+))?$/
+const PERCENT_MARGIN_REGEX = /^(\d+(?:\.\d+)?)%(?:,(\d+(?:\.\d+)?))?$/
 const parseMargin = (maybeMargin: number | string, rect: Rect): number => {
     if (typeof maybeMargin === 'number') return maybeMargin
     const percentMatch = PERCENT_MARGIN_REGEX.exec(maybeMargin)
@@ -82,7 +87,8 @@ const parseMargin = (maybeMargin: number | string, rect: Rect): number => {
             }
         ] = rect
         const width = x2 - x1
-        return (width * percent / 100) | min
+        const margin = width * percent / 100
+        return Math.max(margin, min)
     }
     return parseFloat(maybeMargin)
 }

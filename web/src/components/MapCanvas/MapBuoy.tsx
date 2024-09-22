@@ -1,14 +1,21 @@
 "use client"
 
-import { latLng2canvas, screenUnits2canvasUnits } from "@/lib/graph"
+import { curry } from "@/lib/fp"
+import { latLng2canvas, makePoint, screenUnits2canvasUnits } from "@/lib/graph"
+import { vectorAdd } from "@/lib/vector"
 import { IApiBuoyOutput } from "@/types/api"
-import { MouseEvent, useRef, useState } from "react"
+import { MouseEvent, useCallback, useRef, useState } from "react"
 
 type MapBuoyProps = {
     buoy: IApiBuoyOutput
     onSelect?: (buoy: IApiBuoyOutput) => void
     screen2svgFactor?: number
 }
+
+const CLICK_RADIUS = 15
+const RADIUS = 5
+const TEXT_OFFSET = makePoint(10, 10)
+const FONT_SIZE = 20
 
 const MapBuoy = (props: MapBuoyProps & ScaleToViewBoxProps) => {
     const {
@@ -22,8 +29,14 @@ const MapBuoy = (props: MapBuoyProps & ScaleToViewBoxProps) => {
 
     const [hover, setHover] = useState<boolean>(false)
 
-    const clickRadius = 15
-    const radius = 5
+    const clickRadius = screenUnits2canvasUnits(screen2svgFactor, CLICK_RADIUS)
+    const radius = screenUnits2canvasUnits(screen2svgFactor, RADIUS)
+    const textOffset = makePoint(screenUnits2canvasUnits(
+        screen2svgFactor, TEXT_OFFSET.x),
+        screenUnits2canvasUnits(screen2svgFactor, TEXT_OFFSET.y)
+    )
+    const fontSize = screenUnits2canvasUnits(screen2svgFactor, FONT_SIZE)
+
     const onClick = () => onSelect && onSelect(buoy)
     const onMouseEnter = () => setHover(() => true)
     const onMouseLeave = () => setHover(() => false)
@@ -32,18 +45,18 @@ const MapBuoy = (props: MapBuoyProps & ScaleToViewBoxProps) => {
             <circle
                 cx={x}
                 cy={y}
-                r={screenUnits2canvasUnits(screen2svgFactor, radius)}
+                r={radius}
                 fill={'yellow'}
                 stroke={'black'}
                 strokeWidth={hover ? 2 : 1}
                 vectorEffect="non-scaling-stroke"
             />
-            <text x={x+10} y={y+10}>{buoy.name}</text>
+            <text {...vectorAdd({x, y}, textOffset)} fontSize={fontSize}>{buoy.name}</text>
             <circle
                 ref={hoverRef}
                 cx={x}
                 cy={y}
-                r={screenUnits2canvasUnits(screen2svgFactor, clickRadius)}
+                r={clickRadius}
                 fill={'transparent'}
                 onClick={onClick}
                 onMouseEnter={onMouseEnter}
