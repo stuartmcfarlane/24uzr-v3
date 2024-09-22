@@ -1,5 +1,8 @@
+import { vectorAdd } from "./vector"
+import { realEq } from './math';
+
 export const makePoint = (x: number, y: number) => ({ x, y })
-export const makeRect = (x: number, y: number, width: number, height: number) => [
+export const makeRect = (x: number, y: number, width: number, height: number):Rect => [
     makePoint(x, y),
     makePoint(x + width, y + height),
 ]
@@ -21,7 +24,7 @@ export const fmtRect = (rect?: Rect) => (
     ? `<Rect ${fmtPoint(rectPoint(rect))} w ${fmtReal(rectWidth(rect))} h ${fmtReal(rectHeight(rect))}>`
     : fmtUndefined()
 )
-export const rectPoint = ([point]: Rect): Point => point
+export const rectPoint = (rect: Rect): Point => rect[0]
 export const rectWidth = ([ { x: x1 },{ x: x2 } ]: Rect): number => x2 - x1
 export const rectHeight = ([{ y: y1, }, { y: y2, }]: Rect): number => y2 - y1
 export const rectAspectRatio = (rect?: Rect) => (
@@ -29,7 +32,12 @@ export const rectAspectRatio = (rect?: Rect) => (
     ? rectWidth(rect) / rectHeight(rect)
     : 1
 )
-
+export const rectCenter = (rect: Rect): Point => (
+    vectorAdd(
+        rectPoint(rect),
+        makePoint(rectWidth(rect)/2, rectHeight(rect)/2)
+    )
+)
 export const points2boundingRect = (points: Point[]): Rect => {
     return points.reduce(
         (boundingRect: Rect, point: Point): Rect => {
@@ -196,13 +204,13 @@ export const rect2SvgRect = (rect: Rect) => {
     }
 }
 export const makeScreen2svgFactor = (svgRect: Rect, clientRect: Rect) => {
-    const a = rectAspectRatio(svgRect)
-    const A = rectAspectRatio(clientRect)
-    if (a < A) {
-        const factor = rectHeight(svgRect) / rectHeight(clientRect)
+    const aSvg = rectAspectRatio(svgRect)
+    const aClient = rectAspectRatio(clientRect)
+    if (realEq(0.01)(aSvg, aClient) || aSvg < aClient) {
+        const factor = rectWidth(svgRect) / rectWidth(clientRect)
         return factor
     }
-    const factor = rectWidth(svgRect) / rectWidth(clientRect)
+    const factor = rectHeight(svgRect) / rectHeight(clientRect)
     return factor
 }
 export const screenUnits2canvasUnits = (factor: number = 1, screenUnits: number): number => {

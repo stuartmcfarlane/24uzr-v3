@@ -1,6 +1,6 @@
 "use client"
 
-import { domRect2rect, fitToClient, fmtReal, fmtRect, growRect, latLng2canvas, makeScreen2svgFactor, points2boundingRect, rect2viewBox, rectAspectRatio, screenUnits2canvasUnits } from "@/lib/graph"
+import { domRect2rect, fitToClient, growRect, latLng2canvas, makePoint, makeRect, makeScreen2svgFactor, points2boundingRect, rect2viewBox, screenUnits2canvasUnits } from "@/lib/graph"
 import { IApiBuoyOutput } from "@/types/api"
 import MapBuoy from "./MapBuoy"
 import { MouseEvent, useEffect, useRef, useState } from "react"
@@ -8,6 +8,7 @@ import { rect2SvgRect } from '../../lib/graph';
 import useClientDimensions from "@/hooks/useClientDimensions"
 import { useDebouncedCallback } from "use-debounce"
 import { realEq } from "@/lib/math"
+import { vectorAdd } from '../../lib/vector';
 
 const DEBUG = false
 
@@ -32,6 +33,7 @@ const MapSvg = (props: MapSvgProps) => {
     
     const containerRef = useRef<HTMLDivElement>(null)
     const svgRef = useRef<SVGSVGElement>(null)
+    const unitRef = useRef<SVGRectElement>(null)
     
     const [viewBoxRect, setViewBoxRect] = useState<Rect | undefined>()
     const [boundingRect, setBoundingRect] = useState<Rect | undefined>()
@@ -74,10 +76,12 @@ const MapSvg = (props: MapSvgProps) => {
             if (!viewBoxRect || !clientRect) return
             const newFactor = makeScreen2svgFactor(viewBoxRect, clientRect)
             // when the factor is small is can converge slowly so we stop when the delta is small
-            if (realEq(0.1)(newFactor, screen2svgFactor)) return
+            if (realEq(0.001)(newFactor, screen2svgFactor)) {
+                return
+            }
             setScreen2svgFactor(newFactor)
         },
-        [ viewBoxRect, clientRect ]
+        [ viewBoxRect ]
     )
     const onClick = (e: MouseEvent<SVGSVGElement>) => {
         if (e.target === svgRef?.current) onSelectBuoy && onSelectBuoy()
@@ -92,6 +96,30 @@ const MapSvg = (props: MapSvgProps) => {
                 className="absolute"
                 onClick={onClick}
             >
+                {DEBUG && viewBoxRect && <>
+                    <rect ref={unitRef}
+                        {...rect2SvgRect(
+                            makeRect(
+                                viewBoxRect[0].x, viewBoxRect[0].y,
+                                screenUnits2canvasUnits(screen2svgFactor, 100),
+                                screenUnits2canvasUnits(screen2svgFactor, 100)
+                            )
+                        )}
+                        stroke={'pink'}
+                        strokeWidth={1}
+                        fill={'transparent'}
+                        vectorEffect="non-scaling-stroke"
+                    />
+                    <text
+                        {...vectorAdd(
+                            makePoint(0, screenUnits2canvasUnits(screen2svgFactor, 10)),
+                            viewBoxRect[0]
+                        )}
+                        fontSize={screenUnits2canvasUnits(screen2svgFactor, 10)}
+                    >
+                        {unitRef?.current?.getBoundingClientRect().width}
+                    </text>
+                </>}
                 {DEBUG && boundingRect && <rect {...rect2SvgRect(boundingRect)}
                     stroke={'black'}
                     strokeWidth={1}
