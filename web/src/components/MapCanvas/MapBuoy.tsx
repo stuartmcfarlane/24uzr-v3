@@ -1,18 +1,20 @@
 "use client"
 
-import { latLng2canvas } from "@/lib/graph"
+import { latLng2canvas, screenUnits2canvasUnits } from "@/lib/graph"
 import { IApiBuoyOutput } from "@/types/api"
 import { MouseEvent, useRef, useState } from "react"
 
 type MapBuoyProps = {
     buoy: IApiBuoyOutput
     onSelect?: (buoy: IApiBuoyOutput) => void
+    screen2svgFactor?: number
 }
 
 const MapBuoy = (props: MapBuoyProps & ScaleToViewBoxProps) => {
     const {
         buoy,
-        onSelect
+        onSelect,
+        screen2svgFactor,
     } = props
     const { x, y } = latLng2canvas(buoy)
 
@@ -22,21 +24,15 @@ const MapBuoy = (props: MapBuoyProps & ScaleToViewBoxProps) => {
 
     const clickRadius = 15
     const radius = 5
-    const onClick = (e: MouseEvent<SVGCircleElement>) => {
-        onSelect && onSelect(buoy)
-    }
-    const onMouseEnter = (e: MouseEvent<SVGCircleElement>) => {
-        setHover(() => true)
-    }
-    const onMouseLeave = (e: MouseEvent<SVGCircleElement>) => {
-        setHover(() => false)
-    }
+    const onClick = () => onSelect && onSelect(buoy)
+    const onMouseEnter = () => setHover(() => true)
+    const onMouseLeave = () => setHover(() => false)
     return (
         <>
             <circle
                 cx={x}
                 cy={y}
-                r={radius}
+                r={screenUnits2canvasUnits(screen2svgFactor, radius)}
                 fill={'yellow'}
                 stroke={'black'}
                 strokeWidth={hover ? 2 : 1}
@@ -47,7 +43,7 @@ const MapBuoy = (props: MapBuoyProps & ScaleToViewBoxProps) => {
                 ref={hoverRef}
                 cx={x}
                 cy={y}
-                r={clickRadius}
+                r={screenUnits2canvasUnits(screen2svgFactor, clickRadius)}
                 fill={'transparent'}
                 onClick={onClick}
                 onMouseEnter={onMouseEnter}

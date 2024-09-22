@@ -8,8 +8,8 @@ const useClientDimensions = () => {
     const updateWindowDimensions = () => {
       const newHeight = window.innerHeight
       const newWidth = window.innerWidth
-      setHeight(newHeight)
-      setWidth(newWidth)
+      if (newHeight !== height) setHeight(newHeight)
+      if (newWidth !== width) setWidth(newWidth)
     }
 
     window.addEventListener("resize", updateWindowDimensions)

@@ -1,11 +1,11 @@
 export const latLng2canvas = ({ lat, lng }: LatLng): Point => {
     return {
-        x: lat * 1000,
-        y: lng * 1000,
+        x: lat * 10,
+        y: lng * 10,
     }
 }
 export const fmtUndefined = () => '<undefined>'
-export const fmtReal = (n: number) => n.toFixed(2)
+export const fmtReal = (n: number, precision: number = 2) => n.toFixed(precision)
 export const fmtPoint = (point?: Point) => (
     point
     ? `(${fmtReal(point.x)}, ${fmtReal(point.y)})`
@@ -60,10 +60,18 @@ export const points2boundingRect = (points: Point[]): Rect => {
         ]
     )
 }
+const PERCENT_MARGIN_REGEX = /^(\d+)%(?:,(\d+))?$/
 const parseMargin = (maybeMargin: number | string, rect: Rect): number => {
     if (typeof maybeMargin === 'number') return maybeMargin
-    if (/^\d+%$/.test(maybeMargin)) {
-        const percent = parseFloat(maybeMargin)
+    const percentMatch = PERCENT_MARGIN_REGEX.exec(maybeMargin)
+    if (percentMatch) {
+        const [
+            ,
+            percentString,
+            minString
+        ] = percentMatch
+        const percent = parseFloat(percentString)
+        const min = minString ? parseFloat(minString) : 0
         const [
             {
                 x: x1,
@@ -74,7 +82,7 @@ const parseMargin = (maybeMargin: number | string, rect: Rect): number => {
             }
         ] = rect
         const width = x2 - x1
-        return width * percent / 100
+        return (width * percent / 100) | min
     }
     return parseFloat(maybeMargin)
 }
@@ -115,6 +123,7 @@ export const fitToClient = (boundingRect: Rect, clientRect?: Rect): Rect => {
     if (a < A) {
         const width = rectWidth(boundingRect)
         const newWidth = width * A / a
+        console.log(` fitToClient high into wide: increase width to ${newWidth}`)
         const delta = (newWidth - width) / 2
         return [
             {
@@ -129,6 +138,7 @@ export const fitToClient = (boundingRect: Rect, clientRect?: Rect): Rect => {
     if (a > A) {
         const height = rectHeight(boundingRect)
         const newHeight = height * a / A
+        console.log(` fitToClient wide into high: increase height to ${newHeight}`)
         const delta = (newHeight - height) / 2
         return [
             {
@@ -140,10 +150,13 @@ export const fitToClient = (boundingRect: Rect, clientRect?: Rect): Rect => {
             }
         ]
     }
+    console.log(` fitToClient fits already`)
     return boundingRect
 }
 export const rect2viewBox = (rect?: Rect) => {
-    if (!rect) return {}
+    if (!rect) {
+        return {}
+}
     // if (!rect) return '0 0 100 100'
     const [
         {
@@ -179,4 +192,22 @@ export const rect2SvgRect = (rect: Rect) => {
         width: rectWidth(rect),
         height: rectHeight(rect),
     }
+}
+export const makeScreen2svgFactor = (svgRect: Rect, clientRect: Rect) => {
+    // console.log(`>makeScreen2svgFactor ${fmtRect(svgRect)} ${fmtRect(clientRect)}`)
+    const a = rectAspectRatio(svgRect)
+    const A = rectAspectRatio(clientRect)
+    if (a < A) {
+        // console.log(` makeScreen2svgFactor wide into high`)
+        const factor = rectHeight(svgRect) / rectHeight(clientRect)
+        // console.log(`<makeScreen2svgFactor ${fmtReal(factor, 4)}`)
+        return factor
+    }
+    // console.log(` makeScreen2svgFactor high into wide`)
+    const factor = rectWidth(svgRect) / rectWidth(clientRect)
+    // console.log(`<makeScreen2svgFactor ${fmtReal(factor, 4)}`)
+    return factor
+}
+export const screenUnits2canvasUnits = (factor: number = 1, screenUnits: number): number => {
+    return screenUnits * (factor || 1)
 }

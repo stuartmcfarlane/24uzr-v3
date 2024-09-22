@@ -24,6 +24,7 @@ export const createMap = async (formData: FormData): Promise<ActionError> => {
 }
 
 export const createBuoy = async (formData: FormData): Promise<ActionError> => {
+    console.log(`>createBuoy`)
     const session = await getSession()
 
     const formName = formData.get("name") as string
@@ -31,16 +32,19 @@ export const createBuoy = async (formData: FormData): Promise<ActionError> => {
     const formLng = parseFloat(formData.get("lng") as string)
     const formMapId = parseInt(formData.get("mapId") as string)
 
-    if (!formName || !formLat || !formLng) {
-        return { error: "Missing data" }
-    }
-
-    const createdBuoy = await apiCreateBuoy(session.apiToken!, {
+    const buoy = {
         name: formName,
         lat: formLat,
         lng: formLng,
         mapId: formMapId,
-    })
+    }
+    console.log(` createBuoy`, buoy)
+
+    if (!formName || isNaN(formLat) || isNaN(formLng)) {
+        console.log(` createBuoy missing data`, )
+        return { error: "Missing data" }
+    }
+    const createdBuoy = await apiCreateBuoy(session.apiToken!, buoy)
     if (!createdBuoy) return { error: "Failed to create buoy" }
 
     revalidatePath(`/map/${formMapId}`)
@@ -56,7 +60,7 @@ export const updateBuoy = async (formData: FormData): Promise<ActionError> => {
     const formLng = parseFloat(formData.get("lng") as string)
     const formMapId = parseInt(formData.get("mapId") as string)
 
-    if (!formId || !formName || !formLat || !formLng || !formMapId) {
+    if (isNaN(formId) || !formName || isNaN(formLat) || isNaN(formLng) || isNaN(formMapId)) {
         return { error: "Missing data" }
     }
 
