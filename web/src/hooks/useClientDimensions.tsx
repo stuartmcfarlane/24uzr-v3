@@ -1,25 +1,37 @@
-import { useEffect, useState } from "react"
+import { RefObject, useEffect, useState } from "react"
 
-const useClientDimensions = () => {
+const useClientDimensions = (ref: RefObject<HTMLElement | SVGElement>) => {
   const [width, setWidth] = useState(0)
   const [height, setHeight] = useState(0)
-
+  
+  useEffect(
+    () => {
+      if (ref.current) {
+        const domRect = ref.current.getBoundingClientRect()
+        setWidth(domRect.width)
+        setHeight(domRect.height)
+      }
+    },
+    [ref.current]
+  )
   useEffect(() => {
     const updateWindowDimensions = () => {
-      const newHeight = window.innerHeight
-      const newWidth = window.innerWidth
-      if (newHeight !== height) setHeight(newHeight)
-      if (newWidth !== width) setWidth(newWidth)
+      if (ref.current) {
+        const domRect = ref.current.getBoundingClientRect()
+        setWidth(domRect.width)
+        setHeight(domRect.height)
+      }
     }
-
+    
     window.addEventListener("resize", updateWindowDimensions)
-
+    
     return () => window.removeEventListener("resize", updateWindowDimensions) 
-
+    
   }, [])
-    return {
-        width,
-        height,
+
+  return {
+    width,
+    height,
   }
 }
 

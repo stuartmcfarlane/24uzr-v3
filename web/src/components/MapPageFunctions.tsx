@@ -22,7 +22,6 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
 
     const onSelectBuoy = (buoy?: IApiBuoyOutput) => {
         setSelectedBuoy(buoy)
-        console.log(`buoy selected`, buoy)
     }
     return (
         <div className="flex-grow my-10 flex gap-4">

@@ -123,7 +123,6 @@ export const fitToClient = (boundingRect: Rect, clientRect?: Rect): Rect => {
     if (a < A) {
         const width = rectWidth(boundingRect)
         const newWidth = width * A / a
-        console.log(` fitToClient high into wide: increase width to ${newWidth}`)
         const delta = (newWidth - width) / 2
         return [
             {
@@ -138,7 +137,6 @@ export const fitToClient = (boundingRect: Rect, clientRect?: Rect): Rect => {
     if (a > A) {
         const height = rectHeight(boundingRect)
         const newHeight = height * a / A
-        console.log(` fitToClient wide into high: increase height to ${newHeight}`)
         const delta = (newHeight - height) / 2
         return [
             {
@@ -150,14 +148,12 @@ export const fitToClient = (boundingRect: Rect, clientRect?: Rect): Rect => {
             }
         ]
     }
-    console.log(` fitToClient fits already`)
     return boundingRect
 }
 export const rect2viewBox = (rect?: Rect) => {
     if (!rect) {
         return {}
 }
-    // if (!rect) return '0 0 100 100'
     const [
         {
             x: x1,
@@ -194,18 +190,13 @@ export const rect2SvgRect = (rect: Rect) => {
     }
 }
 export const makeScreen2svgFactor = (svgRect: Rect, clientRect: Rect) => {
-    // console.log(`>makeScreen2svgFactor ${fmtRect(svgRect)} ${fmtRect(clientRect)}`)
     const a = rectAspectRatio(svgRect)
     const A = rectAspectRatio(clientRect)
     if (a < A) {
-        // console.log(` makeScreen2svgFactor wide into high`)
         const factor = rectHeight(svgRect) / rectHeight(clientRect)
-        // console.log(`<makeScreen2svgFactor ${fmtReal(factor, 4)}`)
         return factor
     }
-    // console.log(` makeScreen2svgFactor high into wide`)
     const factor = rectWidth(svgRect) / rectWidth(clientRect)
-    // console.log(`<makeScreen2svgFactor ${fmtReal(factor, 4)}`)
     return factor
 }
 export const screenUnits2canvasUnits = (factor: number = 1, screenUnits: number): number => {

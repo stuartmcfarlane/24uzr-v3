@@ -13,7 +13,6 @@ const EditBuoyForm = (props: EditBuoyFormProps) => {
         buoy,
         onSelectBuoy,
     } = props
-    console.log(`EditBuoyForm`, buoy)
     const [name, setName] = useState(buoy.name)
     const [lat, setLat] = useState(buoy.lat)
     const [lng, setLng] = useState(buoy.lng)

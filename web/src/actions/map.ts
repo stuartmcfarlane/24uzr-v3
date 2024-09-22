@@ -24,7 +24,6 @@ export const createMap = async (formData: FormData): Promise<ActionError> => {
 }
 
 export const createBuoy = async (formData: FormData): Promise<ActionError> => {
-    console.log(`>createBuoy`)
     const session = await getSession()
 
     const formName = formData.get("name") as string
@@ -38,10 +37,8 @@ export const createBuoy = async (formData: FormData): Promise<ActionError> => {
         lng: formLng,
         mapId: formMapId,
     }
-    console.log(` createBuoy`, buoy)
 
     if (!formName || isNaN(formLat) || isNaN(formLng)) {
-        console.log(` createBuoy missing data`, )
         return { error: "Missing data" }
     }
     const createdBuoy = await apiCreateBuoy(session.apiToken!, buoy)

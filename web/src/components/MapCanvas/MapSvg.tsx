@@ -5,10 +5,9 @@ import { IApiBuoyOutput } from "@/types/api"
 import MapBuoy from "./MapBuoy"
 import { useEffect, useRef, useState } from "react"
 import { rect2SvgRect } from '../../lib/graph';
-import useSvgClientDimensions from "@/hooks/useSvgClientDimensions"
-import useHtmlClientDimensions from "@/hooks/useHtmlClientDimensions"
+import useClientDimensions from "@/hooks/useClientDimensions"
 
-const DEBUG = true
+const DEBUG = false
 
 type MapSvgProps = {
     buoys: IApiBuoyOutput[]
@@ -32,7 +31,7 @@ const MapSvg = (props: MapSvgProps) => {
     const [clientRect, setClientRect] = useState<Rect | undefined>()
     const [screen2svgFactor, setScreen2svgFactor] = useState<number>(1)
 
-    const clientDimensions = useHtmlClientDimensions(containerRef)
+    const clientDimensions = useClientDimensions(containerRef)
 
     useEffect(
         () => {
@@ -42,7 +41,6 @@ const MapSvg = (props: MapSvgProps) => {
                     buoys.map(latLng2canvas)
                 )
             )
-            console.log(`boundingRect`, fmtRect(boundingRect))
             setBoundingRect(boundingRect)
         },
         [ buoys ]
@@ -51,7 +49,6 @@ const MapSvg = (props: MapSvgProps) => {
         () => {
             if (!svgRef.current) return
             const clientRect = domRect2rect(svgRef.current?.getBoundingClientRect())
-            console.log(`clientRect`, fmtRect(clientRect))
             setClientRect(clientRect)
         },
         [ clientDimensions.width, clientDimensions.height ]
@@ -61,7 +58,6 @@ const MapSvg = (props: MapSvgProps) => {
             if (!svgRef.current) return
             if (!boundingRect) return
             const viewBoxRect = fitToClient(boundingRect, clientRect)
-            console.log(`viewBoxRect`, fmtRect(viewBoxRect))
             setViewBoxRect(viewBoxRect)
         },
         [ boundingRect, clientRect ]
@@ -70,7 +66,6 @@ const MapSvg = (props: MapSvgProps) => {
         () => {
             if (!viewBoxRect || !clientRect) return
             const screen2svgFactor = makeScreen2svgFactor(viewBoxRect, clientRect)
-            console.log(`screen2svgFactor`, fmtReal(screen2svgFactor, 4))
             setScreen2svgFactor(screen2svgFactor)
         },
         [ viewBoxRect, clientRect ]
