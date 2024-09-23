@@ -3,6 +3,7 @@ import { IApiBuoyOutput, IApiLegOutput } from "@/types/api"
 
 type MapLegProps = {
     leg: IApiLegOutput
+    returnLeg: IApiLegOutput
     startBuoy?: IApiBuoyOutput
     endBuoy?: IApiBuoyOutput
     onSelect?: (leg?: IApiLegOutput) => void
@@ -12,6 +13,7 @@ type MapLegProps = {
 const MapLeg = (props: MapLegProps) => {
     const {
         leg,
+        returnLeg,
         startBuoy,
         endBuoy,
         onSelect,
@@ -23,14 +25,28 @@ const MapLeg = (props: MapLegProps) => {
     const start = latLng2canvas(startBuoy)
     const end = latLng2canvas(endBuoy)
 
-    return <>
-        <line
-            {...line2SvgLine([start, end])}
-            stroke={isSelected ? 'red' : 'green'}
-            strokeWidth={5}
-            vectorEffect="non-scaling-stroke"
-        />
-    </>
+    return (
+        returnLeg
+        ? (
+            <line
+                {...line2SvgLine([start, end])}
+                stroke={'green'}
+                strokeWidth={3}
+                vectorEffect="non-scaling-stroke"
+                marker-end="url(#arrow)"
+                marker-start="url(#arrow)"
+            />
+        )
+        : (
+            <line
+                {...line2SvgLine([start, end])}
+                stroke={'green'}
+                strokeWidth={3}
+                vectorEffect="non-scaling-stroke"
+                marker-end="url(#arrow)"
+            />
+        )
+    )
 }
 
 export default MapLeg

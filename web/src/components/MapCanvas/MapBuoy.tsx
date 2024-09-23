@@ -1,5 +1,6 @@
 "use client"
 
+import { BUOY_CLICK_RADIUS, BUOY_FONT_SIZE, BUOY_RADIUS, BUOY_TEXT_OFFSET } from "@/lib/constants"
 import { curry } from "@/lib/fp"
 import { latLng2canvas, makePoint, screenUnits2canvasUnits } from "@/lib/graph"
 import { vectorAdd } from "@/lib/vector"
@@ -13,11 +14,6 @@ type MapBuoyProps = {
     screen2svgFactor?: number
     isSelected?: boolean
 }
-
-const CLICK_RADIUS = 15
-const RADIUS = 5
-const TEXT_OFFSET = makePoint(10, 10)
-const FONT_SIZE = 20
 
 const MapBuoy = (props: MapBuoyProps & ScaleToViewBoxProps) => {
     const {
@@ -33,13 +29,13 @@ const MapBuoy = (props: MapBuoyProps & ScaleToViewBoxProps) => {
 
     const [hover, setHover] = useState<boolean>(false)
 
-    const clickRadius = screenUnits2canvasUnits(screen2svgFactor, CLICK_RADIUS)
-    const radius = screenUnits2canvasUnits(screen2svgFactor, RADIUS)
+    const clickRadius = screenUnits2canvasUnits(screen2svgFactor, BUOY_CLICK_RADIUS)
+    const radius = screenUnits2canvasUnits(screen2svgFactor, BUOY_RADIUS)
     const textOffset = makePoint(screenUnits2canvasUnits(
-        screen2svgFactor, TEXT_OFFSET.x),
-        screenUnits2canvasUnits(screen2svgFactor, TEXT_OFFSET.y)
+        screen2svgFactor, BUOY_TEXT_OFFSET.x),
+        screenUnits2canvasUnits(screen2svgFactor, BUOY_TEXT_OFFSET.y)
     )
-    const fontSize = screenUnits2canvasUnits(screen2svgFactor, FONT_SIZE)
+    const fontSize = screenUnits2canvasUnits(screen2svgFactor, BUOY_FONT_SIZE)
 
     const onClick = () => onSelect && onSelect(buoy)
     const onMouseEnter = () => {

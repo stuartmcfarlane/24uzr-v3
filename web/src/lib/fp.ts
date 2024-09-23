@@ -36,7 +36,11 @@ function curry<P extends any[], R>(fn: (...args: P) => R) {
     }) as unknown as Curry<P, R>;
 }
 
+const allOf = (...fns: Function[]) => (v: any) => fns.reduce((pp, fn) => pp && fn(v), true)
+
 export const idIs = (needle: number) => (o: { id: number }): boolean => needle === o.id
+export const idIsNot = (needle: number) => (o: { id: number }): boolean => needle !== o.id
+export const and = allOf
 
 export {
     curry,

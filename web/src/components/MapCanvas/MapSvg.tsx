@@ -15,7 +15,7 @@ import { useChange } from "@/hooks/useChange"
 import MapLegDrag from "./MapLegDrag"
 import { apiCreateLeg } from "@/services/api"
 import MapLeg from "./MapLeg"
-import { idIs } from "@/lib/fp"
+import { and, idIs, idIsNot } from "@/lib/fp"
 
 const DEBUG = false
 
@@ -128,6 +128,27 @@ const MapSvg = (props: MapSvgProps) => {
     const onClick = (e: MouseEvent<SVGSVGElement>) => {
         if (e.target === svgRef?.current) onSelectBuoy && onSelectBuoy()
     }
+    const isReturnLeg = (needle: IApiLegOutput) => (haystack: IApiLegOutput) => (
+        needle.startBuoyId === haystack.endBuoyId
+        && needle.endBuoyId === haystack.startBuoyId
+    )
+    const actualLegs = (
+        legs: IApiLegOutput[]
+    ): IApiLegOutput[][] => {
+        const [leg, ...tail] = legs
+        if (!leg) return []
+        const returnLeg = tail.find(isReturnLeg(leg))
+        if (!returnLeg) {
+            return [
+                [leg],
+                ...actualLegs(legs.filter(idIsNot(leg.id)))
+            ]
+        }
+        return [
+            leg.id < returnLeg.id ? [leg, returnLeg] : [returnLeg, leg],
+            ...actualLegs(legs.filter(and(idIsNot(leg.id), idIsNot(returnLeg.id))))
+        ]
+    }
     return (
         <div ref={containerRef} className="w-full h-full relative" >
             <svg
@@ -138,9 +159,24 @@ const MapSvg = (props: MapSvgProps) => {
                 className="absolute"
                 onClick={onClick}
             >
-                {(legs || []).map(leg => (
+                <defs>
+                    <marker
+                        id="arrow"
+                        viewBox="0 0 10 10"
+                        refX="10"
+                        refY="5"
+                        markerWidth="6"
+                        markerHeight="6"
+                        orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z"
+                            fill="context-stroke"
+                        />
+                    </marker>
+                </defs>
+                {(actualLegs(legs)).map(([leg, returnLeg]) => (
                     <MapLeg key={leg.id}
                         leg={leg}
+                        returnLeg={returnLeg}
                         startBuoy={buoys.find(idIs(leg.startBuoyId))}
                         endBuoy={buoys.find(idIs(leg.endBuoyId))}
                         onSelect={onSelectLeg}
