@@ -76,7 +76,7 @@ const MapSvg = (props: MapSvgProps) => {
     useChange(
         () => {
             if (!mouseDragBuoy.dragging) {
-                if (draggedBuoy && hoveredBuoy) {
+                if (draggedBuoy && hoveredBuoy && draggedBuoy.id !== hoveredBuoy.id) {
                     onCreateLeg && onCreateLeg(draggedBuoy, hoveredBuoy)
                 }
             }
