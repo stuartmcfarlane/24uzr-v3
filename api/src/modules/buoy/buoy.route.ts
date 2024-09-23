@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 import {
     createBuoyHandler,
+    deleteBuoyHandler,
     getBuoyHandler,
     getBuoysHandler,
     putBuoyHandler,
@@ -69,6 +70,22 @@ async function buoyRoutes(server: FastifyInstance) {
         },
         getBuoysHandler
     );
+
+    server.delete(
+        "/buoy/:id",
+        {
+            schema: {
+                tags: ['buoy'],
+                security: [ { bearerAuth: [] } ],
+                response: {
+                    200: $ref("buoyResponseSchema"),
+                },
+            },
+            preHandler: [server.authenticate],
+        },
+        deleteBuoyHandler
+    );
+    
 }
 
 export default buoyRoutes;

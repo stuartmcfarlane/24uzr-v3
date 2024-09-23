@@ -1,7 +1,7 @@
 "use server"
 
 import { getSession } from './session';
-import { apiCreateBuoy, apiCreateLeg, apiCreateMap, apiUpdateBuoy } from '@/services/api';
+import { apiCreateBuoy, apiCreateLeg, apiCreateMap, apiDeleteBuoy, apiUpdateBuoy } from '@/services/api';
 import { ActionError } from '@/types/action';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -81,6 +81,22 @@ export const updateBuoy = async (formData: FormData): Promise<ActionError> => {
     if (!updatedBuoy) return { error: "Failed to create buoy" }
 
     revalidatePath(`/map/${formMapId}`)
+
+    return {}
+}
+export const deleteBuoy = async ({
+    id,
+    mapId,
+}: {
+        id: number,
+        mapId: number
+}
+): Promise<ActionError> => {
+    const session = await getSession()
+
+    await apiDeleteBuoy(session.apiToken!, id)
+
+    revalidatePath(`/map/${mapId}`)
 
     return {}
 }

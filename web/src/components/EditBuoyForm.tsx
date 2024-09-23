@@ -1,6 +1,6 @@
-import { updateBuoy } from "@/actions/map"
+import { deleteBuoy, updateBuoy } from "@/actions/map"
 import { IApiBuoyOutput, IApiMapOutput } from "@/types/api"
-import { useEffect, useState } from "react"
+import { MouseEvent, useEffect, useState } from "react"
 
 type EditBuoyFormProps = {
     map: IApiMapOutput
@@ -29,9 +29,20 @@ const EditBuoyForm = (props: EditBuoyFormProps) => {
         onSelectBuoy && onSelectBuoy()
     }
 
+    const updateBuoyAction = async (formData: FormData) => {
+        await updateBuoy(formData)
+        onSelectBuoy && onSelectBuoy()
+    }
+
+    const onDelete = async (e: MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault()
+        await deleteBuoy(buoy)
+        onSelectBuoy && onSelectBuoy()
+    }
+
     return (
         <form
-            action={updateBuoy}
+            action={updateBuoyAction}
             className="flex flex-col gap-4 mt-4 border-t-2 pt-4"
         >
             <input
@@ -69,6 +80,12 @@ const EditBuoyForm = (props: EditBuoyFormProps) => {
                 className="bg-24uzr-red text-white p-2 rounded-md disabled:bg-24uzr-disabled disabled:cursor-not-allowed"
             >
                 Cancel
+            </button>
+            <button
+                onClick={onDelete}
+                className="bg-24uzr-red text-white p-2 rounded-md disabled:bg-24uzr-disabled disabled:cursor-not-allowed"
+            >
+                Delete
             </button>
 
             <input

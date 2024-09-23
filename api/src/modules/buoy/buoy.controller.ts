@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { BuoyIdParamInput, BuoyIdParamSchema, CreateBuoyInput, UpdateBuoyInput } from "./buoy.schema";
-import { createBuoy, findBuoy, findBuoys, updateBuoy } from "./buoy.service";
+import { createBuoy, deleteBuoy, findBuoy, findBuoys, updateBuoy } from "./buoy.service";
 
 export async function createBuoyHandler(
     request: FastifyRequest<{
@@ -47,3 +47,12 @@ export async function putBuoyHandler(
     
     return buoy;
 }
+export async function deleteBuoyHandler(
+    request: FastifyRequest<{
+        Params: BuoyIdParamInput,
+    }>,
+) {
+    const { id } = BuoyIdParamSchema.parse(request.params)
+    await deleteBuoy(id)
+}
+

@@ -33,8 +33,8 @@ const MapLeg = (props: MapLegProps) => {
                 stroke={'green'}
                 strokeWidth={3}
                 vectorEffect="non-scaling-stroke"
-                marker-end="url(#arrow)"
-                marker-start="url(#arrow)"
+                markerEnd="url(#arrow)"
+                markerStart="url(#arrow)"
             />
         )
         : (
@@ -43,7 +43,7 @@ const MapLeg = (props: MapLegProps) => {
                 stroke={'green'}
                 strokeWidth={3}
                 vectorEffect="non-scaling-stroke"
-                marker-end="url(#arrow)"
+                markerEnd="url(#arrow)"
             />
         )
     )

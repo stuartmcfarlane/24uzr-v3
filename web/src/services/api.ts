@@ -13,6 +13,16 @@ const get = async (accessToken: string | undefined, uri: string) => {
     return await fetch(makeApiUrl(uri), options)
 }
 
+const del = async (accessToken: string | undefined, uri: string) => {
+    const options = {
+        method: 'DELETE',
+        headers: {
+            ...(accessToken ? {'Authorization': `Bearer ${accessToken}`} : {}),
+        }
+    }
+    return await fetch(makeApiUrl(uri), options)
+}
+
 const post = async (accessToken: string | undefined, uri: string, data: object) => {
     const options = {
         method: 'POST',
@@ -175,6 +185,13 @@ export const apiUpdateBuoy = async (
     const updatedBuoy = await response.json() as IApiBuoyOutput
     const fixedBuoy = withNumericLatLng(updatedBuoy)
     return fixedBuoy
+}
+export const apiDeleteBuoy = async (
+    accessToken: string,
+    id: number,
+): Promise<void> => {
+
+    await del(accessToken, `/api/buoy/${id}`)
 }
 
 export const apiGetBuoys = async (

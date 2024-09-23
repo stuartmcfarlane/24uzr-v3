@@ -1,13 +1,21 @@
 import { createBuoy } from "@/actions/map"
 import { IApiMapOutput } from "@/types/api"
+import { useRef } from "react"
 
 type AddBuoyFormProps = {
     map: IApiMapOutput
 }
 const AddBuoyForm = (props: AddBuoyFormProps) => {
     const { map } = props
+
+    const formRef = useRef<HTMLFormElement>(null)
+
+    const createBuoyAction = async (formData: FormData) => {
+        await createBuoy(formData)
+        formRef.current?.reset()
+    }
     return (
-        <form action={createBuoy} className="flex flex-col gap-4 mt-4 border-t-2 pt-4">
+        <form ref={formRef} action={createBuoyAction} className="flex flex-col gap-4 mt-4 border-t-2 pt-4">
             <input
                 type="text"
                 name="name"

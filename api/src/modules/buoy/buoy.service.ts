@@ -38,3 +38,12 @@ export async function findBuoysByMapId(mapId: number) {
         },
     });
 }
+
+export async function deleteBuoy(id: number) {
+    return prisma.buoy.delete({
+        where: {
+            id,
+        },
+    });
+}
+
