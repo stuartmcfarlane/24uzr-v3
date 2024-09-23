@@ -9,6 +9,7 @@ import useClientDimensions from "@/hooks/useClientDimensions"
 import { useDebouncedCallback } from "use-debounce"
 import { realEq } from "@/lib/math"
 import { vectorAdd } from '../../lib/vector';
+import { useMouseDrag } from "@/hooks/useMouseDrag"
 
 const DEBUG = false
 
@@ -41,6 +42,9 @@ const MapSvg = (props: MapSvgProps) => {
     const [screen2svgFactor, setScreen2svgFactor] = useState<number>(1)
 
     const clientDimensions = useClientDimensions(containerRef)
+
+    const mouseDrag = useMouseDrag(svgRef, [])
+    mouseDrag.dragging && console.log(`mouseDrag`, mouseDrag)
 
     useEffect(
         useDebouncedCallback(() => {
