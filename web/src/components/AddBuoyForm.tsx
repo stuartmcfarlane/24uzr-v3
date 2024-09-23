@@ -24,6 +24,12 @@ const AddBuoyForm = (props: AddBuoyFormProps) => {
             />
             <input
                 type="text"
+                name="nameLatLng"
+                placeholder="name, lat, long"
+                className="ring-2 ring-gray-300 rounded-md p-4"
+            />
+            <input
+                type="text"
                 name="lat"
                 placeholder="latitude"
                 className="ring-2 ring-gray-300 rounded-md p-4"

@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "geo-coordinates-parser": "^1.7.3",
     "iron-session": "^8.0.3",
     "jose": "^5.9.2",
     "next": "^14",

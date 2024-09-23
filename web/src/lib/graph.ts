@@ -8,8 +8,8 @@ export const makeRect = (x: number, y: number, width: number, height: number):Re
 ]
 export const latLng2canvas = ({ lat, lng }: LatLng): Point => {
     return {
-        x: lat * 10,
-        y: lng * -10,
+        x: lng * 10,
+        y: lat * -10,
     }
 }
 export const fmtUndefined = () => '<undefined>'

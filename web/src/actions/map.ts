@@ -6,6 +6,7 @@ import { ActionError } from '@/types/action';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { IApiLegInput } from '../types/api';
+import { geo2decimal, parseNameLatLng } from '@/lib/geo';
 
 export const createMap = async (formData: FormData): Promise<ActionError> => {
     const session = await getSession()
@@ -38,18 +39,22 @@ export const createBuoy = async (formData: FormData): Promise<ActionError> => {
     const session = await getSession()
 
     const formName = formData.get("name") as string
+    const formNameLatLng = formData.get("nameLatLng") as string
     const formLat = parseFloat(formData.get("lat") as string)
     const formLng = parseFloat(formData.get("lng") as string)
     const formMapId = parseInt(formData.get("mapId") as string)
 
+    const nameLatLng = parseNameLatLng(formNameLatLng)
+
     const buoy = {
-        name: formName,
-        lat: formLat,
-        lng: formLng,
+        name: nameLatLng ? nameLatLng.name : formName,
+        lat: nameLatLng ? nameLatLng.lat : formLat,
+        lng: nameLatLng ? nameLatLng.lng : formLng,
         mapId: formMapId,
     }
 
-    if (!formName || isNaN(formLat) || isNaN(formLng)) {
+    console.log(`createBuoy`, buoy)
+    if (!buoy.name || isNaN(buoy.lat) || isNaN(buoy.lng)) {
         return { error: "Missing data" }
     }
     const createdBuoy = await apiCreateBuoy(session.apiToken!, buoy)

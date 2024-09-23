@@ -50,11 +50,11 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
                     startBuoyId: leg.endBuoyId,
                     endBuoyId: leg.startBuoyId,
                 })
-                if (/^start$/i.test(startBuoy.name)) {
+                if (/\(start\)/i.test(startBuoy.name)) {
                     createLegs([createdLeg])
                     return
                 }
-                if (/^finish$/i.test(endBuoy.name)) {
+                if (/\(finish\)/i.test(endBuoy.name)) {
                     createLegs([createdLeg])
                     return
                 }
