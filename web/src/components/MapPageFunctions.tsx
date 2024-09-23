@@ -6,6 +6,7 @@ import MapCanvas from "./ MapCanvas"
 import { useEffect, useState } from "react"
 import EditBuoyForm from "./EditBuoyForm"
 import { createLeg } from "@/actions/map"
+import { idIs } from "@/lib/fp"
 
 type MapPageClientFunctionsProps = {
     map: IApiMapOutput
@@ -34,11 +35,36 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
     useEffect(
         () => {
             if (createdLeg) {
-                const createTheLeg = async () => {
-                    await createLeg(createdLeg)
+                const startBuoy = buoys.find(idIs(createdLeg.startBuoyId))
+                const endBuoy = buoys.find(idIs(createdLeg.endBuoyId))
+                if (!startBuoy || !endBuoy) {
+                    setCreatedLeg(undefined)
+                    return
+                }
+                const createLegs = async (legs: IApiLegInput[]) => {
+                    await Promise.all(legs.map(createLeg))
                     setCreatedLeg(undefined)
                 }
-                createTheLeg()
+                const reverseLeg = (leg: IApiLegInput) => ({
+                    ...leg,
+                    startBuoyId: leg.endBuoyId,
+                    endBuoyId: leg.startBuoyId,
+                })
+                if (/^start$/i.test(startBuoy.name)) {
+                    createLegs([createdLeg])
+                    return
+                }
+                if (/^finish$/i.test(endBuoy.name)) {
+                    createLegs([createdLeg])
+                    return
+                }
+                if (/^start$/i.test(endBuoy.name) || /^finish$/i.test(startBuoy.name)) {
+                    return
+                }
+                createLegs([
+                    createdLeg,
+                    reverseLeg(createdLeg),
+                ])
             }
         },
         [ createdLeg ]
