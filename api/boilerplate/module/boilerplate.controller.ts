@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { CreateBoilerplateInput, UpdateBoilerplateInput } from "./boilerplate.schema";
+import { BoilerplateIdParamInput, BoilerplateIdParamSchema, CreateBoilerplateInput, UpdateBoilerplateInput } from "./boilerplate.schema";
 import { createBoilerplate, findBoilerplate, findBoilerplates, updateBoilerplate } from "./boilerplate.service";
 
 export async function createBoilerplateHandler(
@@ -27,10 +27,10 @@ export async function getBoilerplatesHandler() {
 
 export async function getBoilerplateHandler(
     request: FastifyRequest<{
-        Params: { id: number },
+        Params: BoilerplateIdParamInput,
     }>,
 ) {
-    const { id } = request.params
+    const { id } = BoilerplateIdParamSchema.parse(request.params)
     const boilerplate = await findBoilerplate(id)
     
     return boilerplate;
@@ -38,11 +38,11 @@ export async function getBoilerplateHandler(
 
 export async function putBoilerplateHandler(
     request: FastifyRequest<{
-        Params: { id: number },
+        Params: BoilerplateIdParamInput,
         Body: UpdateBoilerplateInput,
     }>,
 ) {
-    const { id } = request.params
+    const { id } = BoilerplateIdParamSchema.parse(request.params)
     const boilerplate = await updateBoilerplate(id, request.body)
     
     return boilerplate;

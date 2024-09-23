@@ -4,7 +4,8 @@ import { getSession } from "@/actions/session"
 import MapCanvas from "@/components/ MapCanvas"
 import AddBuoyForm from "@/components/AddBuoyForm"
 import MapPageClientFunctions from "@/components/MapPageFunctions"
-import { apiGetBuoys, apiGetMap } from "@/services/api"
+import { apiCreateLeg, apiGetBuoys, apiGetLegs, apiGetMap } from "@/services/api"
+import { IApiBuoyOutput } from "@/types/api"
 import { redirect } from "next/navigation"
 
 const MapPage = async ({
@@ -23,9 +24,14 @@ const MapPage = async ({
         redirect('/dashboard')
     }
     const buoys = await apiGetBuoys(session.apiToken!, map.id)
+    const legs = await apiGetLegs(session.apiToken!, map.id)
 
     return (
-        <MapPageClientFunctions map={map} buoys={buoys || []} />
+        <MapPageClientFunctions
+            map={map}
+            buoys={buoys || []}
+            legs={legs || []}
+        />
     )
 }
 export default MapPage

@@ -17,3 +17,5 @@ type Rect = [
 type ScaleToViewBoxProps = {
     viewBoxRect?: Rect
 }
+
+type Line = [Point, Point]

@@ -36,6 +36,8 @@ function curry<P extends any[], R>(fn: (...args: P) => R) {
     }) as unknown as Curry<P, R>;
 }
 
+export const idIs = (needle: number) => (o: { id: number }): boolean => needle === o.id
+
 export {
     curry,
 }

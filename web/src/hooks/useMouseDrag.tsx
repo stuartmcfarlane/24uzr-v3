@@ -1,21 +1,47 @@
 "use client"
 
-import { useState, useEffect, useRef, RefObject } from 'react'
+import { useState, useEffect, useRef, RefObject, MouseEvent } from 'react'
 import { useChange } from './useChange'
-import { useMousePositionRelative } from './useMousePosition'
+import { useMousePosition, useMousePositionRelative } from './useMousePosition'
 
-export function useMouseDrag(elementRef: RefObject<HTMLElement | SVGElement>, constraints: Function[] = []) {
+export type MousePosition = {
+    mousePosition: {
+        start: Point | null
+        end: Point
+    }
+    dragging: boolean
+}
+export type MouseDragConstraint = (
+    element: HTMLElement | SVGElement,
+    mousePosition: Point
+) => boolean
 
-    const mousePosition = useMousePositionRelative(elementRef)
+export function useMouseDrag(
+    elementRef: RefObject<HTMLElement | SVGElement>,
+    constraints: MouseDragConstraint[] = [],
+    relativeRef?: RefObject<HTMLElement | SVGElement>,
+): MousePosition {
+
+    const mousePosition = (
+        relativeRef
+            ?useMousePositionRelative(elementRef)
+            : useMousePosition()
+    )
     const ref = useRef(mousePosition)
 
     let [ startPosition, setStartPosition] = useState<Point|null>(null)
     const [ dragging, setDragging ] = useState(false)
 
-    const handleMouseDown: EventListener = (event: MouseEventInit) => {
-        const valid = constraints.every(fn => fn(mousePosition))
-        if (valid) {
-            setStartPosition(ref.current)
+    const handleMouseDown = (event: MouseEvent<HTMLElement | SVGElement>) => {
+        const element = (
+            event.target instanceof HTMLElement
+            || event.target instanceof SVGElement
+        ) ? event.target : null
+        if (element) {
+            const valid = constraints.every(fn => fn(element, mousePosition))
+            if (valid) {
+                setStartPosition(ref.current)
+            }
         }
     }
 
@@ -45,7 +71,7 @@ export function useMouseDrag(elementRef: RefObject<HTMLElement | SVGElement>, co
 
     return {
         mousePosition: {
-            start: { ...startPosition },
+            start: startPosition ? { ...startPosition } : null,
             end: { ...mousePosition }
         },
         dragging

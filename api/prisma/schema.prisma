@@ -36,6 +36,7 @@ model Map {
   updatedAt DateTime @updatedAt
   name      String   @db.VarChar(128)
   Buoy      Buoy[]
+  Leg       Leg[]
 }
 
 model Buoy {
@@ -45,4 +46,12 @@ model Buoy {
   lng   Decimal @db.Decimal(11, 8)
   map   Map     @relation(fields: [mapId], references: [id])
   mapId Int
+}
+
+model Leg {
+  id          Int @id @default(autoincrement())
+  map         Map @relation(fields: [mapId], references: [id])
+  mapId       Int
+  startBuoyId Int
+  endBuoyId   Int
 }

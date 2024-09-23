@@ -1,28 +1,56 @@
 "use client"
 
-import { IApiBuoyOutput, IApiMapOutput } from "@/types/api"
+import { IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapOutput } from "@/types/api"
 import AddBuoyForm from "./AddBuoyForm"
 import MapCanvas from "./ MapCanvas"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import EditBuoyForm from "./EditBuoyForm"
+import { createLeg } from "@/actions/map"
 
 type MapPageClientFunctionsProps = {
     map: IApiMapOutput
     buoys: IApiBuoyOutput[]
-    onSelectBuoy?: (buoy?: IApiBuoyOutput) => void
+    legs: IApiLegOutput[]
 }
 
 const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
     const {
         map,
         buoys,
+        legs,
     } = props
 
     const [selectedBuoy, setSelectedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
+    const [selectedLeg, setSelectedLeg] = useState<IApiLegOutput | undefined>(undefined)
+    const [createdLeg, setCreatedLeg] = useState<IApiLegInput | undefined>(undefined)
 
     const onSelectBuoy = (buoy?: IApiBuoyOutput) => {
         setSelectedBuoy(buoy)
     }
+    const onSelectLeg = (leg?: IApiLegOutput) => {
+        setSelectedLeg(leg)
+    }
+
+    useEffect(
+        () => {
+            if (createdLeg) {
+                const createTheLeg = async () => {
+                    await createLeg(createdLeg)
+                    setCreatedLeg(undefined)
+                }
+                createTheLeg()
+            }
+        },
+        [ createdLeg ]
+    )
+    const onCreateLeg = (startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput) => {
+        setCreatedLeg({
+            mapId: map.id,
+            startBuoyId: startBuoy.id,
+            endBuoyId: endBuoy.id,
+        })
+    }
+
     return (
         <div className="flex-grow my-10 flex gap-4">
             {selectedBuoy ? (
@@ -41,8 +69,12 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
                     <MapCanvas
                         map={map}
                         buoys={buoys}
-                        selectedBuoy={selectedBuoy} 
+                        legs={legs}
+                        selectedBuoy={selectedBuoy}
                         onSelectBuoy={onSelectBuoy}
+                        selectedLeg={selectedLeg}
+                        onSelectLeg={onSelectLeg}
+                        onCreateLeg={onCreateLeg}
                     />
                 </div>
             </div>

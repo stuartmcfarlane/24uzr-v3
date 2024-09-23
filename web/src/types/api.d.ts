@@ -37,3 +37,14 @@ export interface IApiBuoyOutput extends IApiBuoyInput{
 }
 
 export type IApiBuoy = IApiBuoyInput | IApiBuoyOutput
+
+export interface IApiLegInput {
+  mapId: number
+  startBuoyId: number
+  endBuoyId: number
+}
+export interface IApiLegOutput extends IApiLegInput{
+  id: number
+}
+
+export type IApiLeg = IApiLegInput | IApiLegOutput

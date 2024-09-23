@@ -3,6 +3,7 @@ import {
     createMapHandler,
     getMapBuoysHandler,
     getMapHandler,
+    getMapLegsHandler,
     getMapsHandler,
     putMapHandler,
 } from "./map.controller";
@@ -85,6 +86,22 @@ async function mapRoutes(server: FastifyInstance) {
       preHandler: [server.authenticate],
     },
     getMapBuoysHandler
+  );
+
+    server.get(
+    "/map/:id/legs",
+    {
+      schema: {
+        tags: ['map'],
+        security: [
+          {
+            bearerAuth: [],
+          }
+        ],
+      },
+      preHandler: [server.authenticate],
+    },
+    getMapLegsHandler
   );
 }
 

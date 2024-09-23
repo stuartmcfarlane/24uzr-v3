@@ -1,5 +1,5 @@
 import { vectorAdd } from "./vector"
-import { realEq } from './math';
+import { realEq } from './math'
 
 export const makePoint = (x: number, y: number) => ({ x, y })
 export const makeRect = (x: number, y: number, width: number, height: number):Rect => [
@@ -22,6 +22,11 @@ export const fmtPoint = (point?: Point) => (
 export const fmtRect = (rect?: Rect) => (
     rect
     ? `<Rect ${fmtPoint(rectPoint(rect))} w ${fmtReal(rectWidth(rect))} h ${fmtReal(rectHeight(rect))}>`
+    : fmtUndefined()
+)
+export const fmtLine = (line?: Line) => (
+    line
+    ? `<Line ${fmtPoint(line[0])} -> ${fmtPoint(line[1])}>`
     : fmtUndefined()
 )
 export const rectPoint = (rect: Rect): Point => rect[0]
@@ -167,7 +172,7 @@ export const fitToClient = (boundingRect: Rect, clientRect?: Rect): Rect => {
 export const rect2viewBox = (rect?: Rect) => {
     if (!rect) {
         return {}
-}
+    }
     const [
         {
             x: x1,
@@ -203,6 +208,15 @@ export const rect2SvgRect = (rect: Rect) => {
         height: rectHeight(rect),
     }
 }
+export const line2SvgLine = (line: Line) => {
+    const [p1, p2] = line
+    return {
+        x1: p1.x,
+        y1: p1.y,
+        x2: p2.x,
+        y2: p2.y,
+    }
+}
 export const makeScreen2svgFactor = (svgRect: Rect, clientRect: Rect) => {
     const aSvg = rectAspectRatio(svgRect)
     const aClient = rectAspectRatio(clientRect)
@@ -215,4 +229,16 @@ export const makeScreen2svgFactor = (svgRect: Rect, clientRect: Rect) => {
 }
 export const screenUnits2canvasUnits = (factor: number = 1, screenUnits: number): number => {
     return screenUnits * (factor || 1)
+}
+export const clientPoint2svgPoint = (svg: SVGSVGElement | null, clientPoint: Point) => {
+    if (!svg) return undefined
+    const svgPoint = svg.createSVGPoint()
+    
+    svgPoint.x = clientPoint.x
+    svgPoint.y = clientPoint.y
+    
+    const screenCTM = svg.getScreenCTM()
+    if (!screenCTM) return undefined
+
+    return svgPoint.matrixTransform(svg.getScreenCTM()?.inverse())
 }

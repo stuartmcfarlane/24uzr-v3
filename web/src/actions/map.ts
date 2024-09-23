@@ -1,10 +1,11 @@
 "use server"
 
 import { getSession } from './session';
-import { apiCreateBuoy, apiCreateMap, apiUpdateBuoy } from '@/services/api';
+import { apiCreateBuoy, apiCreateLeg, apiCreateMap, apiUpdateBuoy } from '@/services/api';
 import { ActionError } from '@/types/action';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { IApiLegInput } from '../types/api';
 
 export const createMap = async (formData: FormData): Promise<ActionError> => {
     const session = await getSession()
@@ -23,6 +24,16 @@ export const createMap = async (formData: FormData): Promise<ActionError> => {
     redirect(`/map/${createdMap.id}`)
 }
 
+export const createLeg = async (leg: IApiLegInput): Promise<ActionError> => {
+    const session = await getSession()
+
+    const createdLeg = await apiCreateLeg(session.apiToken!, leg)
+    if (!createdLeg) return { error: "Failed to create leg" }
+
+    revalidatePath(`/map/${leg.mapId}`)
+
+    return {}
+}
 export const createBuoy = async (formData: FormData): Promise<ActionError> => {
     const session = await getSession()
 

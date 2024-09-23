@@ -1,4 +1,4 @@
-import { IApiBuoyInput, IApiBuoyOutput, IApiMapInput, IApiMapOutput, IApiUser, IApiUserOutput } from "@/types/api"
+import { IApiBuoyInput, IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapInput, IApiMapOutput, IApiUser, IApiUserOutput } from "@/types/api"
 
 const makeApiUrl = (uri: string) => `${process.env.NEXT_PUBLIC_API_URL || process.env.API_URL}${uri}`
 
@@ -136,7 +136,13 @@ export const apiCreateMap = async (
     return createdMap
 }
 
-const withNumericLatLng = ({ lat, lng, ...rest }: MaybeLatLng): LatLng => ({
+const withNumericLatLng = (
+    {
+        lat,
+        lng,
+        ...rest
+    }: MaybeLatLng & IApiBuoyOutput
+): IApiBuoyOutput => ({
     ...rest,
     lat: typeof lat === 'string' ? parseFloat(lat) : lat,
     lng: typeof lng === 'string' ? parseFloat(lng) : lng,
@@ -183,5 +189,46 @@ export const apiGetBuoys = async (
     const buoys = await response.json()
 
     return  buoys.map(withNumericLatLng)
+}
+
+export const apiCreateLeg = async (
+    accessToken: string,
+    leg: IApiLegInput,
+): Promise<IApiLegOutput | null> => {
+
+    const response = await post(accessToken, `/api/legs`, leg)
+
+    if (!response.ok) return null
+    
+    const createdLeg = await response.json() as IApiLegOutput
+    return createdLeg
+}
+
+export const apiUpdateLeg = async (
+    accessToken: string,
+    id: number,
+    leg: IApiLegInput,
+): Promise<IApiLegOutput | null> => {
+
+    const response = await put(accessToken, `/api/leg/${id}`, leg)
+
+    if (!response.ok) return null
+    
+    const updatedLeg = await response.json() as IApiLegOutput
+    return updatedLeg
+}
+
+export const apiGetLegs = async (
+    accessToken: string,
+    mapId: number,
+): Promise<IApiLegOutput[] | null> => {
+
+    const response = await get(accessToken, `/api/map/${mapId}/legs`)
+
+    if (!response.ok) return null
+    
+    const legs = await response.json()
+
+    return  legs
 }
 

@@ -25,8 +25,13 @@ const boilerplateResponseSchema = z.object({
 
 const boilerplatesResponseSchema = z.array(boilerplateResponseSchema);
 
+export const BoilerplateIdParamSchema = z.object({
+    id: z.coerce.number(),
+}).strict()
+
 export type CreateBoilerplateInput = z.infer<typeof createBoilerplateSchema>;
 export type UpdateBoilerplateInput = z.infer<typeof updateBoilerplateSchema>;
+export type BoilerplateIdParamInput = z.infer<typeof BoilerplateIdParamSchema>;
 
 export const { schemas: boilerplateSchemas, $ref } = buildJsonSchemas({
     createBoilerplateSchema,

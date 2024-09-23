@@ -9,6 +9,7 @@ import { MouseEvent, useCallback, useEffect, useRef, useState } from "react"
 type MapBuoyProps = {
     buoy: IApiBuoyOutput
     onSelect?: (buoy: IApiBuoyOutput) => void
+    onHover?: (buoy?: IApiBuoyOutput) => void
     screen2svgFactor?: number
     isSelected?: boolean
 }
@@ -22,6 +23,7 @@ const MapBuoy = (props: MapBuoyProps & ScaleToViewBoxProps) => {
     const {
         buoy,
         onSelect,
+        onHover,
         screen2svgFactor,
         isSelected,
     } = props
@@ -40,8 +42,14 @@ const MapBuoy = (props: MapBuoyProps & ScaleToViewBoxProps) => {
     const fontSize = screenUnits2canvasUnits(screen2svgFactor, FONT_SIZE)
 
     const onClick = () => onSelect && onSelect(buoy)
-    const onMouseEnter = () => setHover(() => true)
-    const onMouseLeave = () => setHover(() => false)
+    const onMouseEnter = () => {
+        onHover && onHover(buoy)
+        setHover(() => true)
+    }
+    const onMouseLeave = () => {
+        onHover && onHover()
+        setHover(() => false)
+    }
 
     return (
         <>
@@ -64,6 +72,8 @@ const MapBuoy = (props: MapBuoyProps & ScaleToViewBoxProps) => {
                 onClick={onClick}
                 onMouseEnter={onMouseEnter}
                 onMouseLeave={onMouseLeave}
+                data-drag-target-type={'buoy'}
+                data-drag-target={JSON.stringify(buoy)}
             />
         </>
     )
