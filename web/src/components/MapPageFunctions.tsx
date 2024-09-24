@@ -71,6 +71,7 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
         [ createdLeg ]
     )
     const onCreateLeg = (startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput) => {
+        if (map.isLocked) return
         setCreatedLeg({
             mapId: map.id,
             startBuoyId: startBuoy.id,
