@@ -246,26 +246,14 @@ export const line2SvgLine = (line: Line) => {
     }
 }
 export const makeScreen2svgFactor = (svgRef: RefObject<SVGSVGElement>): number => {
-    console.log(`>makeScreen2svgFactor`, svgRef)
     if (!svgRef.current) return 1
     const svgP1 = clientPoint2svgPoint(svgRef.current, makePoint(0, 0))
     const svgP2 = clientPoint2svgPoint(svgRef.current, makePoint(100, 0))
     if (!svgP1 || !svgP2) return 1
     const svg100 = svgP2.x - svgP1.x
     const factor =  svg100 / 100
-    console.log(`<makeScreen2svgFactor ${fmtReal(svg100, 0)} / 100 ${fmtReal(factor)}`)
     return factor
 }
-// export const makeScreen2svgFactor = (svgRect: Rect, clientRect: Rect) => {
-//     const aSvg = rectAspectRatio(svgRect)
-//     const aClient = rectAspectRatio(clientRect)
-//     if (realEq(0.01)(aSvg, aClient) || aSvg < aClient) {
-//         const factor = rectWidth(svgRect) / rectWidth(clientRect)
-//         return factor
-//     }
-//     const factor = rectHeight(svgRect) / rectHeight(clientRect)
-//     return factor
-// }
 export const screenUnits2canvasUnits = (factor: number = 1, screenUnits: number): number => {
     return screenUnits * (factor || 1)
 }
@@ -315,10 +303,8 @@ export const rectGrowAroundPoint = (
     const grownRect = rectGrow(margin, centeredRect)
     const α2 = rectAspectRatio(grownRect)
     if (!realEq(0.0001)(α1, α2)) {
-        console.error(`!aspect ration broken ${α1} !== ${α2}`)
     }
     if (rectWidth(grownRect) <= 0 || rectHeight(grownRect) <= 0) {
-        console.log(`!rectGrowAroundPoint too small`)
         return rect
     }
     const vRecenter = vectorScale(-rectWidth(rect) / rectWidth(grownRect), vCenter)
@@ -326,7 +312,6 @@ export const rectGrowAroundPoint = (
     return resultRect
 }
 export const rectLimitTo = (limitRect: Rect, rect: Rect): Rect => {
-    console.log(`>rectLimitTo ${fmtRect(limitRect)} ${fmtRect(rect)}`)
     if (rectWidth(rect) > rectWidth(limitRect)) return limitRect
     const [
         {
@@ -355,6 +340,5 @@ export const rectLimitTo = (limitRect: Rect, rect: Rect): Rect => {
             y: Math.min(limitY2, y2),
         }
     ]
-    console.log(`<rectLimitTo ${fmtRect(result)}`)
     return result
 }

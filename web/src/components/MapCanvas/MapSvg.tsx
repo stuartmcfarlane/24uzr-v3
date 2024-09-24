@@ -19,6 +19,7 @@ import { actualLegs } from "@/lib/legs"
 import { MAX_MARGIN, MIN_MARGIN } from "@/lib/constants"
 import { useScrollWheelZoom } from "@/hooks/useScrollWheelZoom"
 import MouseCursor from "./MouseCursor"
+import ArrowMarker from "./ArrowMarker"
 
 const DEBUG = false
 
@@ -108,7 +109,6 @@ const MapSvg = (props: MapSvgProps) => {
                 `10%`,
                 boundingRect
             )
-            console.log(`setMaxBoundingViewBoxRect( ${fmtRect(maxBoundingRect)} )`)
             setMaxBoundingViewBoxRect(maxBoundingRect)
         },
         [ boundingRect ]
@@ -123,7 +123,6 @@ const MapSvg = (props: MapSvgProps) => {
     )
     useEffect(
         () => {
-            console.log(`setViewBoxRect(${fmtRect(initialBoundingViewBoxRect)})`)
             setViewBoxRect(initialBoundingViewBoxRect)
         },
         [initialBoundingViewBoxRect]
@@ -163,18 +162,9 @@ const MapSvg = (props: MapSvgProps) => {
                 onClick={onClick}
             >
                 <defs>
-                    <marker
-                        id="arrow"
-                        viewBox="0 0 10 10"
-                        refX="10"
-                        refY="5"
-                        markerWidth="6"
-                        markerHeight="6"
-                        orient="auto-start-reverse">
-                        <path d="M 0 0 L 10 5 L 0 10 z"
-                            fill="context-stroke"
-                        />
-                    </marker>
+                    <ArrowMarker
+                        screen2svgFactor={screen2svgFactor}
+                    />
                 </defs>
                 {mouseSvgPoint && (
                     <MouseCursor

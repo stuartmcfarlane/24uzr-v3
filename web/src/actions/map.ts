@@ -53,7 +53,6 @@ export const createBuoy = async (formData: FormData): Promise<ActionError> => {
         mapId: formMapId,
     }
 
-    console.log(`createBuoy`, buoy)
     if (!buoy.name || isNaN(buoy.lat) || isNaN(buoy.lng)) {
         return { error: "Missing data" }
     }

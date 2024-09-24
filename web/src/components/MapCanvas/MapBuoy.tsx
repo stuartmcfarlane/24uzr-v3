@@ -1,11 +1,10 @@
 "use client"
 
 import { BUOY_CLICK_RADIUS, BUOY_FONT_SIZE, BUOY_RADIUS, BUOY_TEXT_OFFSET } from "@/lib/constants"
-import { curry } from "@/lib/fp"
 import { latLng2canvas, makePoint, screenUnits2canvasUnits } from "@/lib/graph"
 import { vectorAdd } from "@/lib/vector"
 import { IApiBuoyOutput } from "@/types/api"
-import { MouseEvent, useCallback, useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 
 type MapBuoyProps = {
     buoy: IApiBuoyOutput
