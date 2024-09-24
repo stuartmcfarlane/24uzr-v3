@@ -1,3 +1,4 @@
+import { realEq } from "./math"
 import { vectorAdd } from "./vector"
 import { RefObject } from "react"
 
@@ -14,7 +15,7 @@ export const latLng2canvas = ({ lat, lng }: LatLng): Point => {
     }
 }
 export const fmtUndefined = () => '<undefined>'
-export const fmtReal = (n: number, precision: number = 2) => n.toFixed(precision)
+export const fmtReal = (n: number, precision: number = 4) => n.toFixed(precision)
 export const fmtPoint = (point?: Point) => (
     point
     ? `(${fmtReal(point.x)}, ${fmtReal(point.y)})`
@@ -123,6 +124,17 @@ export const rectGrow = (margin_: number, rect: Rect): Rect => {
             ? Math.min(width, height)
             : margin_
     )
+    const α = rectAspectRatio(rect)
+    const dX = (
+        α >= 1
+            ? margin
+            : margin / α
+    )
+    const dY = (
+        α >= 1
+            ? margin / α
+            : margin
+    )
     const [
         {
             x: x1,
@@ -134,11 +146,11 @@ export const rectGrow = (margin_: number, rect: Rect): Rect => {
     ] = rect
     return [
         {
-            x: x1 - margin,
-            y: y1 - margin,
+            x: x1 - dX,
+            y: y1 - dY,
         }, {
-            x: x2 + margin,
-            y: y2 + margin,
+            x: x2 + dX,
+            y: y2 + dY,
         }
     ]
 }
@@ -299,8 +311,14 @@ export const rectGrowAroundPoint = (
 ): Rect => {
     const vCenter = points2vector(point, rectCenter(rect))
     const centeredRect = rectTranslate(vCenter, rect)
+    const α1 = rectAspectRatio(centeredRect) 
     const grownRect = rectGrow(margin, centeredRect)
+    const α2 = rectAspectRatio(grownRect)
+    if (!realEq(0.0001)(α1, α2)) {
+        console.error(`!aspect ration broken ${α1} !== ${α2}`)
+    }
     if (rectWidth(grownRect) <= 0 || rectHeight(grownRect) <= 0) {
+        console.log(`!rectGrowAroundPoint too small`)
         return rect
     }
     const vRecenter = vectorScale(-rectWidth(rect) / rectWidth(grownRect), vCenter)
