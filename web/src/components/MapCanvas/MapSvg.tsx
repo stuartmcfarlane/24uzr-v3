@@ -1,24 +1,24 @@
 "use client"
 
-import { clientPoint2svgPoint, domRect2rect, fitToClient, rectGrowMargin, latLng2canvas, makePoint, makeRect, makeScreen2svgFactor, points2boundingRect, rect2viewBox, screenUnits2canvasUnits, fmtRect } from "@/lib/graph"
+import { clientPoint2svgPoint, domRect2rect, fitToClient, rectGrowMargin, latLng2canvas, makePoint, makeRect, makeScreen2svgFactor, points2boundingRect, rect2viewBox, screenUnits2canvasUnits, fmtRect, fmtReal } from "@/lib/graph"
 import { IApiBuoyOutput, IApiLegOutput } from "@/types/api"
 import MapBuoy from "./MapBuoy"
-import { MouseEvent, useEffect, useRef, useState } from "react"
+import { act, MouseEvent, useEffect, useRef, useState } from "react"
 import { rect2SvgRect } from '../../lib/graph';
 import useClientDimensions from "@/hooks/useClientDimensions"
 import { useDebouncedCallback } from "use-debounce"
 import { realEq } from "@/lib/math"
 import { vectorAdd } from '../../lib/vector';
-import { MousePosition, useMouseDrag } from "@/hooks/useMouseDrag"
-import { useMousePosition } from "@/hooks/useMousePosition"
+import { useMouseDrag } from "@/hooks/useMouseDrag"
+import { useMouseSvgPosition } from "@/hooks/useMousePosition"
 import { useChange } from "@/hooks/useChange"
 import MapLegDrag from "./MapLegDrag"
-import { apiCreateLeg } from "@/services/api"
 import MapLeg from "./MapLeg"
-import { and, idIs, idIsNot } from "@/lib/fp"
+import { idIs } from "@/lib/fp"
 import { actualLegs } from "@/lib/legs"
 import { MAX_MARGIN, MIN_MARGIN } from "@/lib/constants"
 import { useScrollWheelZoom } from "@/hooks/useScrollWheelZoom"
+import MouseCursor from "./MouseCursor"
 
 const DEBUG = false
 
@@ -52,6 +52,7 @@ const MapSvg = (props: MapSvgProps) => {
     const unitRef = useRef<SVGRectElement>(null)
     
     const [viewBoxRect, setViewBoxRect] = useState<Rect | undefined>()
+    const [actualViewBoxRect, setActualViewBoxRect] = useState<Rect | undefined>()
     const [maxBoundingViewBoxRect, setMaxBoundingViewBoxRect] = useState<Rect | undefined>()
     const [initialBoundingViewBoxRect, setInitialBoundingViewBoxRect] = useState<Rect | undefined>()
     const [boundingRect, setBoundingRect] = useState<Rect | undefined>()
@@ -88,28 +89,29 @@ const MapSvg = (props: MapSvgProps) => {
     )
 
     useEffect(
-        useDebouncedCallback(() => {
+        () => {
             const boundingRect = rectGrowMargin(
-                `10%,${screenUnits2canvasUnits(screen2svgFactor, MIN_MARGIN)}`,
+                `10%`,
                 points2boundingRect(
                     buoys.map(latLng2canvas)
                 )
             )
             setBoundingRect(boundingRect)
-        }, 50),
-        [ buoys, screen2svgFactor ]
+            setInitialBoundingViewBoxRect(boundingRect)
+        },
+        [ buoys ]
     )
     useEffect(
         () => {
             if (!boundingRect) return
             const maxBoundingRect = rectGrowMargin(
-                `50%,${screenUnits2canvasUnits(screen2svgFactor, MAX_MARGIN)}`,
+                `10%`,
                 boundingRect
             )
             console.log(`setMaxBoundingViewBoxRect( ${fmtRect(maxBoundingRect)} )`)
             setMaxBoundingViewBoxRect(maxBoundingRect)
         },
-        [ boundingRect, screen2svgFactor ]
+        [ boundingRect ]
     )
     useEffect(
         () => {
@@ -121,58 +123,43 @@ const MapSvg = (props: MapSvgProps) => {
     )
     useEffect(
         () => {
-            if (!svgRef.current) return
-            if (!boundingRect) return
-            const viewBoxRect = fitToClient(boundingRect, clientRect)
-            console.log(`setInitialBoundingViewBoxRect( ${fmtRect(viewBoxRect)} )`)
-            setInitialBoundingViewBoxRect(viewBoxRect)
-        },
-        [ boundingRect, clientRect ]
-    )
-    useEffect(
-        () => {
-            console.log(`!!initialBoundingViewBoxRect => setViewBoxRect(${fmtRect(initialBoundingViewBoxRect)})`)
+            console.log(`setViewBoxRect(${fmtRect(initialBoundingViewBoxRect)})`)
             setViewBoxRect(initialBoundingViewBoxRect)
         },
         [initialBoundingViewBoxRect]
     )
-    useEffect(
-        () => {
-            if (!viewBoxRect || !clientRect) return
-            const newFactor = makeScreen2svgFactor(viewBoxRect, clientRect)
-            // when the factor is small is can converge slowly so we stop when the delta is small
-            setScreen2svgFactor((screen2svgFactor) => {
-                if (realEq(0.001)(newFactor, screen2svgFactor)) {
-                    return screen2svgFactor
-                }
-                return newFactor
-            })
-        },
-        [ viewBoxRect, clientRect ]
-    )
 
     const zoomedViewBoxRect = useScrollWheelZoom(svgRef, initialBoundingViewBoxRect, maxBoundingViewBoxRect)
 
-    useChange(
+    useEffect(
         () => {
-            if (!zoomedViewBoxRect) return
-            console.log(`!!zoomedViewBoxRect => setViewBoxRect(${fmtRect(zoomedViewBoxRect)})`)
-            setViewBoxRect(zoomedViewBoxRect)
+            const actual = zoomedViewBoxRect || viewBoxRect
+            if (!actual || !clientRect) return
+            setActualViewBoxRect(fitToClient(actual, clientRect))
         },
-        [zoomedViewBoxRect]
+        [ boundingRect, clientRect, viewBoxRect, zoomedViewBoxRect ]
+    )
+    useEffect(
+        () => {
+            const newFactor = makeScreen2svgFactor(svgRef)
+            setScreen2svgFactor(newFactor)
+        },
+        [ actualViewBoxRect ]
     )
 
     const onClick = (e: MouseEvent<SVGSVGElement>) => {
         if (e.target === svgRef?.current) onSelectBuoy && onSelectBuoy()
     }
+    const mouseSvgPoint = useMouseSvgPosition(svgRef)
+
     return (
         <div ref={containerRef} className="w-full h-full relative" >
             <svg
                 ref={svgRef}
                 width={clientDimensions.width}
                 height={clientDimensions.height}
-                {...rect2viewBox(viewBoxRect)}
-                className="absolute"
+                {...rect2viewBox(actualViewBoxRect)}
+                className="map-canvas absolute"
                 onClick={onClick}
             >
                 <defs>
@@ -189,6 +176,12 @@ const MapSvg = (props: MapSvgProps) => {
                         />
                     </marker>
                 </defs>
+                {mouseSvgPoint && (
+                    <MouseCursor
+                        point={mouseSvgPoint}
+                        screen2svgFactor={screen2svgFactor}
+                    />
+                )}
                 {(actualLegs(legs)).map(([leg, returnLeg]) => (
                     <MapLeg key={leg.id}
                         leg={leg}

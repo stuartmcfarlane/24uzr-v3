@@ -1,5 +1,6 @@
 "use client"
 
+import { clientPoint2svgPoint } from "@/lib/graph";
 import { RefObject, useEffect, useState } from "react";
 
 export function useMousePosition() {
@@ -36,3 +37,11 @@ export function useMousePositionRelative(elementRef: RefObject<HTMLElement | SVG
     }
 }
 
+export const useMouseSvgPosition = (svgRef: RefObject<SVGSVGElement>): Point | undefined  => {
+
+    const mousePosition = useMousePosition()
+
+    const svgPoint = clientPoint2svgPoint(svgRef.current, mousePosition)
+
+    return svgPoint
+}

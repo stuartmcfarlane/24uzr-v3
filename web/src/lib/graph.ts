@@ -1,15 +1,16 @@
 import { vectorAdd } from "./vector"
-import { realEq } from './math'
+import { RefObject } from "react"
 
 export const makePoint = (x: number, y: number) => ({ x, y })
 export const makeRect = (x: number, y: number, width: number, height: number):Rect => [
     makePoint(x, y),
     makePoint(x + width, y + height),
 ]
+export const makeLine = (p1: Point, p2: Point): Line => [ p1, p2 ]
 export const latLng2canvas = ({ lat, lng }: LatLng): Point => {
     return {
-        x: lng * 10,
-        y: lat * -10,
+        x: lng * 100,
+        y: lat * -100,
     }
 }
 export const fmtUndefined = () => '<undefined>'
@@ -114,7 +115,14 @@ export const rectGrowMargin = (maybeMargin: number | string, rect: Rect): Rect =
     const margin = parseMargin(maybeMargin, rect)
     return rectGrow(margin, rect)
 }
-export const rectGrow = (margin: number, rect: Rect): Rect => {
+export const rectGrow = (margin_: number, rect: Rect): Rect => {
+    const width = rectWidth(rect)
+    const height = rectHeight(rect)
+    const margin = (
+        width < 2 * margin_ || height < 2 * margin_
+            ? Math.min(width, height)
+            : margin_
+    )
     const [
         {
             x: x1,
@@ -225,16 +233,27 @@ export const line2SvgLine = (line: Line) => {
         y2: p2.y,
     }
 }
-export const makeScreen2svgFactor = (svgRect: Rect, clientRect: Rect) => {
-    const aSvg = rectAspectRatio(svgRect)
-    const aClient = rectAspectRatio(clientRect)
-    if (realEq(0.01)(aSvg, aClient) || aSvg < aClient) {
-        const factor = rectWidth(svgRect) / rectWidth(clientRect)
-        return factor
-    }
-    const factor = rectHeight(svgRect) / rectHeight(clientRect)
+export const makeScreen2svgFactor = (svgRef: RefObject<SVGSVGElement>): number => {
+    console.log(`>makeScreen2svgFactor`, svgRef)
+    if (!svgRef.current) return 1
+    const svgP1 = clientPoint2svgPoint(svgRef.current, makePoint(0, 0))
+    const svgP2 = clientPoint2svgPoint(svgRef.current, makePoint(100, 0))
+    if (!svgP1 || !svgP2) return 1
+    const svg100 = svgP2.x - svgP1.x
+    const factor =  svg100 / 100
+    console.log(`<makeScreen2svgFactor ${fmtReal(svg100, 0)} / 100 ${fmtReal(factor)}`)
     return factor
 }
+// export const makeScreen2svgFactor = (svgRect: Rect, clientRect: Rect) => {
+//     const aSvg = rectAspectRatio(svgRect)
+//     const aClient = rectAspectRatio(clientRect)
+//     if (realEq(0.01)(aSvg, aClient) || aSvg < aClient) {
+//         const factor = rectWidth(svgRect) / rectWidth(clientRect)
+//         return factor
+//     }
+//     const factor = rectHeight(svgRect) / rectHeight(clientRect)
+//     return factor
+// }
 export const screenUnits2canvasUnits = (factor: number = 1, screenUnits: number): number => {
     return screenUnits * (factor || 1)
 }
@@ -278,20 +297,19 @@ export const rectGrowAroundPoint = (
     point: Point,
     rect: Rect
 ): Rect => {
-    console.log(`>rectGrowAroundPoint ${fmtReal(margin)} ${fmtPoint(point)} ${fmtRect(rect)}`)
-    const vCenter = points2vector(point, rectPoint(rect))
-    console.log(` rectGrowAroundPoint ${fmtVector(vCenter)}`)
+    const vCenter = points2vector(point, rectCenter(rect))
     const centeredRect = rectTranslate(vCenter, rect)
-    console.log(` rectGrowAroundPoint ${fmtRect(centeredRect)}`)
     const grownRect = rectGrow(margin, centeredRect)
-    console.log(` rectGrowAroundPoint ${fmtRect(grownRect)}`)
+    if (rectWidth(grownRect) <= 0 || rectHeight(grownRect) <= 0) {
+        return rect
+    }
     const vRecenter = vectorScale(-rectWidth(rect) / rectWidth(grownRect), vCenter)
-    console.log(` rectGrowAroundPoint ${fmtVector(vRecenter)}`)
     const resultRect = rectTranslate(vRecenter, grownRect)
-    console.log(`<rectGrowAroundPoint ${fmtRect(resultRect)}`)
     return resultRect
 }
 export const rectLimitTo = (limitRect: Rect, rect: Rect): Rect => {
+    console.log(`>rectLimitTo ${fmtRect(limitRect)} ${fmtRect(rect)}`)
+    if (rectWidth(rect) > rectWidth(limitRect)) return limitRect
     const [
         {
             x: limitX1,
@@ -310,7 +328,7 @@ export const rectLimitTo = (limitRect: Rect, rect: Rect): Rect => {
             y: y2,
         }
     ] = rect
-    return [
+    const result: Rect = [
         {
             x: Math.max(limitX1, x1),
             y: Math.max(limitY1, y1),
@@ -319,4 +337,6 @@ export const rectLimitTo = (limitRect: Rect, rect: Rect): Rect => {
             y: Math.min(limitY2, y2),
         }
     ]
+    console.log(`<rectLimitTo ${fmtRect(result)}`)
+    return result
 }
