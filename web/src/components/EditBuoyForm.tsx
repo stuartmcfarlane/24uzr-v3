@@ -43,7 +43,7 @@ const EditBuoyForm = (props: EditBuoyFormProps) => {
     return (
         <form
             action={updateBuoyAction}
-            className="flex flex-col gap-4 mt-4 border-t-2 pt-4"
+            className="flex flex-col gap-4"
         >
             <input
                 type="text"

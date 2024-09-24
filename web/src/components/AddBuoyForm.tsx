@@ -15,7 +15,7 @@ const AddBuoyForm = (props: AddBuoyFormProps) => {
         formRef.current?.reset()
     }
     return (
-        <form ref={formRef} action={createBuoyAction} className="flex flex-col gap-4 mt-4 border-t-2 pt-4">
+        <form ref={formRef} action={createBuoyAction} className="flex flex-col gap-4">
             <input
                 type="text"
                 name="name"

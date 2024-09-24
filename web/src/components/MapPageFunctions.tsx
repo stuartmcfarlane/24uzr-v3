@@ -8,6 +8,7 @@ import EditBuoyForm from "./EditBuoyForm"
 import { createLeg, updateMap } from "@/actions/map"
 import { idIs } from "@/lib/fp"
 import PadlockIcon from "./PadlockIcon"
+import BuoyIcon from "./BuoyIcon"
 
 type MapPageClientFunctionsProps = {
     map: IApiMapOutput
@@ -22,6 +23,7 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
         legs,
     } = props
 
+    const [buoyOptionsOpen, setBuoyOptionsOpen] = useState(false)
     const [selectedBuoy, setSelectedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
     const [selectedLeg, setSelectedLeg] = useState<IApiLegOutput | undefined>(undefined)
     const [createdLeg, setCreatedLeg] = useState<IApiLegInput | undefined>(undefined)
@@ -95,11 +97,26 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
                     </span>
                 </h1>
                 {!map.isLocked && (
-                    selectedBuoy ? (
-                        <EditBuoyForm map={map} buoy={selectedBuoy} onSelectBuoy={onSelectBuoy} />
-                    ) : (
-                        <AddBuoyForm map={map} />
-                    )
+                    <div className="flex flex-col gap-4 mt-4 border-t-2 pt-4">
+                        <div
+                            className="flex gap-4"
+                            onClick={() => setBuoyOptionsOpen(open => !open)}
+                        >
+                            <div className="w-7">
+                                <BuoyIcon/>
+                            </div>
+                            <div className="">
+                                {buoyOptionsOpen ? 'Hide buoy options' : 'Show buoy options'}
+                            </div>
+                        </div>
+                        {buoyOptionsOpen && (
+                            selectedBuoy ? (
+                                <EditBuoyForm map={map} buoy={selectedBuoy} onSelectBuoy={onSelectBuoy} />
+                            ) : (
+                                <AddBuoyForm map={map} />
+                            )
+                        )}
+                    </div>
                 )}
             </div>
             <div className="border flex-grow flex flex-col">
