@@ -1,13 +1,11 @@
 "use client"
 
-import { clientPoint2svgPoint, domRect2rect, fitToClient, rectGrowMargin, latLng2canvas, makePoint, makeRect, makeScreen2svgFactor, points2boundingRect, rect2viewBox, screenUnits2canvasUnits, fmtRect, fmtReal } from "@/lib/graph"
+import { clientPoint2svgPoint, domRect2rect, fitToClient, rectGrowMargin, latLng2canvas, makePoint, makeRect, makeScreen2svgFactor, points2boundingRect, rect2viewBox, screenUnits2canvasUnits } from "@/lib/graph"
 import { IApiBuoyOutput, IApiLegOutput } from "@/types/api"
 import MapBuoy from "./MapBuoy"
-import { act, MouseEvent, useEffect, useRef, useState } from "react"
+import { MouseEvent, useEffect, useRef, useState } from "react"
 import { rect2SvgRect } from '../../lib/graph';
 import useClientDimensions from "@/hooks/useClientDimensions"
-import { useDebouncedCallback } from "use-debounce"
-import { realEq } from "@/lib/math"
 import { vectorAdd } from '../../lib/vector';
 import { useMouseDrag } from "@/hooks/useMouseDrag"
 import { useMouseSvgPosition } from "@/hooks/useMousePosition"
@@ -16,7 +14,6 @@ import MapLegDrag from "./MapLegDrag"
 import MapLeg from "./MapLeg"
 import { idIs } from "@/lib/fp"
 import { actualLegs } from "@/lib/legs"
-import { MAX_MARGIN, MIN_MARGIN } from "@/lib/constants"
 import { useScrollWheelZoom } from "@/hooks/useScrollWheelZoom"
 import MouseCursor from "./MouseCursor"
 import ArrowMarker from "./ArrowMarker"
@@ -162,9 +159,7 @@ const MapSvg = (props: MapSvgProps) => {
                 onClick={onClick}
             >
                 <defs>
-                    <ArrowMarker
-                        screen2svgFactor={screen2svgFactor}
-                    />
+                    <ArrowMarker />
                 </defs>
                 {mouseSvgPoint && (
                     <MouseCursor

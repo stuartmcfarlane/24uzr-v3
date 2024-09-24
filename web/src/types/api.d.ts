@@ -22,6 +22,7 @@ export interface IApiMapInput {
 }
 export interface IApiMapOutput extends IApiMapInput {
   id: number
+  isLocked: boolean
 }
 
 export type IApiMap = IApiMapInput | IApiMapOutput

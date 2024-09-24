@@ -1,11 +1,8 @@
 "use server"
 
 import { getSession } from "@/actions/session"
-import MapCanvas from "@/components/ MapCanvas"
-import AddBuoyForm from "@/components/AddBuoyForm"
 import MapPageClientFunctions from "@/components/MapPageFunctions"
-import { apiCreateLeg, apiGetBuoys, apiGetLegs, apiGetMap } from "@/services/api"
-import { IApiBuoyOutput } from "@/types/api"
+import { apiGetBuoys, apiGetLegs, apiGetMap } from "@/services/api"
 import { redirect } from "next/navigation"
 
 const MapPage = async ({

@@ -145,6 +145,19 @@ export const apiCreateMap = async (
     const createdMap = await response.json()
     return createdMap
 }
+export const apiUpdateMap = async (
+    accessToken: string,
+    id: number,
+    map: IApiMapInput,
+): Promise<IApiMapOutput | null> => {
+
+    const response = await put(accessToken, `/api/map/${id}`, map)
+
+    if (!response.ok) return null
+    
+    const updatedMap = await response.json() as IApiMapOutput
+    return updatedMap
+}
 
 const withNumericLatLng = (
     {

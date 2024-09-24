@@ -3,6 +3,7 @@ import { buildJsonSchemas } from 'fastify-zod';
 
 const mapInput = {
     name: z.string(),
+    isLocked: z.boolean(),
 };
 
 const mapGenerated = {

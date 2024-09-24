@@ -37,7 +37,7 @@ export const UserScalarFieldEnumSchema = z.enum(['id','email','name','password',
 
 export const ShipScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','name','ownerId']);
 
-export const MapScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','name']);
+export const MapScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','isLocked','name']);
 
 export const BuoyScalarFieldEnumSchema = z.enum(['id','name','lat','lng','mapId']);
 
@@ -87,6 +87,7 @@ export const MapSchema = z.object({
   id: z.number().int(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
+  isLocked: z.boolean(),
   name: z.string(),
 })
 
@@ -203,6 +204,7 @@ export const MapSelectSchema: z.ZodType<Prisma.MapSelect> = z.object({
   id: z.boolean().optional(),
   createdAt: z.boolean().optional(),
   updatedAt: z.boolean().optional(),
+  isLocked: z.boolean().optional(),
   name: z.boolean().optional(),
   Buoy: z.union([z.boolean(),z.lazy(() => BuoyFindManyArgsSchema)]).optional(),
   Leg: z.union([z.boolean(),z.lazy(() => LegFindManyArgsSchema)]).optional(),
@@ -396,6 +398,7 @@ export const MapWhereInputSchema: z.ZodType<Prisma.MapWhereInput> = z.object({
   id: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  isLocked: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   Buoy: z.lazy(() => BuoyListRelationFilterSchema).optional(),
   Leg: z.lazy(() => LegListRelationFilterSchema).optional()
@@ -405,6 +408,7 @@ export const MapOrderByWithRelationInputSchema: z.ZodType<Prisma.MapOrderByWithR
   id: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  isLocked: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   Buoy: z.lazy(() => BuoyOrderByRelationAggregateInputSchema).optional(),
   Leg: z.lazy(() => LegOrderByRelationAggregateInputSchema).optional()
@@ -420,6 +424,7 @@ export const MapWhereUniqueInputSchema: z.ZodType<Prisma.MapWhereUniqueInput> = 
   NOT: z.union([ z.lazy(() => MapWhereInputSchema),z.lazy(() => MapWhereInputSchema).array() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  isLocked: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   Buoy: z.lazy(() => BuoyListRelationFilterSchema).optional(),
   Leg: z.lazy(() => LegListRelationFilterSchema).optional()
@@ -429,6 +434,7 @@ export const MapOrderByWithAggregationInputSchema: z.ZodType<Prisma.MapOrderByWi
   id: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  isLocked: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => MapCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => MapAvgOrderByAggregateInputSchema).optional(),
@@ -444,6 +450,7 @@ export const MapScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.MapScalar
   id: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  isLocked: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
   name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
 }).strict();
 
@@ -681,6 +688,7 @@ export const ShipUncheckedUpdateManyInputSchema: z.ZodType<Prisma.ShipUncheckedU
 export const MapCreateInputSchema: z.ZodType<Prisma.MapCreateInput> = z.object({
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  isLocked: z.boolean().optional(),
   name: z.string(),
   Buoy: z.lazy(() => BuoyCreateNestedManyWithoutMapInputSchema).optional(),
   Leg: z.lazy(() => LegCreateNestedManyWithoutMapInputSchema).optional()
@@ -690,6 +698,7 @@ export const MapUncheckedCreateInputSchema: z.ZodType<Prisma.MapUncheckedCreateI
   id: z.number().int().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  isLocked: z.boolean().optional(),
   name: z.string(),
   Buoy: z.lazy(() => BuoyUncheckedCreateNestedManyWithoutMapInputSchema).optional(),
   Leg: z.lazy(() => LegUncheckedCreateNestedManyWithoutMapInputSchema).optional()
@@ -698,6 +707,7 @@ export const MapUncheckedCreateInputSchema: z.ZodType<Prisma.MapUncheckedCreateI
 export const MapUpdateInputSchema: z.ZodType<Prisma.MapUpdateInput> = z.object({
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  isLocked: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   Buoy: z.lazy(() => BuoyUpdateManyWithoutMapNestedInputSchema).optional(),
   Leg: z.lazy(() => LegUpdateManyWithoutMapNestedInputSchema).optional()
@@ -707,6 +717,7 @@ export const MapUncheckedUpdateInputSchema: z.ZodType<Prisma.MapUncheckedUpdateI
   id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  isLocked: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   Buoy: z.lazy(() => BuoyUncheckedUpdateManyWithoutMapNestedInputSchema).optional(),
   Leg: z.lazy(() => LegUncheckedUpdateManyWithoutMapNestedInputSchema).optional()
@@ -716,12 +727,14 @@ export const MapCreateManyInputSchema: z.ZodType<Prisma.MapCreateManyInput> = z.
   id: z.number().int().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  isLocked: z.boolean().optional(),
   name: z.string()
 }).strict();
 
 export const MapUpdateManyMutationInputSchema: z.ZodType<Prisma.MapUpdateManyMutationInput> = z.object({
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  isLocked: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
@@ -729,6 +742,7 @@ export const MapUncheckedUpdateManyInputSchema: z.ZodType<Prisma.MapUncheckedUpd
   id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  isLocked: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
@@ -1069,6 +1083,7 @@ export const MapCountOrderByAggregateInputSchema: z.ZodType<Prisma.MapCountOrder
   id: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  isLocked: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
@@ -1080,6 +1095,7 @@ export const MapMaxOrderByAggregateInputSchema: z.ZodType<Prisma.MapMaxOrderByAg
   id: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  isLocked: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
@@ -1087,6 +1103,7 @@ export const MapMinOrderByAggregateInputSchema: z.ZodType<Prisma.MapMinOrderByAg
   id: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  isLocked: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
@@ -1775,6 +1792,7 @@ export const LegScalarWhereInputSchema: z.ZodType<Prisma.LegScalarWhereInput> = 
 export const MapCreateWithoutBuoyInputSchema: z.ZodType<Prisma.MapCreateWithoutBuoyInput> = z.object({
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  isLocked: z.boolean().optional(),
   name: z.string(),
   Leg: z.lazy(() => LegCreateNestedManyWithoutMapInputSchema).optional()
 }).strict();
@@ -1783,6 +1801,7 @@ export const MapUncheckedCreateWithoutBuoyInputSchema: z.ZodType<Prisma.MapUnche
   id: z.number().int().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  isLocked: z.boolean().optional(),
   name: z.string(),
   Leg: z.lazy(() => LegUncheckedCreateNestedManyWithoutMapInputSchema).optional()
 }).strict();
@@ -1806,6 +1825,7 @@ export const MapUpdateToOneWithWhereWithoutBuoyInputSchema: z.ZodType<Prisma.Map
 export const MapUpdateWithoutBuoyInputSchema: z.ZodType<Prisma.MapUpdateWithoutBuoyInput> = z.object({
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  isLocked: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   Leg: z.lazy(() => LegUpdateManyWithoutMapNestedInputSchema).optional()
 }).strict();
@@ -1814,6 +1834,7 @@ export const MapUncheckedUpdateWithoutBuoyInputSchema: z.ZodType<Prisma.MapUnche
   id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  isLocked: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   Leg: z.lazy(() => LegUncheckedUpdateManyWithoutMapNestedInputSchema).optional()
 }).strict();
@@ -1821,6 +1842,7 @@ export const MapUncheckedUpdateWithoutBuoyInputSchema: z.ZodType<Prisma.MapUnche
 export const MapCreateWithoutLegInputSchema: z.ZodType<Prisma.MapCreateWithoutLegInput> = z.object({
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  isLocked: z.boolean().optional(),
   name: z.string(),
   Buoy: z.lazy(() => BuoyCreateNestedManyWithoutMapInputSchema).optional()
 }).strict();
@@ -1829,6 +1851,7 @@ export const MapUncheckedCreateWithoutLegInputSchema: z.ZodType<Prisma.MapUnchec
   id: z.number().int().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  isLocked: z.boolean().optional(),
   name: z.string(),
   Buoy: z.lazy(() => BuoyUncheckedCreateNestedManyWithoutMapInputSchema).optional()
 }).strict();
@@ -1852,6 +1875,7 @@ export const MapUpdateToOneWithWhereWithoutLegInputSchema: z.ZodType<Prisma.MapU
 export const MapUpdateWithoutLegInputSchema: z.ZodType<Prisma.MapUpdateWithoutLegInput> = z.object({
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  isLocked: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   Buoy: z.lazy(() => BuoyUpdateManyWithoutMapNestedInputSchema).optional()
 }).strict();
@@ -1860,6 +1884,7 @@ export const MapUncheckedUpdateWithoutLegInputSchema: z.ZodType<Prisma.MapUnchec
   id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  isLocked: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   Buoy: z.lazy(() => BuoyUncheckedUpdateManyWithoutMapNestedInputSchema).optional()
 }).strict();

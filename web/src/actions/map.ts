@@ -1,12 +1,12 @@
 "use server"
 
 import { getSession } from './session';
-import { apiCreateBuoy, apiCreateLeg, apiCreateMap, apiDeleteBuoy, apiUpdateBuoy } from '@/services/api';
+import { apiCreateBuoy, apiCreateLeg, apiCreateMap, apiDeleteBuoy, apiUpdateBuoy, apiUpdateMap } from '@/services/api';
 import { ActionError } from '@/types/action';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { IApiLegInput } from '../types/api';
-import { geo2decimal, parseNameLatLng } from '@/lib/geo';
+import { IApiLegInput, IApiMapOutput } from '../types/api';
+import { parseNameLatLng } from '@/lib/geo';
 
 export const createMap = async (formData: FormData): Promise<ActionError> => {
     const session = await getSession()
@@ -23,6 +23,17 @@ export const createMap = async (formData: FormData): Promise<ActionError> => {
     if (!createdMap) return { error: "Failed to create map" }
 
     redirect(`/map/${createdMap.id}`)
+}
+export const updateMap = async (id: number, map: IApiMapOutput): Promise<ActionError> => {
+    const session = await getSession()
+
+
+    const updatedMap = await apiUpdateMap(session.apiToken!, id, map)
+    if (!updatedMap) return { error: "Failed to update map" }
+
+    revalidatePath(`/map/${id}`)
+
+    return {}
 }
 
 export const createLeg = async (leg: IApiLegInput): Promise<ActionError> => {
@@ -82,7 +93,7 @@ export const updateBuoy = async (formData: FormData): Promise<ActionError> => {
         lng: formLng,
         mapId: formMapId,
     })
-    if (!updatedBuoy) return { error: "Failed to create buoy" }
+    if (!updatedBuoy) return { error: "Failed to update buoy" }
 
     revalidatePath(`/map/${formMapId}`)
 

@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Map` ADD COLUMN `isLocked` BOOLEAN NOT NULL DEFAULT false;

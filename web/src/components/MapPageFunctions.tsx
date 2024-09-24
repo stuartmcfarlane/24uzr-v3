@@ -5,8 +5,9 @@ import AddBuoyForm from "./AddBuoyForm"
 import MapCanvas from "./ MapCanvas"
 import { useEffect, useState } from "react"
 import EditBuoyForm from "./EditBuoyForm"
-import { createLeg } from "@/actions/map"
+import { createLeg, updateMap } from "@/actions/map"
 import { idIs } from "@/lib/fp"
+import PadlockIcon from "./PadlockIcon"
 
 type MapPageClientFunctionsProps = {
     map: IApiMapOutput
@@ -76,20 +77,30 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
             endBuoyId: endBuoy.id,
         })
     }
+    const onToggleMapLock = async () => {
+        await updateMap(map.id, {
+            ...map,
+            isLocked: !map.isLocked,
+        })
+    }
 
     return (
         <div className="flex-grow my-10 flex gap-4">
-            {selectedBuoy ? (
-                <div className="">
-                    <h1 className="text-2xl">Map {map?.name}</h1>
-                    <EditBuoyForm map={map} buoy={selectedBuoy} onSelectBuoy={onSelectBuoy} />
-                </div>
-            ) : (
-                <div className="">
-                    <h1 className="text-2xl">Map {map?.name}</h1>
-                    <AddBuoyForm map={map} />
-                </div>
-            )}
+            <div className="">
+                <h1 className="text-2xl flex gap-4">
+                    <span>Map {map?.name} </span>
+                    <span className="w-7">
+                        <PadlockIcon isLocked={map.isLocked} onClick={onToggleMapLock} />
+                    </span>
+                </h1>
+                {!map.isLocked && (
+                    selectedBuoy ? (
+                        <EditBuoyForm map={map} buoy={selectedBuoy} onSelectBuoy={onSelectBuoy} />
+                    ) : (
+                        <AddBuoyForm map={map} />
+                    )
+                )}
+            </div>
             <div className="border flex-grow flex flex-col">
                 <div className="flex-1">
                     <MapCanvas

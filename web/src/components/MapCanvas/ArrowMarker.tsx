@@ -2,8 +2,8 @@ import { ARROW_MARKER_SIZE } from "@/lib/constants"
 import { screenUnits2canvasUnits } from "@/lib/graph"
 
 type ArrowMarkerProps = {
-    size: number
-    id: string
+    size?: number
+    id?: string
 }
 const defaultProps: ArrowMarkerProps = {
     size: 4,
