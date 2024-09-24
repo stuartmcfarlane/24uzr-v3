@@ -19,3 +19,5 @@ type ScaleToViewBoxProps = {
 }
 
 type Line = [Point, Point]
+
+type Vector = Point

@@ -1,6 +1,6 @@
 "use client"
 
-import { clientPoint2svgPoint, domRect2rect, fitToClient, growRect, latLng2canvas, makePoint, makeRect, makeScreen2svgFactor, points2boundingRect, rect2viewBox, screenUnits2canvasUnits } from "@/lib/graph"
+import { clientPoint2svgPoint, domRect2rect, fitToClient, rectGrowMargin, latLng2canvas, makePoint, makeRect, makeScreen2svgFactor, points2boundingRect, rect2viewBox, screenUnits2canvasUnits, fmtRect } from "@/lib/graph"
 import { IApiBuoyOutput, IApiLegOutput } from "@/types/api"
 import MapBuoy from "./MapBuoy"
 import { MouseEvent, useEffect, useRef, useState } from "react"
@@ -16,10 +16,11 @@ import MapLegDrag from "./MapLegDrag"
 import { apiCreateLeg } from "@/services/api"
 import MapLeg from "./MapLeg"
 import { and, idIs, idIsNot } from "@/lib/fp"
+import { actualLegs } from "@/lib/legs"
+import { MAX_MARGIN, MIN_MARGIN } from "@/lib/constants"
+import { useScrollWheelZoom } from "@/hooks/useScrollWheelZoom"
 
 const DEBUG = false
-
-const MIN_MARGIN = 50
 
 type MapSvgProps = {
     buoys: IApiBuoyOutput[]
@@ -51,6 +52,8 @@ const MapSvg = (props: MapSvgProps) => {
     const unitRef = useRef<SVGRectElement>(null)
     
     const [viewBoxRect, setViewBoxRect] = useState<Rect | undefined>()
+    const [maxBoundingViewBoxRect, setMaxBoundingViewBoxRect] = useState<Rect | undefined>()
+    const [initialBoundingViewBoxRect, setInitialBoundingViewBoxRect] = useState<Rect | undefined>()
     const [boundingRect, setBoundingRect] = useState<Rect | undefined>()
     const [clientRect, setClientRect] = useState<Rect | undefined>()
     const [screen2svgFactor, setScreen2svgFactor] = useState<number>(1)
@@ -86,7 +89,7 @@ const MapSvg = (props: MapSvgProps) => {
 
     useEffect(
         useDebouncedCallback(() => {
-            const boundingRect = growRect(
+            const boundingRect = rectGrowMargin(
                 `10%,${screenUnits2canvasUnits(screen2svgFactor, MIN_MARGIN)}`,
                 points2boundingRect(
                     buoys.map(latLng2canvas)
@@ -95,6 +98,18 @@ const MapSvg = (props: MapSvgProps) => {
             setBoundingRect(boundingRect)
         }, 50),
         [ buoys, screen2svgFactor ]
+    )
+    useEffect(
+        () => {
+            if (!boundingRect) return
+            const maxBoundingRect = rectGrowMargin(
+                `50%,${screenUnits2canvasUnits(screen2svgFactor, MAX_MARGIN)}`,
+                boundingRect
+            )
+            console.log(`setMaxBoundingViewBoxRect( ${fmtRect(maxBoundingRect)} )`)
+            setMaxBoundingViewBoxRect(maxBoundingRect)
+        },
+        [ boundingRect, screen2svgFactor ]
     )
     useEffect(
         () => {
@@ -109,9 +124,17 @@ const MapSvg = (props: MapSvgProps) => {
             if (!svgRef.current) return
             if (!boundingRect) return
             const viewBoxRect = fitToClient(boundingRect, clientRect)
-            setViewBoxRect(viewBoxRect)
+            console.log(`setInitialBoundingViewBoxRect( ${fmtRect(viewBoxRect)} )`)
+            setInitialBoundingViewBoxRect(viewBoxRect)
         },
         [ boundingRect, clientRect ]
+    )
+    useEffect(
+        () => {
+            console.log(`!!initialBoundingViewBoxRect => setViewBoxRect(${fmtRect(initialBoundingViewBoxRect)})`)
+            setViewBoxRect(initialBoundingViewBoxRect)
+        },
+        [initialBoundingViewBoxRect]
     )
     useEffect(
         () => {
@@ -127,29 +150,20 @@ const MapSvg = (props: MapSvgProps) => {
         },
         [ viewBoxRect, clientRect ]
     )
+
+    const zoomedViewBoxRect = useScrollWheelZoom(svgRef, initialBoundingViewBoxRect, maxBoundingViewBoxRect)
+
+    useChange(
+        () => {
+            if (!zoomedViewBoxRect) return
+            console.log(`!!zoomedViewBoxRect => setViewBoxRect(${fmtRect(zoomedViewBoxRect)})`)
+            setViewBoxRect(zoomedViewBoxRect)
+        },
+        [zoomedViewBoxRect]
+    )
+
     const onClick = (e: MouseEvent<SVGSVGElement>) => {
         if (e.target === svgRef?.current) onSelectBuoy && onSelectBuoy()
-    }
-    const isReturnLeg = (needle: IApiLegOutput) => (haystack: IApiLegOutput) => (
-        needle.startBuoyId === haystack.endBuoyId
-        && needle.endBuoyId === haystack.startBuoyId
-    )
-    const actualLegs = (
-        legs: IApiLegOutput[]
-    ): IApiLegOutput[][] => {
-        const [leg, ...tail] = legs
-        if (!leg) return []
-        const returnLeg = tail.find(isReturnLeg(leg))
-        if (!returnLeg) {
-            return [
-                [leg],
-                ...actualLegs(legs.filter(idIsNot(leg.id)))
-            ]
-        }
-        return [
-            leg.id < returnLeg.id ? [leg, returnLeg] : [returnLeg, leg],
-            ...actualLegs(legs.filter(and(idIsNot(leg.id), idIsNot(returnLeg.id))))
-        ]
     }
     return (
         <div ref={containerRef} className="w-full h-full relative" >

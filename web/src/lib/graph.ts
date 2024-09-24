@@ -19,6 +19,11 @@ export const fmtPoint = (point?: Point) => (
     ? `(${fmtReal(point.x)}, ${fmtReal(point.y)})`
     : fmtUndefined()
 )
+export const fmtVector = (point?: Point) => (
+    point
+    ? `[${fmtReal(point.x)}, ${fmtReal(point.y)}]`
+    : fmtUndefined()
+)
 export const fmtRect = (rect?: Rect) => (
     rect
     ? `<Rect ${fmtPoint(rectPoint(rect))} w ${fmtReal(rectWidth(rect))} h ${fmtReal(rectHeight(rect))}>`
@@ -105,8 +110,11 @@ const parseMargin = (maybeMargin: number | string, rect: Rect): number => {
     }
     return parseFloat(maybeMargin)
 }
-export const growRect = (maybeMargin: number | string, rect: Rect): Rect => {
+export const rectGrowMargin = (maybeMargin: number | string, rect: Rect): Rect => {
     const margin = parseMargin(maybeMargin, rect)
+    return rectGrow(margin, rect)
+}
+export const rectGrow = (margin: number, rect: Rect): Rect => {
     const [
         {
             x: x1,
@@ -230,7 +238,7 @@ export const makeScreen2svgFactor = (svgRect: Rect, clientRect: Rect) => {
 export const screenUnits2canvasUnits = (factor: number = 1, screenUnits: number): number => {
     return screenUnits * (factor || 1)
 }
-export const clientPoint2svgPoint = (svg: SVGSVGElement | null, clientPoint: Point) => {
+export const clientPoint2svgPoint = (svg: SVGSVGElement | null, clientPoint: Point): Point | undefined => {
     if (!svg) return undefined
     const svgPoint = svg.createSVGPoint()
     
@@ -240,5 +248,75 @@ export const clientPoint2svgPoint = (svg: SVGSVGElement | null, clientPoint: Poi
     const screenCTM = svg.getScreenCTM()
     if (!screenCTM) return undefined
 
-    return svgPoint.matrixTransform(svg.getScreenCTM()?.inverse())
+    return svgPoint.matrixTransform(svg.getScreenCTM()?.inverse()) as Point
+}
+
+export const points2vector = (p1: Point, p2: Point): Vector => ({ x: p2.x - p1.x, y: p2.y - p1.y })
+export const rectTranslate = (v: Vector, r: Rect): Rect => {
+    const [
+        {
+            x: x1,
+            y: y1,
+        }, {
+            x: x2,
+            y: y2,
+        }
+    ] = r
+    return [
+        {
+            x: x1 + v.x,
+            y: y1 + v.y,
+        }, {
+            x: x2 + v.x,
+            y: y2 + v.y,
+        }
+    ]
+}
+export const vectorScale = (s: number, v: Vector): Vector => ({ x: s * v.x, y: s * v.y})
+export const rectGrowAroundPoint = (
+    margin: number,
+    point: Point,
+    rect: Rect
+): Rect => {
+    console.log(`>rectGrowAroundPoint ${fmtReal(margin)} ${fmtPoint(point)} ${fmtRect(rect)}`)
+    const vCenter = points2vector(point, rectPoint(rect))
+    console.log(` rectGrowAroundPoint ${fmtVector(vCenter)}`)
+    const centeredRect = rectTranslate(vCenter, rect)
+    console.log(` rectGrowAroundPoint ${fmtRect(centeredRect)}`)
+    const grownRect = rectGrow(margin, centeredRect)
+    console.log(` rectGrowAroundPoint ${fmtRect(grownRect)}`)
+    const vRecenter = vectorScale(-rectWidth(rect) / rectWidth(grownRect), vCenter)
+    console.log(` rectGrowAroundPoint ${fmtVector(vRecenter)}`)
+    const resultRect = rectTranslate(vRecenter, grownRect)
+    console.log(`<rectGrowAroundPoint ${fmtRect(resultRect)}`)
+    return resultRect
+}
+export const rectLimitTo = (limitRect: Rect, rect: Rect): Rect => {
+    const [
+        {
+            x: limitX1,
+            y: limitY1,
+        }, {
+            x: limitX2,
+            y: limitY2,
+        }
+    ] = limitRect
+    const [
+        {
+            x: x1,
+            y: y1,
+        }, {
+            x: x2,
+            y: y2,
+        }
+    ] = rect
+    return [
+        {
+            x: Math.max(limitX1, x1),
+            y: Math.max(limitY1, y1),
+        }, {
+            x: Math.min(limitX2, x2),
+            y: Math.min(limitY2, y2),
+        }
+    ]
 }

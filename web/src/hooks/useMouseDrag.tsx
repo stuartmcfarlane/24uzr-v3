@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, RefObject, MouseEvent } from 'react'
 import { useChange } from './useChange'
-import { useMousePosition, useMousePositionRelative } from './useMousePosition'
+import { useMousePosition, useMousePositionRelative } from './useMousePosition';
 
 export type MousePosition = {
     mousePosition: {
@@ -22,10 +22,13 @@ export function useMouseDrag(
     relativeRef?: RefObject<HTMLElement | SVGElement>,
 ): MousePosition {
 
+    const mousePositionAbsolute = useMousePosition()
+    const mousePositionRelative = useMousePositionRelative(elementRef)
+
     const mousePosition = (
         relativeRef
-            ?useMousePositionRelative(elementRef)
-            : useMousePosition()
+        ? mousePositionRelative
+        : mousePositionAbsolute
     )
     const ref = useRef(mousePosition)
 
