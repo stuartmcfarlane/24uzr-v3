@@ -118,12 +118,14 @@ const MapSvg = (props: MapSvgProps) => {
             if (!viewBoxRect || !clientRect) return
             const newFactor = makeScreen2svgFactor(viewBoxRect, clientRect)
             // when the factor is small is can converge slowly so we stop when the delta is small
-            if (realEq(0.001)(newFactor, screen2svgFactor)) {
-                return
-            }
-            setScreen2svgFactor(newFactor)
+            setScreen2svgFactor((screen2svgFactor) => {
+                if (realEq(0.001)(newFactor, screen2svgFactor)) {
+                    return screen2svgFactor
+                }
+                return newFactor
+            })
         },
-        [ viewBoxRect ]
+        [ viewBoxRect, clientRect ]
     )
     const onClick = (e: MouseEvent<SVGSVGElement>) => {
         if (e.target === svgRef?.current) onSelectBuoy && onSelectBuoy()
