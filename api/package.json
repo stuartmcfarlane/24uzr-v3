@@ -23,7 +23,7 @@
     "@fastify/mysql": "^4.3.0",
     "@fastify/swagger": "^8.15.0",
     "@fastify/swagger-ui": "^4.1.0",
-    "@prisma/client": "^5.19.1",
+    "@prisma/client": "^5.20.0",
     "fastify": "^4.28.1",
     "fastify-zod": "^1.4.0",
     "zod": "^3.23.8"
@@ -33,7 +33,7 @@
     "concurrently": "^9.0.1",
     "dotenv-cli": "^7.4.2",
     "nodemon": "^3.1.4",
-    "prisma": "^5.19.1",
+    "prisma": "^5.20.0",
     "typescript": "^5.5.4",
     "zod-prisma-types": "^3.1.8"
   }

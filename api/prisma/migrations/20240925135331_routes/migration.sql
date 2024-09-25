@@ -1,0 +1,32 @@
+-- CreateTable
+CREATE TABLE `Route` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+    `name` VARCHAR(128) NOT NULL,
+    `mapId` INTEGER NOT NULL,
+    `startBuoyId` INTEGER NOT NULL,
+    `endBuoyId` INTEGER NOT NULL,
+    `ownerId` INTEGER NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `LegsOnRoute` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `routeId` INTEGER NOT NULL,
+    `legId` INTEGER NOT NULL,
+    `index` INTEGER NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `Route` ADD CONSTRAINT `Route_ownerId_fkey` FOREIGN KEY (`ownerId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Route` ADD CONSTRAINT `Route_mapId_fkey` FOREIGN KEY (`mapId`) REFERENCES `Map`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `LegsOnRoute` ADD CONSTRAINT `LegsOnRoute_routeId_fkey` FOREIGN KEY (`routeId`) REFERENCES `Route`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
