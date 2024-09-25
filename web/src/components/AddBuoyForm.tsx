@@ -1,4 +1,4 @@
-import { createBuoy } from "@/actions/map"
+import { createBuoyWithForm } from "@/actions/map"
 import { IApiMapOutput } from "@/types/api"
 import { useRef } from "react"
 
@@ -11,7 +11,7 @@ const AddBuoyForm = (props: AddBuoyFormProps) => {
     const formRef = useRef<HTMLFormElement>(null)
 
     const createBuoyAction = async (formData: FormData) => {
-        await createBuoy(formData)
+        await createBuoyWithForm(formData)
         formRef.current?.reset()
     }
     return (

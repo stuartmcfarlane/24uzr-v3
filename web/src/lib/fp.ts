@@ -39,9 +39,19 @@ function curry<P extends any[], R>(fn: (...args: P) => R) {
 const allOf = (...fns: Function[]) => (v: any) => fns.reduce((pp, fn) => pp && fn(v), true)
 
 export const idIs = (needle: number) => (o: { id: number }): boolean => needle === o.id
+export const nameIs = (needle: string) => (o: { name: string }): boolean => needle === o.id
 export const idIsNot = (needle: number) => (o: { id: number }): boolean => needle !== o.id
 export const and = allOf
-
+export const project = <O, K extends keyof O>(k: K) => (o: O) => o[k]
+export const unique = <T>(array: T[]) => {
+    const set = new Set<T>(array)
+    return [...set]
+}
+export const notEmpty = <TValue>(value: TValue | null | undefined): value is TValue => {
+    return value !== null && value !== undefined;
+}
+export const truthy = (a:any) => !!a
+export const withField = (o1: {}) => (o2: {}) => ({ ...o2, ...o1})
 export {
     curry,
 }

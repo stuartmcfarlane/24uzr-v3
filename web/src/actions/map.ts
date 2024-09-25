@@ -1,14 +1,16 @@
 "use server"
 
 import { getSession } from './session';
-import { apiCreateBuoy, apiCreateLeg, apiCreateMap, apiDeleteBuoy, apiUpdateBuoy, apiUpdateMap } from '@/services/api';
+import { apiCreateBuoy, apiCreateLeg, apiCreateMap, apiDeleteBuoy, apiGetBuoys, apiUpdateBuoy, apiUpdateMap } from '@/services/api';
 import { ActionError } from '@/types/action';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { IApiLegInput, IApiMapOutput } from '../types/api';
-import { parseNameLatLng } from '@/lib/geo';
+import { IApiBuoyInput, IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapOutput } from '../types/api';
+import { parseNameLatLng } from '@/lib/parsers';
+import { project, truthy, unique } from '@/lib/fp';
+import { notEmpty } from '../lib/fp';
 
-export const createMap = async (formData: FormData): Promise<ActionError> => {
+export const createMapWithForm = async (formData: FormData): Promise<ActionError> => {
     const session = await getSession()
 
     const formName = formData.get("name") as string
@@ -46,7 +48,29 @@ export const createLeg = async (leg: IApiLegInput): Promise<ActionError> => {
 
     return {}
 }
-export const createBuoy = async (formData: FormData): Promise<ActionError> => {
+export const createLegs = async (legs: IApiLegInput[]): Promise<IApiLegOutput[]> => {
+    const session = await getSession()
+
+    const mapIds = unique(legs.map(project('mapId')))
+
+    const createdLegs = await Promise.all(
+        legs.map(
+            (leg) => apiCreateLeg(session.apiToken!, leg)
+        )
+    )
+
+    mapIds.forEach(mapId => revalidatePath(`/map/${mapId}`))
+
+    return createdLegs.filter(notEmpty)
+}
+export const getBuoys = async (mapId: number): Promise<IApiBuoyOutput[]> => {
+    const session = await getSession()
+
+    const buoys = await apiGetBuoys(session.apiToken!, mapId)
+
+    return buoys || []
+}
+export const createBuoyWithForm = async (formData: FormData): Promise<ActionError> => {
     const session = await getSession()
 
     const formName = formData.get("name") as string
@@ -74,9 +98,29 @@ export const createBuoy = async (formData: FormData): Promise<ActionError> => {
 
     return {}
 }
-export const updateBuoy = async (formData: FormData): Promise<ActionError> => {
+export const createBuoys = async (buoys: IApiBuoyInput[]): Promise<IApiBuoyOutput[]> => {
     const session = await getSession()
 
+    const mapIds = unique(buoys.map(project('mapId')))
+
+    const createdBuoys = await Promise.all(
+        buoys.map(
+            (buoy) => apiCreateBuoy(session.apiToken!, buoy)
+        )
+    )
+
+    mapIds.forEach(mapId => revalidatePath(`/map/${mapId}`))
+
+    return createdBuoys.filter(notEmpty)
+}
+export const updateBuoy = async (id: number, buoy: IApiBuoyInput): Promise<IApiBuoyOutput | null> => {
+    const session = await getSession()
+
+    const updatedBuoy = await apiUpdateBuoy(session.apiToken!, id, buoy)
+
+    return updatedBuoy
+}
+export const updateBuoyWithForm = async (formData: FormData): Promise<ActionError> => {
     const formId = parseInt(formData.get("id") as string)
     const formName = formData.get("name") as string
     const formLat = parseFloat(formData.get("lat") as string)
@@ -87,7 +131,7 @@ export const updateBuoy = async (formData: FormData): Promise<ActionError> => {
         return { error: "Missing data" }
     }
 
-    const updatedBuoy = await apiUpdateBuoy(session.apiToken!, formId, {
+    const updatedBuoy = await updateBuoy(formId, {
         name: formName,
         lat: formLat,
         lng: formLng,

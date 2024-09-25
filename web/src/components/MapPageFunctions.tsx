@@ -11,6 +11,7 @@ import useKeyPress from "@/hooks/useKeyPress"
 import { useChange } from "@/hooks/useChange"
 import ChartIcon from "./Icons/ChartIcon"
 import BuoyOptions from "./BuoyOptions"
+import ChartOptions from "./ChartOptions"
 
 type MapPageClientFunctionsProps = {
     map: IApiMapOutput
@@ -118,50 +119,54 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
 
     return (
         <div className="flex-grow my-10 flex gap-4">
-            <div className="">
-                <h1 className="text-2xl flex gap-4">
-                    <span>Map {map?.name} </span>
-                    <span className="w-7">
-                        <PadlockIcon isLocked={map.isLocked} onClick={onToggleMapLock} />
-                    </span>
-                </h1>
-                {!map.isLocked && (
-                    <div className="flex flex-col gap-4 mt-4 border-t-2 pt-4">
-                        <div
-                            className="flex gap-4"
-                            onClick={() => setBuoyOptionsOpen(open => !open)}
-                        >
-                            <div className="w-7">
-                                <BuoyIcon/>
+            <div className="flex flex-col">
+                <div className="flex-1 flex flex-col">
+                    <h1 className="text-2xl flex gap-4">
+                        <span>Map {map?.name} </span>
+                        <span className="w-7">
+                            <PadlockIcon isLocked={map.isLocked} onClick={onToggleMapLock} />
+                        </span>
+                    </h1>
+                    {!map.isLocked && (
+                        <div className="flex-1 flex flex-col gap-4 mt-4 border-t-2 pt-4">
+                            <div
+                                className="flex gap-4"
+                                onClick={() => setBuoyOptionsOpen(open => !open)}
+                            >
+                                <div className="w-7">
+                                    <BuoyIcon/>
+                                </div>
+                                <div className="">
+                                    {buoyOptionsOpen ? 'Hide buoy options' : 'Show buoy options'}
+                                </div>
                             </div>
-                            <div className="">
-                                {buoyOptionsOpen ? 'Hide buoy options' : 'Show buoy options'}
+                            {buoyOptionsOpen && (
+                                <BuoyOptions
+                                    map={map}
+                                    buoy={selectedBuoy}
+                                    onSelectBuoy={onSelectBuoy}
+                                    onDeleteBuoy={onDeleteBuoy}
+                                />
+                            )}
+                            <div
+                                className="flex gap-4"
+                                onClick={() => setChartOptionsOpen(open => !open)}
+                            >
+                                <div className="w-7">
+                                    <ChartIcon/>
+                                </div>
+                                <div className="">
+                                    {chartOptionsOpen ? 'Hide chart options' : 'Show chart options'}
+                                </div>
                             </div>
+                            {chartOptionsOpen && (
+                                <ChartOptions
+                                    map={map}
+                                />
+                            )}
                         </div>
-                        {buoyOptionsOpen && (
-                            <BuoyOptions
-                                map={map}
-                                buoy={selectedBuoy}
-                                onSelectBuoy={onSelectBuoy}
-                                onDeleteBuoy={onDeleteBuoy}
-                            />
-                        )}
-                        <div
-                            className="flex gap-4"
-                            onClick={() => setChartOptionsOpen(open => !open)}
-                        >
-                            <div className="w-7">
-                                <ChartIcon/>
-                            </div>
-                            <div className="">
-                                {chartOptionsOpen ? 'Hide chart options' : 'Show chart options'}
-                            </div>
-                        </div>
-                        {chartOptionsOpen && (
-                            <></>
-                        )}
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
             <div className="border flex-grow flex flex-col">
                 <div className="flex-1">

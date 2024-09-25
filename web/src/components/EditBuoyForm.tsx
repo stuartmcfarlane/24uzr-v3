@@ -1,4 +1,4 @@
-import { deleteBuoy, updateBuoy } from "@/actions/map"
+import { deleteBuoy, updateBuoyWithForm } from "@/actions/map"
 import { IApiBuoyOutput, IApiMapOutput } from "@/types/api"
 import { MouseEvent, useEffect, useState } from "react"
 
@@ -32,7 +32,7 @@ const EditBuoyForm = (props: EditBuoyFormProps) => {
     }
 
     const updateBuoyAction = async (formData: FormData) => {
-        await updateBuoy(formData)
+        await updateBuoyWithForm(formData)
         onSelectBuoy && onSelectBuoy()
     }
 

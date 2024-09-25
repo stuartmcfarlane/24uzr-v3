@@ -17,6 +17,7 @@ export const geo2decimal = (geo: string): LatLng | undefined => {
 
 export const decimal2geo = (latLng: LatLng) => {
     try {
+        console.error('convert lat,lng => geo not implemented')
         const converted = convert(`${latLng.lat}, ${latLng.lng}`)
         return {
             lat: 0,
@@ -28,23 +29,4 @@ export const decimal2geo = (latLng: LatLng) => {
         undefined
     }
     
-}
-
-export const parseNameLatLng = (nameLatLng: string): {
-    name: string,
-    lat: number,
-    lng: number,
-} | undefined => {
-    const parts = nameLatLng.split(',')
-    if (parts.length === 3) {
-        const name = parts[0].trim()
-        const latLng = geo2decimal(`${parts[1]}, ${parts[2]}`)
-        if (latLng) {
-            return {
-                name,
-                ...latLng
-            }
-        }
-    }
-    return undefined
 }

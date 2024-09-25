@@ -1,12 +1,12 @@
 "use client"
 
-import { createMap } from "@/actions/map"
+import { createMapWithForm } from "@/actions/map"
 
 export const NewMapTool = () => {
     
     return (
         <div>
-            <form action={createMap}>
+            <form action={createMapWithForm}>
                 <input
                     type="text"
                     name="name"
