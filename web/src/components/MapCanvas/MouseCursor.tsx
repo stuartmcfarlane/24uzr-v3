@@ -27,8 +27,9 @@ const MouseCursor = (props: MouseCursorProps) => {
     )
     const fontSize = screenUnits2canvasUnits(screen2svgFactor, CURSOR_FONT_SIZE)
     return <>
-        {lines.map((line: Line) => (
+        {lines.map((line: Line, key: number) => (
             <line
+                key={key}
                 {...line2SvgLine(line)}
                 stroke={'black'}
                 strokeWidth={1}
