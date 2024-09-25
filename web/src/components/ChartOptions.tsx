@@ -1,11 +1,12 @@
-import { IApiBuoyInput, IApiBuoyOutput, IApiLegInput, IApiMapOutput } from "@/types/api"
+import { IApiBuoyInput, IApiBuoyOutput, IApiLeg, IApiLegInput, IApiLegOutput, IApiMapOutput } from "@/types/api"
 import EditBuoyForm from "./EditBuoyForm"
 import AddBuoyForm from "./AddBuoyForm"
 import { ChangeEvent, useState } from "react"
 import { parseBuoys, parseLegs } from "@/lib/parsers"
 import { useChange } from '../hooks/useChange';
-import { createBuoys, createLegs, getBuoys, updateBuoy, updateBuoyWithForm } from "@/actions/map"
+import { createBuoys, createLegs, getBuoys, getLegs, updateBuoy, updateBuoyWithForm, updateLeg } from "@/actions/map"
 import { fieldIs, nameIs, withField } from "@/lib/fp"
+import { uniqueHash } from '../lib/fp';
 
 type ChartOptionsProps = {
     map: IApiMapOutput
@@ -23,11 +24,16 @@ const ChartOptions = (props: ChartOptionsProps) => {
     useChange(
         async () => {
             if (!unparsedData) return
-            const { parsed, unparsed: unparsedBuoys } = parseBuoys(unparsedData)
-            const buoys = parsed.map(nameLatLng => ({
-                mapId: map.id,
-                ...nameLatLng
-            } as IApiBuoyInput))
+            const { parsed: parsedBuoys, unparsed: unparsedBuoys } = parseBuoys(unparsedData)
+            const buoys = uniqueHash(
+                (buoy => buoy.name),
+                parsedBuoys.map(
+                    nameLatLng => ({
+                        mapId: map.id,
+                        ...nameLatLng
+                    } as IApiBuoyInput)
+                )
+            )
             if (buoys.length) {
                 const mapBuoys = await getBuoys(map.id)
                 const mapBuoysByName = mapBuoys.reduce(
@@ -52,14 +58,39 @@ const ChartOptions = (props: ChartOptionsProps) => {
                 ))
             }
             const mapBuoys = await getBuoys(map.id)
-            const { parsed: legs, unparsed: unparsedLegs } = parseLegs(mapBuoys, unparsedBuoys)
-            console.log(`parsed legs`, legs)
-            if (legs.length) {
-                await createLegs(legs)
+            const { parsed: parsedLegs, unparsed: unparsedLegs } = parseLegs(mapBuoys, unparsedBuoys)
+            console.log(`parsed legs`, parsedLegs)
+            if (parsedLegs.length) {
+                const mapLegs = await getLegs(map.id)
+                const legName = (leg: IApiLeg) => `${leg.startBuoyId}:${leg.endBuoyId}`
+                const isSameLeg = (needle: IApiLeg) => (haystack: IApiLeg) => (
+                    legName(needle) === legName(haystack)
+                )
+                const legs = uniqueHash(legName, parsedLegs)
+                const mapLegsByName = mapLegs.reduce(
+                    (legsByName, leg) => {
+                        legsByName.set(legName(leg), leg)
+                        return legsByName
+                    },
+                    new Map<string, IApiLegOutput>()
+                )
+                const creatingLegs = legs.filter(
+                    leg => !mapLegs.find(isSameLeg(leg))
+                )
+                // const updatingLegs = mapLegs.filter(
+                //     leg => legs.find(isSameLeg(leg))
+                // )
+                await createLegs(creatingLegs)
+                // no need to update legs because they only have start and end
+                // await Promise.all(updatingLegs.map(
+                //     leg => {
+                //         const id = mapLegsByName.get(legName(leg))?.id
+                //         return updateLeg(id!, leg)
+                //     }
+                // ))
             }
-            console.log('unparsed buoys', unparsedBuoys)
             console.log('unparsed legs', unparsedLegs)
-            setBulkData([unparsedBuoys, unparsedLegs].join('\n'))
+            setBulkData(unparsedLegs)
         },
         [unparsedData]
     )

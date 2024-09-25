@@ -67,7 +67,8 @@ export const parseLegs = (buoys: IApiBuoyOutput[], bulkData: string): {
     const { parsed, unparsed } = lines.reduce(
         (previousValue, line) => {
             const { parsed, unparsed } = previousValue
-            const p = /^\s*([^,\s]*)\s*,\s*([^,\s]*)\s*$/.exec(line)
+            const p = /^\s*([^,]*)\s*,\s*([^,\s]*)\s*$/.exec(line)
+            console.log(`matched leg?`, p)
             if (!p) return {
                 parsed,
                 unparsed: [...unparsed, line]

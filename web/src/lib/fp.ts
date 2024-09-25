@@ -47,6 +47,13 @@ export const unique = <T>(array: T[]) => {
     const set = new Set<T>(array)
     return [...set]
 }
+export const uniqueHash = <T>(hash: (t: T) => string, array: T[]) => {
+    const map = new Map<string, T>()
+    array.forEach(a => map.set(hash(a), a))
+    let uniq: T[] = []
+    map.forEach(a => uniq.push(a))
+    return uniq
+}
 export const notEmpty = <TValue>(value: TValue | null | undefined): value is TValue => {
     return value !== null && value !== undefined;
 }

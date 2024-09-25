@@ -1,7 +1,7 @@
 "use server"
 
 import { getSession } from './session';
-import { apiCreateBuoy, apiCreateLeg, apiCreateMap, apiDeleteBuoy, apiGetBuoys, apiUpdateBuoy, apiUpdateMap } from '@/services/api';
+import { apiCreateBuoy, apiCreateLeg, apiCreateMap, apiDeleteBuoy, apiGetBuoys, apiGetLegs, apiUpdateBuoy, apiUpdateLeg, apiUpdateMap } from '@/services/api';
 import { ActionError } from '@/types/action';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -62,6 +62,20 @@ export const createLegs = async (legs: IApiLegInput[]): Promise<IApiLegOutput[]>
     mapIds.forEach(mapId => revalidatePath(`/map/${mapId}`))
 
     return createdLegs.filter(notEmpty)
+}
+export const getLegs = async (mapId: number): Promise<IApiLegOutput[]> => {
+    const session = await getSession()
+
+    const legs = await apiGetLegs(session.apiToken!, mapId)
+
+    return legs || []
+}
+export const updateLeg = async (id: number, leg: IApiLegInput): Promise<IApiLegOutput | null> => {
+    const session = await getSession()
+
+    const updatedLeg = await apiUpdateLeg(session.apiToken!, id, leg)
+
+    return updatedLeg
 }
 export const getBuoys = async (mapId: number): Promise<IApiBuoyOutput[]> => {
     const session = await getSession()
