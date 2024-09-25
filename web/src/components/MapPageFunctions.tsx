@@ -1,16 +1,16 @@
 "use client"
 
 import { IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapOutput } from "@/types/api"
-import AddBuoyForm from "./AddBuoyForm"
 import MapCanvas from "./ MapCanvas"
 import { useEffect, useState } from "react"
-import EditBuoyForm from "./EditBuoyForm"
 import { createLeg, deleteBuoy, updateMap } from "@/actions/map"
 import { idIs } from "@/lib/fp"
-import PadlockIcon from "./PadlockIcon"
-import BuoyIcon from "./BuoyIcon"
+import PadlockIcon from "./Icons/PadlockIcon"
+import BuoyIcon from "./Icons/BuoyIcon"
 import useKeyPress from "@/hooks/useKeyPress"
 import { useChange } from "@/hooks/useChange"
+import ChartIcon from "./Icons/ChartIcon"
+import BuoyOptions from "./BuoyOptions"
 
 type MapPageClientFunctionsProps = {
     map: IApiMapOutput
@@ -26,19 +26,22 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
     } = props
 
     const [buoyOptionsOpen, setBuoyOptionsOpen] = useState(false)
+    const [chartOptionsOpen, setChartOptionsOpen] = useState(false)
     const [selectedBuoy, setSelectedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
+    const [deletedBuoy, setDeletedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
     const [selectedLeg, setSelectedLeg] = useState<IApiLegOutput | undefined>(undefined)
     const [createdLeg, setCreatedLeg] = useState<IApiLegInput | undefined>(undefined)
 
     const onSelectBuoy = (buoy?: IApiBuoyOutput) => {
         setSelectedBuoy(buoy)
+        setBuoyOptionsOpen(!!buoy)
     }
     const onSelectLeg = (leg?: IApiLegOutput) => {
         setSelectedLeg(leg)
     }
-    const onDeleteBuoy = async (buoy: IApiBuoyOutput) => {
-        await deleteBuoy(buoy)
-        onSelectBuoy()
+    const onDeleteBuoy = (buoy?: IApiBuoyOutput) => {
+        console.log('onDeleteBuoy', buoy)
+        setDeletedBuoy(buoy)
     }
     const deleteKeyPressed = useKeyPress(["Delete", "Backspace"])
 
@@ -50,7 +53,17 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
         },
         [deleteKeyPressed]
     )
-
+    useChange(
+        async () => {
+            if (deletedBuoy) {
+                console.log('deleting buoy', deletedBuoy)
+                await deleteBuoy(deletedBuoy)
+                setDeletedBuoy(undefined)
+                onSelectBuoy()
+            }
+        },
+        [deletedBuoy]
+    )
     useEffect(
         () => {
             if (createdLeg) {
@@ -86,7 +99,7 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
                 ])
             }
         },
-        [ createdLeg ]
+        [ buoys, createdLeg ]
     )
     const onCreateLeg = (startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput) => {
         if (map.isLocked) return
@@ -126,16 +139,26 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
                             </div>
                         </div>
                         {buoyOptionsOpen && (
-                            selectedBuoy ? (
-                                <EditBuoyForm
-                                    map={map}
-                                    buoy={selectedBuoy}
-                                    onSelectBuoy={onSelectBuoy}
-                                    onDeleteBuoy={onDeleteBuoy}
-                                />
-                            ) : (
-                                <AddBuoyForm map={map} />
-                            )
+                            <BuoyOptions
+                                map={map}
+                                buoy={selectedBuoy}
+                                onSelectBuoy={onSelectBuoy}
+                                onDeleteBuoy={onDeleteBuoy}
+                            />
+                        )}
+                        <div
+                            className="flex gap-4"
+                            onClick={() => setChartOptionsOpen(open => !open)}
+                        >
+                            <div className="w-7">
+                                <ChartIcon/>
+                            </div>
+                            <div className="">
+                                {chartOptionsOpen ? 'Hide chart options' : 'Show chart options'}
+                            </div>
+                        </div>
+                        {chartOptionsOpen && (
+                            <></>
                         )}
                     </div>
                 )}
