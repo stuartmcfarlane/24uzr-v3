@@ -41,7 +41,6 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
         setSelectedLeg(leg)
     }
     const onDeleteBuoy = (buoy?: IApiBuoyOutput) => {
-        console.log('onDeleteBuoy', buoy)
         setDeletedBuoy(buoy)
     }
     const deleteKeyPressed = useKeyPress(["Delete", "Backspace"])
@@ -57,7 +56,6 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
     useChange(
         async () => {
             if (deletedBuoy) {
-                console.log('deleting buoy', deletedBuoy)
                 await deleteBuoy(deletedBuoy)
                 setDeletedBuoy(undefined)
                 onSelectBuoy()

@@ -12,28 +12,29 @@ const MouseCursor = (props: MouseCursorProps) => {
         point,
         screen2svgFactor,
     } = props
+    const one = screenUnits2canvasUnits(screen2svgFactor, 1)
     const size = screenUnits2canvasUnits(screen2svgFactor, CURSOR_SIZE)
     const { x, y } = point
-    const line1 = makeLine(makePoint(x - size, y), makePoint(x + size, y))
-    const line2 = makeLine(makePoint(x, y - size), makePoint(x, y + size))
+    const lines = [
+        makeLine(makePoint(x - size, y), makePoint(x - one, y)),
+        makeLine(makePoint(x, y - size), makePoint(x, y - one)),
+        makeLine(makePoint(x + one, y), makePoint(x + size, y)),
+        makeLine(makePoint(x, y + one), makePoint(x, y + size)),
+    ]
     const textOffset = makePoint(screenUnits2canvasUnits(
         screen2svgFactor, CURSOR_TEXT_OFFSET.x),
         screenUnits2canvasUnits(screen2svgFactor, CURSOR_TEXT_OFFSET.y)
     )
     const fontSize = screenUnits2canvasUnits(screen2svgFactor, CURSOR_FONT_SIZE)
     return <>
-        <line
-            {...line2SvgLine(line1)}
-            stroke={'black'}
-            strokeWidth={1}
-            vectorEffect="non-scaling-stroke"
-        />
-        <line
-            {...line2SvgLine(line2)}
-            stroke={'black'}
-            strokeWidth={1}
-            vectorEffect="non-scaling-stroke"
-        />
+        {lines.map((line: Line) => (
+            <line
+                {...line2SvgLine(line)}
+                stroke={'black'}
+                strokeWidth={1}
+                vectorEffect="non-scaling-stroke"
+            />
+        ))}
         <text {...vectorAdd({x, y}, textOffset)} fontSize={fontSize}>({fmtReal(x, 2)}, {fmtReal(y, 2)})</text>
     </>
 }

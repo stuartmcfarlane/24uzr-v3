@@ -149,7 +149,7 @@ const MapSvg = (props: MapSvgProps) => {
     )
 
     const onClick = (e: MouseEvent<SVGSVGElement>) => {
-        if (e.target === svgRef?.current) onSelectBuoy && onSelectBuoy()
+        if (e.target === svgRef.current) onSelectBuoy && onSelectBuoy()
     }
     const mouseSvgPoint = useMouseSvgPosition(svgRef)
 

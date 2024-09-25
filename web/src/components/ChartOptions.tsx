@@ -59,7 +59,6 @@ const ChartOptions = (props: ChartOptionsProps) => {
             }
             const mapBuoys = await getBuoys(map.id)
             const { parsed: parsedLegs, unparsed: unparsedLegs } = parseLegs(mapBuoys, unparsedBuoys)
-            console.log(`parsed legs`, parsedLegs)
             if (parsedLegs.length) {
                 const mapLegs = await getLegs(map.id)
                 const legName = (leg: IApiLeg) => `${leg.startBuoyId}:${leg.endBuoyId}`
@@ -89,7 +88,6 @@ const ChartOptions = (props: ChartOptionsProps) => {
                 //     }
                 // ))
             }
-            console.log('unparsed legs', unparsedLegs)
             setBulkData(unparsedLegs)
         },
         [unparsedData]
