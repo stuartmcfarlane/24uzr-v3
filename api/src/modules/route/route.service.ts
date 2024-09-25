@@ -1,9 +1,28 @@
+import { RouteUpdateInputSchema } from "../../../prisma/generated/zod";
 import prisma from "../../utils/prisma";
 import { CreateRouteInput, UpdateRouteInput } from "./route.schema";
 
 export async function createRoute(data: CreateRouteInput) {
+    console.log(`createRoute`, data)
+    const legs = (
+        data.legs
+            ? {
+                legs: {
+                    create: data.legs,
+                }
+            } :
+            {
+                legs: undefined
+            }
+    )
     const route = await prisma.route.create({
-        data
+        data: {
+            ...data,
+            ...legs,
+        },
+        include: {
+            legs: true
+        },
     });
     
     return route;
@@ -11,18 +30,43 @@ export async function createRoute(data: CreateRouteInput) {
 
 export async function findRoute(id: number) {
     return prisma.route.findUnique({
+        include: {
+            legs: true
+        },
         where: {
             id,
         },
     });
 }
 
-export async function updateRoute(id: number, route: UpdateRouteInput ) {
+export async function updateRoute(id: number, route: UpdateRouteInput) {
+    const legs = (
+        route.legs
+            ? {
+                legs: {
+                    update: {
+                        where: {
+                            // pffffffff
+                            routeId: id,
+                        },
+                        data: route.legs,
+                    }
+                }
+            } :
+            {
+                legs: undefined
+            }
+    )
     return prisma.route.update({
         where: {
             id,
         },
-        data: route
+        data: {
+            ...route,
+            ...{
+                legs: undefined
+            },
+        }
     });
 }
 
@@ -34,7 +78,8 @@ export async function findRoutes() {
                     id: true,
                     name: true,
                 }
-            }
+            },
+            legs: true
         }
     });
 }

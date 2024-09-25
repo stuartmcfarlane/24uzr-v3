@@ -67,7 +67,7 @@ async function routeRoutes(server: FastifyInstance) {
             },
             preHandler: [server.authenticate],
         },
-        getRouteHandler
+        getRoutesHandler
     );
 }
 

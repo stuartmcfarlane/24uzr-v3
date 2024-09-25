@@ -11,6 +11,10 @@ export async function createLeg(data: CreateLegInput) {
 
 export async function findLeg(id: number) {
     return prisma.leg.findUnique({
+        include: {
+            startBuoy: true,
+            endBuoy: true,
+        },
         where: {
             id,
         },
@@ -27,13 +31,26 @@ export async function updateLeg(id: number, leg: UpdateLegInput ) {
 }
 
 export async function findLegs() {
-    return prisma.leg.findMany();
+    return prisma.leg.findMany({
+        include: {
+            startBuoy: true,
+            endBuoy: true,
+        },
+    });
 }
 
 export async function findLegsByMapId(mapId: number) {
     return prisma.leg.findMany({
         where: {
             mapId
+        },
+    });
+}
+
+export async function findLegsByRouteId(routeId: number) {
+    return prisma.legsOnRoute.findMany({
+        where: {
+            routeId
         },
     });
 }

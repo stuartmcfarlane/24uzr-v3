@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
 }
 
 datasource db {
@@ -43,19 +44,25 @@ model Map {
 }
 
 model Buoy {
-  id    Int     @id @default(autoincrement())
-  name  String  @db.VarChar(128)
-  lat   Decimal @db.Decimal(10, 8)
-  lng   Decimal @db.Decimal(11, 8)
-  map   Map     @relation(fields: [mapId], references: [id])
-  mapId Int
+  id          Int     @id @default(autoincrement())
+  name        String  @db.VarChar(128)
+  lat         Decimal @db.Decimal(10, 8)
+  lng         Decimal @db.Decimal(11, 8)
+  map         Map     @relation(fields: [mapId], references: [id])
+  mapId       Int
+  legsOut     Leg[]   @relation("startBuoy")
+  legsIn      Leg[]   @relation("endBuoy")
+  routeStarts Route[] @relation("startBuoy")
+  routeEnd    Route[] @relation("endBuoy")
 }
 
 model Leg {
-  id          Int @id @default(autoincrement())
-  map         Map @relation(fields: [mapId], references: [id])
+  id          Int  @id @default(autoincrement())
+  map         Map  @relation(fields: [mapId], references: [id])
   mapId       Int
+  startBuoy   Buoy @relation(name: "startBuoy", fields: [startBuoyId], references: [id])
   startBuoyId Int
+  endBuoy     Buoy @relation(name: "endBuoy", fields: [endBuoyId], references: [id])
   endBuoyId   Int
 }
 
@@ -67,7 +74,9 @@ model Route {
   name        String        @db.VarChar(128)
   map         Map           @relation(fields: [mapId], references: [id])
   mapId       Int
+  startBuoy   Buoy          @relation(name: "startBuoy", fields: [startBuoyId], references: [id])
   startBuoyId Int
+  endBuoy     Buoy          @relation(name: "endBuoy", fields: [endBuoyId], references: [id])
   endBuoyId   Int
   legs        LegsOnRoute[]
   ownerId     Int
