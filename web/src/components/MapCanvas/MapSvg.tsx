@@ -88,6 +88,11 @@ const MapSvg = (props: MapSvgProps) => {
 
     useEffect(
         () => {
+            if (!buoys.length) {
+                setBoundingRect(makeRect(0, 0, 100, 100))
+                setInitialBoundingViewBoxRect(makeRect(0, 0, 100, 100))
+                return
+            }
             const boundingRect = rectGrowMargin(
                 `10%`,
                 points2boundingRect(

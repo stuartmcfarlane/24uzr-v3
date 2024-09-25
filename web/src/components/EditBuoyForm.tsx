@@ -6,12 +6,14 @@ type EditBuoyFormProps = {
     map: IApiMapOutput
     buoy: IApiBuoyOutput
     onSelectBuoy?: (buoy?: IApiBuoyOutput) => void
+    onDeleteBuoy?: (buoy?: IApiBuoyOutput) => void
 }
 const EditBuoyForm = (props: EditBuoyFormProps) => {
     const {
         map,
         buoy,
         onSelectBuoy,
+        onDeleteBuoy,
     } = props
     const [name, setName] = useState(buoy.name)
     const [lat, setLat] = useState(buoy.lat)
@@ -36,8 +38,7 @@ const EditBuoyForm = (props: EditBuoyFormProps) => {
 
     const onDelete = async (e: MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
-        await deleteBuoy(buoy)
-        onSelectBuoy && onSelectBuoy()
+        onDeleteBuoy && onDeleteBuoy(buoy)
     }
 
     return (

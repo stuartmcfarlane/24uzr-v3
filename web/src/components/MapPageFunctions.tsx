@@ -5,10 +5,12 @@ import AddBuoyForm from "./AddBuoyForm"
 import MapCanvas from "./ MapCanvas"
 import { useEffect, useState } from "react"
 import EditBuoyForm from "./EditBuoyForm"
-import { createLeg, updateMap } from "@/actions/map"
+import { createLeg, deleteBuoy, updateMap } from "@/actions/map"
 import { idIs } from "@/lib/fp"
 import PadlockIcon from "./PadlockIcon"
 import BuoyIcon from "./BuoyIcon"
+import useKeyPress from "@/hooks/useKeyPress"
+import { useChange } from "@/hooks/useChange"
 
 type MapPageClientFunctionsProps = {
     map: IApiMapOutput
@@ -34,6 +36,20 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
     const onSelectLeg = (leg?: IApiLegOutput) => {
         setSelectedLeg(leg)
     }
+    const onDeleteBuoy = async (buoy: IApiBuoyOutput) => {
+        await deleteBuoy(buoy)
+        onSelectBuoy()
+    }
+    const deleteKeyPressed = useKeyPress(["Delete", "Backspace"])
+
+    useChange(
+        () => {
+            if (deleteKeyPressed && selectedBuoy) {
+                onDeleteBuoy(selectedBuoy)
+            }
+        },
+        [deleteKeyPressed]
+    )
 
     useEffect(
         () => {
@@ -111,7 +127,12 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
                         </div>
                         {buoyOptionsOpen && (
                             selectedBuoy ? (
-                                <EditBuoyForm map={map} buoy={selectedBuoy} onSelectBuoy={onSelectBuoy} />
+                                <EditBuoyForm
+                                    map={map}
+                                    buoy={selectedBuoy}
+                                    onSelectBuoy={onSelectBuoy}
+                                    onDeleteBuoy={onDeleteBuoy}
+                                />
                             ) : (
                                 <AddBuoyForm map={map} />
                             )
