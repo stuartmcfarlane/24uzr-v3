@@ -24,10 +24,10 @@ const isReturnLeg = (needle: IApiLegOutput) => (haystack: IApiLegOutput) => (
 //    [c -> d]
 // ]
 export const actualLegs = (
-        legs: IApiLegOutput[]
-    ): IApiLegOutput[][] => {
+        legs: IApiLegOutput[] = []
+): IApiLegOutput[][] => {
+        if (!legs.length) return []
         const [leg, ...tail] = legs
-        if (!leg) return []
         const returnLeg = tail.find(isReturnLeg(leg))
         if (!returnLeg) {
             return [

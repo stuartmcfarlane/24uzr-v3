@@ -34,6 +34,9 @@ const MapRoutePage = async ({
     if (!map) {
         redirect('/dashboard')
     }
+    if (!route) {
+        redirect(`/map/${mapId}`)
+    }
 
     return (
         <MapRoutePageClientFunctions

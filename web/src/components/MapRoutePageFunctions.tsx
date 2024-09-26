@@ -12,12 +12,12 @@ import { useChange } from "@/hooks/useChange"
 import ChartIcon from "./Icons/ChartIcon"
 import BuoyOptions from "./BuoyOptions"
 import ChartOptions from "./ChartOptions"
+import { legsOnRoute } from '../../../api/src/modules/route/route.schema';
 
 type MapRoutePageClientFunctionsProps = {
     map: IApiMapOutput
     route: IApiRouteOutput
     buoys: IApiBuoyOutput[]
-    legs: IApiLegOutput[]
 }
 
 const MapRoutePageClientFunctions = (props: MapRoutePageClientFunctionsProps) => {
@@ -25,147 +25,26 @@ const MapRoutePageClientFunctions = (props: MapRoutePageClientFunctionsProps) =>
         map,
         route,
         buoys,
-        legs,
     } = props
 
-    const [buoyOptionsOpen, setBuoyOptionsOpen] = useState(false)
-    const [chartOptionsOpen, setChartOptionsOpen] = useState(false)
     const [selectedBuoy, setSelectedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
-    const [deletedBuoy, setDeletedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
     const [selectedLeg, setSelectedLeg] = useState<IApiLegOutput | undefined>(undefined)
-    const [createdLeg, setCreatedLeg] = useState<IApiLegInput | undefined>(undefined)
 
     const onSelectBuoy = (buoy?: IApiBuoyOutput) => {
         setSelectedBuoy(buoy)
-        setBuoyOptionsOpen(!!buoy)
     }
     const onSelectLeg = (leg?: IApiLegOutput) => {
         setSelectedLeg(leg)
     }
-    const onDeleteBuoy = (buoy?: IApiBuoyOutput) => {
-        setDeletedBuoy(buoy)
-    }
-    const deleteKeyPressed = useKeyPress(["Delete", "Backspace"])
 
-    useChange(
-        () => {
-            if (deleteKeyPressed && selectedBuoy) {
-                onDeleteBuoy(selectedBuoy)
-            }
-        },
-        [deleteKeyPressed]
-    )
-    useChange(
-        async () => {
-            if (deletedBuoy) {
-                await deleteBuoy(deletedBuoy)
-                setDeletedBuoy(undefined)
-                onSelectBuoy()
-            }
-        },
-        [deletedBuoy]
-    )
-    useEffect(
-        () => {
-            if (createdLeg) {
-                const startBuoy = buoys.find(idIs(createdLeg.startBuoyId))
-                const endBuoy = buoys.find(idIs(createdLeg.endBuoyId))
-                if (!startBuoy || !endBuoy) {
-                    setCreatedLeg(undefined)
-                    return
-                }
-                const createLegs = async (legs: IApiLegInput[]) => {
-                    await Promise.all(legs.map(createLeg))
-                    setCreatedLeg(undefined)
-                }
-                const reverseLeg = (leg: IApiLegInput) => ({
-                    ...leg,
-                    startBuoyId: leg.endBuoyId,
-                    endBuoyId: leg.startBuoyId,
-                })
-                if (/\(start\)/i.test(startBuoy.name)) {
-                    createLegs([createdLeg])
-                    return
-                }
-                if (/\(finish\)/i.test(endBuoy.name)) {
-                    createLegs([createdLeg])
-                    return
-                }
-                if (/^start$/i.test(endBuoy.name) || /^finish$/i.test(startBuoy.name)) {
-                    return
-                }
-                createLegs([
-                    createdLeg,
-                    reverseLeg(createdLeg),
-                ])
-            }
-        },
-        [ buoys, createdLeg ]
-    )
-    const onCreateLeg = (startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput) => {
-        if (map.isLocked) return
-        setCreatedLeg({
-            mapId: map.id,
-            startBuoyId: startBuoy.id,
-            endBuoyId: endBuoy.id,
-        })
-    }
-    const onToggleMapLock = async () => {
-        await updateMap(map.id, {
-            ...map,
-            isLocked: !map.isLocked,
-        })
-    }
 
     return (
         <div className="flex-grow my-10 flex gap-4">
             <div className="flex flex-col">
                 <div className="flex-1 flex flex-col">
                     <h1 className="text-2xl flex gap-4">
-                        <span>Map {map?.name} </span>
-                        <span className="w-7">
-                            <PadlockIcon isLocked={map.isLocked} onClick={onToggleMapLock} />
-                        </span>
+                        <span>Route {route.name} </span>
                     </h1>
-                    {!map.isLocked && (
-                        <div className="flex-1 flex flex-col gap-4 mt-4 border-t-2 pt-4">
-                            <div
-                                className="flex gap-4"
-                                onClick={() => setBuoyOptionsOpen(open => !open)}
-                            >
-                                <div className="w-7">
-                                    <BuoyIcon/>
-                                </div>
-                                <div className="">
-                                    {buoyOptionsOpen ? 'Hide buoy options' : 'Show buoy options'}
-                                </div>
-                            </div>
-                            {buoyOptionsOpen && (
-                                <BuoyOptions
-                                    map={map}
-                                    buoy={selectedBuoy}
-                                    onSelectBuoy={onSelectBuoy}
-                                    onDeleteBuoy={onDeleteBuoy}
-                                />
-                            )}
-                            <div
-                                className="flex gap-4"
-                                onClick={() => setChartOptionsOpen(open => !open)}
-                            >
-                                <div className="w-7">
-                                    <ChartIcon/>
-                                </div>
-                                <div className="">
-                                    {chartOptionsOpen ? 'Hide chart options' : 'Show chart options'}
-                                </div>
-                            </div>
-                            {chartOptionsOpen && (
-                                <ChartOptions
-                                    map={map}
-                                />
-                            )}
-                        </div>
-                    )}
                 </div>
             </div>
             <div className="border flex-grow flex flex-col">
@@ -173,12 +52,11 @@ const MapRoutePageClientFunctions = (props: MapRoutePageClientFunctionsProps) =>
                     <MapCanvas
                         map={map}
                         buoys={buoys}
-                        legs={legs}
+                        legs={route.legs}
                         selectedBuoy={selectedBuoy}
                         onSelectBuoy={onSelectBuoy}
                         selectedLeg={selectedLeg}
                         onSelectLeg={onSelectLeg}
-                        onCreateLeg={onCreateLeg}
                     />
                 </div>
             </div>

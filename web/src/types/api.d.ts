@@ -61,6 +61,7 @@ export interface IApiRouteOutput extends IApiRouteInput{
   id: number
   createdAt: string
   updatedAt: string
+  legs: IApiLegOutput[]
 }
 
 export type IApiRoute = IApiRouteInput | IApiRouteOutput
