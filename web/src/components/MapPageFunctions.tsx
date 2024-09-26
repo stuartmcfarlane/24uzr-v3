@@ -77,6 +77,21 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
         },
         [deletedBuoy]
     )
+    useChange(
+        async () => {
+            if (startBuoy) setRouteOptionsOpen(true)
+        },
+        [startBuoy]
+    )
+    useChange(
+        async () => {
+            if (!routeOptionsOpen) {
+                setSelectedBuoy(undefined)
+                setStartBuoy(undefined)
+            }
+        },
+        [routeOptionsOpen]
+    )
     useEffect(
         () => {
             if (createdLeg) {

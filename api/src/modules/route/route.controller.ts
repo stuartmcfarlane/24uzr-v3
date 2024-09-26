@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { RouteIdParamInput, RouteIdParamSchema, CreateRouteInput, UpdateRouteInput } from "./route.schema";
-import { createRoute, findRoute, findRoutes, updateRoute } from "./route.service";
+import { createRoute, findRoute, findRoutes, updateRoute, updateRouteStatus } from "./route.service";
+import { delay } from "../../utils/timer";
 
 export async function createRouteHandler(
     request: FastifyRequest<{
@@ -13,16 +14,19 @@ export async function createRouteHandler(
     try {
         const route = await createRoute(body);
         
-        return reply.code(201).send(route);
+        reply.code(201).send(route);
+
+        await delay(10000)
+        await updateRouteStatus(route.id, 'DONE')
     } catch (e) {
         return reply.code(500).send(e);
     }
 }
 
 export async function getRoutesHandler() {
-    const boilerplates = await findRoutes();
+    const routes = await findRoutes();
     
-    return boilerplates;
+    return routes;
 }
 
 export async function getRouteHandler(
@@ -32,6 +36,7 @@ export async function getRouteHandler(
 ) {
     const { id } = RouteIdParamSchema.parse(request.params)
     const route = await findRoute(id)
+    console.log(`found route`, route)
     
     return route;
 }

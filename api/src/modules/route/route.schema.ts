@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { buildJsonSchemas } from 'fastify-zod';
-import { LegsOnRouteSchema, RouteCreateInputSchema } from "../../../prisma/generated/zod";
+import { LegsOnRouteSchema, RouteCreateInputSchema, StatusSchema } from "../../../prisma/generated/zod";
 
 export const legsOnRoute = z.object({
   routeId: z.number().int(),
@@ -21,10 +21,13 @@ const routeInput = {
     endBuoyId: z.number(),
 };
 
+const routeStatus = StatusSchema
+
 const routeGenerated = {
     id: z.number(),
     createdAt: z.string(),
     updatedAt: z.string(),
+    status: routeStatus,
 };
 
 const createRouteSchema = z.object({
@@ -51,6 +54,7 @@ export const RouteIdParamSchema = z.object({
 export type CreateRouteInput = z.infer<typeof createRouteSchema>;
 export type UpdateRouteInput = z.infer<typeof updateRouteSchema>;
 export type RouteIdParamInput = z.infer<typeof RouteIdParamSchema>;
+export type RouteStatusInput = z.infer<typeof routeStatus>;
 
 export const { schemas: routeSchemas, $ref } = buildJsonSchemas({
     createRouteSchema,

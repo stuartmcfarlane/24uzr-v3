@@ -45,13 +45,18 @@ export const BuoyScalarFieldEnumSchema = z.enum(['id','name','lat','lng','mapId'
 
 export const LegScalarFieldEnumSchema = z.enum(['id','mapId','startBuoyId','endBuoyId']);
 
-export const RouteScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','name','mapId','startBuoyId','endBuoyId','ownerId']);
+export const RouteScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','status','name','mapId','startBuoyId','endBuoyId','ownerId']);
 
 export const LegsOnRouteScalarFieldEnumSchema = z.enum(['routeId','legId','index']);
 
 export const SortOrderSchema = z.enum(['asc','desc']);
 
 export const NullsOrderSchema = z.enum(['first','last']);
+
+export const StatusSchema = z.enum(['PENDING','FAILED','DONE']);
+
+export type StatusType = `${z.infer<typeof StatusSchema>}`
+
 /////////////////////////////////////////
 // MODELS
 /////////////////////////////////////////
@@ -131,6 +136,7 @@ export type Leg = z.infer<typeof LegSchema>
 /////////////////////////////////////////
 
 export const RouteSchema = z.object({
+  status: StatusSchema,
   id: z.number().int(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
@@ -347,6 +353,7 @@ export const RouteSelectSchema: z.ZodType<Prisma.RouteSelect> = z.object({
   id: z.boolean().optional(),
   createdAt: z.boolean().optional(),
   updatedAt: z.boolean().optional(),
+  status: z.boolean().optional(),
   name: z.boolean().optional(),
   mapId: z.boolean().optional(),
   startBuoyId: z.boolean().optional(),
@@ -727,6 +734,7 @@ export const RouteWhereInputSchema: z.ZodType<Prisma.RouteWhereInput> = z.object
   id: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  status: z.union([ z.lazy(() => EnumStatusFilterSchema),z.lazy(() => StatusSchema) ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   mapId: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   startBuoyId: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
@@ -743,6 +751,7 @@ export const RouteOrderByWithRelationInputSchema: z.ZodType<Prisma.RouteOrderByW
   id: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  status: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   mapId: z.lazy(() => SortOrderSchema).optional(),
   startBuoyId: z.lazy(() => SortOrderSchema).optional(),
@@ -765,6 +774,7 @@ export const RouteWhereUniqueInputSchema: z.ZodType<Prisma.RouteWhereUniqueInput
   NOT: z.union([ z.lazy(() => RouteWhereInputSchema),z.lazy(() => RouteWhereInputSchema).array() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  status: z.union([ z.lazy(() => EnumStatusFilterSchema),z.lazy(() => StatusSchema) ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   mapId: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   startBuoyId: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
@@ -781,6 +791,7 @@ export const RouteOrderByWithAggregationInputSchema: z.ZodType<Prisma.RouteOrder
   id: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  status: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   mapId: z.lazy(() => SortOrderSchema).optional(),
   startBuoyId: z.lazy(() => SortOrderSchema).optional(),
@@ -800,6 +811,7 @@ export const RouteScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.RouteSc
   id: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  status: z.union([ z.lazy(() => EnumStatusWithAggregatesFilterSchema),z.lazy(() => StatusSchema) ]).optional(),
   name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   mapId: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   startBuoyId: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
@@ -1157,6 +1169,7 @@ export const LegUncheckedUpdateManyInputSchema: z.ZodType<Prisma.LegUncheckedUpd
 export const RouteCreateInputSchema: z.ZodType<Prisma.RouteCreateInput> = z.object({
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  status: z.lazy(() => StatusSchema).optional(),
   name: z.string(),
   owner: z.lazy(() => UserCreateNestedOneWithoutRoutesInputSchema),
   map: z.lazy(() => MapCreateNestedOneWithoutRoutesInputSchema),
@@ -1169,6 +1182,7 @@ export const RouteUncheckedCreateInputSchema: z.ZodType<Prisma.RouteUncheckedCre
   id: z.number().int().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  status: z.lazy(() => StatusSchema).optional(),
   name: z.string(),
   mapId: z.number().int(),
   startBuoyId: z.number().int(),
@@ -1180,6 +1194,7 @@ export const RouteUncheckedCreateInputSchema: z.ZodType<Prisma.RouteUncheckedCre
 export const RouteUpdateInputSchema: z.ZodType<Prisma.RouteUpdateInput> = z.object({
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   owner: z.lazy(() => UserUpdateOneRequiredWithoutRoutesNestedInputSchema).optional(),
   map: z.lazy(() => MapUpdateOneRequiredWithoutRoutesNestedInputSchema).optional(),
@@ -1192,6 +1207,7 @@ export const RouteUncheckedUpdateInputSchema: z.ZodType<Prisma.RouteUncheckedUpd
   id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   mapId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   startBuoyId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
@@ -1204,6 +1220,7 @@ export const RouteCreateManyInputSchema: z.ZodType<Prisma.RouteCreateManyInput> 
   id: z.number().int().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  status: z.lazy(() => StatusSchema).optional(),
   name: z.string(),
   mapId: z.number().int(),
   startBuoyId: z.number().int(),
@@ -1214,6 +1231,7 @@ export const RouteCreateManyInputSchema: z.ZodType<Prisma.RouteCreateManyInput> 
 export const RouteUpdateManyMutationInputSchema: z.ZodType<Prisma.RouteUpdateManyMutationInput> = z.object({
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
@@ -1221,6 +1239,7 @@ export const RouteUncheckedUpdateManyInputSchema: z.ZodType<Prisma.RouteUnchecke
   id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   mapId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   startBuoyId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
@@ -1657,6 +1676,13 @@ export const LegSumOrderByAggregateInputSchema: z.ZodType<Prisma.LegSumOrderByAg
   endBuoyId: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
+export const EnumStatusFilterSchema: z.ZodType<Prisma.EnumStatusFilter> = z.object({
+  equals: z.lazy(() => StatusSchema).optional(),
+  in: z.lazy(() => StatusSchema).array().optional(),
+  notIn: z.lazy(() => StatusSchema).array().optional(),
+  not: z.union([ z.lazy(() => StatusSchema),z.lazy(() => NestedEnumStatusFilterSchema) ]).optional(),
+}).strict();
+
 export const LegsOnRouteListRelationFilterSchema: z.ZodType<Prisma.LegsOnRouteListRelationFilter> = z.object({
   every: z.lazy(() => LegsOnRouteWhereInputSchema).optional(),
   some: z.lazy(() => LegsOnRouteWhereInputSchema).optional(),
@@ -1671,6 +1697,7 @@ export const RouteCountOrderByAggregateInputSchema: z.ZodType<Prisma.RouteCountO
   id: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  status: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   mapId: z.lazy(() => SortOrderSchema).optional(),
   startBuoyId: z.lazy(() => SortOrderSchema).optional(),
@@ -1690,6 +1717,7 @@ export const RouteMaxOrderByAggregateInputSchema: z.ZodType<Prisma.RouteMaxOrder
   id: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  status: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   mapId: z.lazy(() => SortOrderSchema).optional(),
   startBuoyId: z.lazy(() => SortOrderSchema).optional(),
@@ -1701,6 +1729,7 @@ export const RouteMinOrderByAggregateInputSchema: z.ZodType<Prisma.RouteMinOrder
   id: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  status: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   mapId: z.lazy(() => SortOrderSchema).optional(),
   startBuoyId: z.lazy(() => SortOrderSchema).optional(),
@@ -1714,6 +1743,16 @@ export const RouteSumOrderByAggregateInputSchema: z.ZodType<Prisma.RouteSumOrder
   startBuoyId: z.lazy(() => SortOrderSchema).optional(),
   endBuoyId: z.lazy(() => SortOrderSchema).optional(),
   ownerId: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EnumStatusWithAggregatesFilterSchema: z.ZodType<Prisma.EnumStatusWithAggregatesFilter> = z.object({
+  equals: z.lazy(() => StatusSchema).optional(),
+  in: z.lazy(() => StatusSchema).array().optional(),
+  notIn: z.lazy(() => StatusSchema).array().optional(),
+  not: z.union([ z.lazy(() => StatusSchema),z.lazy(() => NestedEnumStatusWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedEnumStatusFilterSchema).optional(),
+  _max: z.lazy(() => NestedEnumStatusFilterSchema).optional()
 }).strict();
 
 export const RouteRelationFilterSchema: z.ZodType<Prisma.RouteRelationFilter> = z.object({
@@ -2274,6 +2313,10 @@ export const LegsOnRouteUncheckedCreateNestedManyWithoutRouteInputSchema: z.ZodT
   connect: z.union([ z.lazy(() => LegsOnRouteWhereUniqueInputSchema),z.lazy(() => LegsOnRouteWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
+export const EnumStatusFieldUpdateOperationsInputSchema: z.ZodType<Prisma.EnumStatusFieldUpdateOperationsInput> = z.object({
+  set: z.lazy(() => StatusSchema).optional()
+}).strict();
+
 export const UserUpdateOneRequiredWithoutRoutesNestedInputSchema: z.ZodType<Prisma.UserUpdateOneRequiredWithoutRoutesNestedInput> = z.object({
   create: z.union([ z.lazy(() => UserCreateWithoutRoutesInputSchema),z.lazy(() => UserUncheckedCreateWithoutRoutesInputSchema) ]).optional(),
   connectOrCreate: z.lazy(() => UserCreateOrConnectWithoutRoutesInputSchema).optional(),
@@ -2524,6 +2567,23 @@ export const NestedDecimalWithAggregatesFilterSchema: z.ZodType<Prisma.NestedDec
   _max: z.lazy(() => NestedDecimalFilterSchema).optional()
 }).strict();
 
+export const NestedEnumStatusFilterSchema: z.ZodType<Prisma.NestedEnumStatusFilter> = z.object({
+  equals: z.lazy(() => StatusSchema).optional(),
+  in: z.lazy(() => StatusSchema).array().optional(),
+  notIn: z.lazy(() => StatusSchema).array().optional(),
+  not: z.union([ z.lazy(() => StatusSchema),z.lazy(() => NestedEnumStatusFilterSchema) ]).optional(),
+}).strict();
+
+export const NestedEnumStatusWithAggregatesFilterSchema: z.ZodType<Prisma.NestedEnumStatusWithAggregatesFilter> = z.object({
+  equals: z.lazy(() => StatusSchema).optional(),
+  in: z.lazy(() => StatusSchema).array().optional(),
+  notIn: z.lazy(() => StatusSchema).array().optional(),
+  not: z.union([ z.lazy(() => StatusSchema),z.lazy(() => NestedEnumStatusWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedEnumStatusFilterSchema).optional(),
+  _max: z.lazy(() => NestedEnumStatusFilterSchema).optional()
+}).strict();
+
 export const ShipCreateWithoutOwnerInputSchema: z.ZodType<Prisma.ShipCreateWithoutOwnerInput> = z.object({
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -2550,6 +2610,7 @@ export const ShipCreateManyOwnerInputEnvelopeSchema: z.ZodType<Prisma.ShipCreate
 export const RouteCreateWithoutOwnerInputSchema: z.ZodType<Prisma.RouteCreateWithoutOwnerInput> = z.object({
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  status: z.lazy(() => StatusSchema).optional(),
   name: z.string(),
   map: z.lazy(() => MapCreateNestedOneWithoutRoutesInputSchema),
   startBuoy: z.lazy(() => BuoyCreateNestedOneWithoutRouteStartsInputSchema),
@@ -2561,6 +2622,7 @@ export const RouteUncheckedCreateWithoutOwnerInputSchema: z.ZodType<Prisma.Route
   id: z.number().int().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  status: z.lazy(() => StatusSchema).optional(),
   name: z.string(),
   mapId: z.number().int(),
   startBuoyId: z.number().int(),
@@ -2628,6 +2690,7 @@ export const RouteScalarWhereInputSchema: z.ZodType<Prisma.RouteScalarWhereInput
   id: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  status: z.union([ z.lazy(() => EnumStatusFilterSchema),z.lazy(() => StatusSchema) ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   mapId: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   startBuoyId: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
@@ -2744,6 +2807,7 @@ export const LegCreateManyMapInputEnvelopeSchema: z.ZodType<Prisma.LegCreateMany
 export const RouteCreateWithoutMapInputSchema: z.ZodType<Prisma.RouteCreateWithoutMapInput> = z.object({
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  status: z.lazy(() => StatusSchema).optional(),
   name: z.string(),
   owner: z.lazy(() => UserCreateNestedOneWithoutRoutesInputSchema),
   startBuoy: z.lazy(() => BuoyCreateNestedOneWithoutRouteStartsInputSchema),
@@ -2755,6 +2819,7 @@ export const RouteUncheckedCreateWithoutMapInputSchema: z.ZodType<Prisma.RouteUn
   id: z.number().int().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  status: z.lazy(() => StatusSchema).optional(),
   name: z.string(),
   startBuoyId: z.number().int(),
   endBuoyId: z.number().int(),
@@ -2910,6 +2975,7 @@ export const LegCreateManyEndBuoyInputEnvelopeSchema: z.ZodType<Prisma.LegCreate
 export const RouteCreateWithoutStartBuoyInputSchema: z.ZodType<Prisma.RouteCreateWithoutStartBuoyInput> = z.object({
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  status: z.lazy(() => StatusSchema).optional(),
   name: z.string(),
   owner: z.lazy(() => UserCreateNestedOneWithoutRoutesInputSchema),
   map: z.lazy(() => MapCreateNestedOneWithoutRoutesInputSchema),
@@ -2921,6 +2987,7 @@ export const RouteUncheckedCreateWithoutStartBuoyInputSchema: z.ZodType<Prisma.R
   id: z.number().int().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  status: z.lazy(() => StatusSchema).optional(),
   name: z.string(),
   mapId: z.number().int(),
   endBuoyId: z.number().int(),
@@ -2941,6 +3008,7 @@ export const RouteCreateManyStartBuoyInputEnvelopeSchema: z.ZodType<Prisma.Route
 export const RouteCreateWithoutEndBuoyInputSchema: z.ZodType<Prisma.RouteCreateWithoutEndBuoyInput> = z.object({
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  status: z.lazy(() => StatusSchema).optional(),
   name: z.string(),
   owner: z.lazy(() => UserCreateNestedOneWithoutRoutesInputSchema),
   map: z.lazy(() => MapCreateNestedOneWithoutRoutesInputSchema),
@@ -2952,6 +3020,7 @@ export const RouteUncheckedCreateWithoutEndBuoyInputSchema: z.ZodType<Prisma.Rou
   id: z.number().int().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  status: z.lazy(() => StatusSchema).optional(),
   name: z.string(),
   mapId: z.number().int(),
   startBuoyId: z.number().int(),
@@ -3505,6 +3574,7 @@ export const LegsOnRouteScalarWhereInputSchema: z.ZodType<Prisma.LegsOnRouteScal
 export const RouteCreateWithoutLegsInputSchema: z.ZodType<Prisma.RouteCreateWithoutLegsInput> = z.object({
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  status: z.lazy(() => StatusSchema).optional(),
   name: z.string(),
   owner: z.lazy(() => UserCreateNestedOneWithoutRoutesInputSchema),
   map: z.lazy(() => MapCreateNestedOneWithoutRoutesInputSchema),
@@ -3516,6 +3586,7 @@ export const RouteUncheckedCreateWithoutLegsInputSchema: z.ZodType<Prisma.RouteU
   id: z.number().int().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  status: z.lazy(() => StatusSchema).optional(),
   name: z.string(),
   mapId: z.number().int(),
   startBuoyId: z.number().int(),
@@ -3542,6 +3613,7 @@ export const RouteUpdateToOneWithWhereWithoutLegsInputSchema: z.ZodType<Prisma.R
 export const RouteUpdateWithoutLegsInputSchema: z.ZodType<Prisma.RouteUpdateWithoutLegsInput> = z.object({
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   owner: z.lazy(() => UserUpdateOneRequiredWithoutRoutesNestedInputSchema).optional(),
   map: z.lazy(() => MapUpdateOneRequiredWithoutRoutesNestedInputSchema).optional(),
@@ -3553,6 +3625,7 @@ export const RouteUncheckedUpdateWithoutLegsInputSchema: z.ZodType<Prisma.RouteU
   id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   mapId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   startBuoyId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
@@ -3571,6 +3644,7 @@ export const RouteCreateManyOwnerInputSchema: z.ZodType<Prisma.RouteCreateManyOw
   id: z.number().int().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  status: z.lazy(() => StatusSchema).optional(),
   name: z.string(),
   mapId: z.number().int(),
   startBuoyId: z.number().int(),
@@ -3600,6 +3674,7 @@ export const ShipUncheckedUpdateManyWithoutOwnerInputSchema: z.ZodType<Prisma.Sh
 export const RouteUpdateWithoutOwnerInputSchema: z.ZodType<Prisma.RouteUpdateWithoutOwnerInput> = z.object({
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   map: z.lazy(() => MapUpdateOneRequiredWithoutRoutesNestedInputSchema).optional(),
   startBuoy: z.lazy(() => BuoyUpdateOneRequiredWithoutRouteStartsNestedInputSchema).optional(),
@@ -3611,6 +3686,7 @@ export const RouteUncheckedUpdateWithoutOwnerInputSchema: z.ZodType<Prisma.Route
   id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   mapId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   startBuoyId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
@@ -3622,6 +3698,7 @@ export const RouteUncheckedUpdateManyWithoutOwnerInputSchema: z.ZodType<Prisma.R
   id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   mapId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   startBuoyId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
@@ -3645,6 +3722,7 @@ export const RouteCreateManyMapInputSchema: z.ZodType<Prisma.RouteCreateManyMapI
   id: z.number().int().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  status: z.lazy(() => StatusSchema).optional(),
   name: z.string(),
   startBuoyId: z.number().int(),
   endBuoyId: z.number().int(),
@@ -3699,6 +3777,7 @@ export const LegUncheckedUpdateManyWithoutMapInputSchema: z.ZodType<Prisma.LegUn
 export const RouteUpdateWithoutMapInputSchema: z.ZodType<Prisma.RouteUpdateWithoutMapInput> = z.object({
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   owner: z.lazy(() => UserUpdateOneRequiredWithoutRoutesNestedInputSchema).optional(),
   startBuoy: z.lazy(() => BuoyUpdateOneRequiredWithoutRouteStartsNestedInputSchema).optional(),
@@ -3710,6 +3789,7 @@ export const RouteUncheckedUpdateWithoutMapInputSchema: z.ZodType<Prisma.RouteUn
   id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   startBuoyId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   endBuoyId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
@@ -3721,6 +3801,7 @@ export const RouteUncheckedUpdateManyWithoutMapInputSchema: z.ZodType<Prisma.Rou
   id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   startBuoyId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   endBuoyId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
@@ -3743,6 +3824,7 @@ export const RouteCreateManyStartBuoyInputSchema: z.ZodType<Prisma.RouteCreateMa
   id: z.number().int().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  status: z.lazy(() => StatusSchema).optional(),
   name: z.string(),
   mapId: z.number().int(),
   endBuoyId: z.number().int(),
@@ -3753,6 +3835,7 @@ export const RouteCreateManyEndBuoyInputSchema: z.ZodType<Prisma.RouteCreateMany
   id: z.number().int().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  status: z.lazy(() => StatusSchema).optional(),
   name: z.string(),
   mapId: z.number().int(),
   startBuoyId: z.number().int(),
@@ -3796,6 +3879,7 @@ export const LegUncheckedUpdateManyWithoutEndBuoyInputSchema: z.ZodType<Prisma.L
 export const RouteUpdateWithoutStartBuoyInputSchema: z.ZodType<Prisma.RouteUpdateWithoutStartBuoyInput> = z.object({
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   owner: z.lazy(() => UserUpdateOneRequiredWithoutRoutesNestedInputSchema).optional(),
   map: z.lazy(() => MapUpdateOneRequiredWithoutRoutesNestedInputSchema).optional(),
@@ -3807,6 +3891,7 @@ export const RouteUncheckedUpdateWithoutStartBuoyInputSchema: z.ZodType<Prisma.R
   id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   mapId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   endBuoyId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
@@ -3818,6 +3903,7 @@ export const RouteUncheckedUpdateManyWithoutStartBuoyInputSchema: z.ZodType<Pris
   id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   mapId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   endBuoyId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
@@ -3827,6 +3913,7 @@ export const RouteUncheckedUpdateManyWithoutStartBuoyInputSchema: z.ZodType<Pris
 export const RouteUpdateWithoutEndBuoyInputSchema: z.ZodType<Prisma.RouteUpdateWithoutEndBuoyInput> = z.object({
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   owner: z.lazy(() => UserUpdateOneRequiredWithoutRoutesNestedInputSchema).optional(),
   map: z.lazy(() => MapUpdateOneRequiredWithoutRoutesNestedInputSchema).optional(),
@@ -3838,6 +3925,7 @@ export const RouteUncheckedUpdateWithoutEndBuoyInputSchema: z.ZodType<Prisma.Rou
   id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   mapId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   startBuoyId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
@@ -3849,6 +3937,7 @@ export const RouteUncheckedUpdateManyWithoutEndBuoyInputSchema: z.ZodType<Prisma
   id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   mapId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   startBuoyId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),

@@ -1,6 +1,7 @@
 import { RouteUpdateInputSchema } from "../../../prisma/generated/zod";
 import prisma from "../../utils/prisma";
-import { CreateRouteInput, UpdateRouteInput } from "./route.schema";
+import { CreateRouteInput, RouteStatusInput, UpdateRouteInput } from "./route.schema";
+import { StatusSchema } from '../../../prisma/generated/zod/index';
 
 export async function createRoute(data: CreateRouteInput) {
     console.log(`createRoute`, data)
@@ -66,6 +67,16 @@ export async function updateRoute(id: number, route: UpdateRouteInput) {
             ...{
                 legs: undefined
             },
+        }
+    });
+}
+export async function updateRouteStatus(id: number, status: RouteStatusInput) {
+    return prisma.route.update({
+        where: {
+            id,
+        },
+        data: {
+            status,
         }
     });
 }

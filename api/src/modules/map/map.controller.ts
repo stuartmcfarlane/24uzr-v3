@@ -47,6 +47,7 @@ export async function putMapHandler(
 ) {
     const { id } = MapIdParamSchema.parse(request.params)
     const map = await updateMap(id, request.body)
+    console.log(`found map`, map)
     
     return map;
 }

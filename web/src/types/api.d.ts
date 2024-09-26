@@ -48,6 +48,8 @@ export interface IApiLegOutput extends IApiLegInput{
   id: number
 }
 
+export type ApiRouteStatus = ("PENDING" | "FAILED" | "DONE")
+
 export type IApiLeg = IApiLegInput | IApiLegOutput
 
 export interface IApiRouteInput {
@@ -59,6 +61,7 @@ export interface IApiRouteInput {
 }
 export interface IApiRouteOutput extends IApiRouteInput{
   id: number
+  status: ApiRouteStatus
   createdAt: string
   updatedAt: string
   legs: IApiLegOutput[]
