@@ -1,4 +1,4 @@
-import { IApiBuoyInput, IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapInput, IApiMapOutput, IApiUser, IApiUserOutput } from "@/types/api"
+import { IApiBuoyInput, IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapInput, IApiMapOutput, IApiRouteInput, IApiRouteOutput, IApiUser, IApiUserOutput } from "@/types/api"
 
 const makeApiUrl = (uri: string) => `${process.env.NEXT_PUBLIC_API_URL || process.env.API_URL}${uri}`
 
@@ -260,5 +260,48 @@ export const apiGetLegs = async (
     const legs = await response.json()
 
     return  legs
+}
+
+export const apiGetRoutes = async (
+    accessToken: string,
+    mapId: number,
+): Promise<IApiRouteOutput[] | null> => {
+
+    const response = await get(accessToken, `/api/map/${mapId}/routes`)
+
+    if (!response.ok) return null
+    
+    const routes = await response.json()
+    console.log(`<getRoutes`, routes)
+
+    return  routes
+}
+
+export const apiGetRoute = async (
+    accessToken: string,
+    routeId: number,
+): Promise<IApiRouteOutput | null> => {
+
+    const response = await get(accessToken, `/api/route/${routeId}`)
+
+    if (!response.ok) return null
+    
+    const route = await response.json()
+    console.log(`<getRoute`, route)
+
+    return route
+}
+
+export const apiCreateRoute = async (
+    accessToken: string,
+    route: IApiRouteInput,
+): Promise<IApiRouteOutput | null> => {
+
+    const response = await post(accessToken, `/api/routes`, route)
+
+    if (!response.ok) return null
+    
+    const createdRoute = await response.json() as IApiRouteOutput
+    return createdRoute
 }
 

@@ -1,7 +1,7 @@
 "use server"
 
 import { getSession } from './session';
-import { apiCreateBuoy, apiCreateLeg, apiCreateMap, apiDeleteBuoy, apiGetBuoys, apiGetLegs, apiUpdateBuoy, apiUpdateLeg, apiUpdateMap } from '@/services/api';
+import { apiCreateBuoy, apiCreateLeg, apiCreateMap, apiCreateRoute, apiDeleteBuoy, apiGetBuoys, apiGetLegs, apiUpdateBuoy, apiUpdateLeg, apiUpdateMap } from '@/services/api';
 import { ActionError } from '@/types/action';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -172,4 +172,33 @@ export const deleteBuoy = async ({
     revalidatePath(`/map/${mapId}`)
 
     return {}
+}
+export const createRouteWithForm = async (formData: FormData): Promise<ActionError> => {
+    const session = await getSession()
+
+    const formName = formData.get("name") as string
+    const formMapId = parseInt(formData.get("mapId") as string)
+    const formStartBuoyId = parseInt(formData.get("startBuoyId") as string)
+    const formEndBuoyId = parseInt(formData.get("endBuoyId") as string)
+
+    if (!formName ||
+        !session.userId ||
+        !formMapId ||
+        !formStartBuoyId ||
+        !formEndBuoyId
+    ) {
+        return { error: "Missing data" }
+    }
+    
+    const createdRoute = await apiCreateRoute(session.apiToken!, {
+        name: formName,
+        ownerId: session.userId,
+        mapId: formMapId,
+        startBuoyId: formStartBuoyId,
+        endBuoyId: formEndBuoyId,
+    })
+    if (!createdRoute) return { error: "Failed to create map" }
+
+    console.log(`created`, createdRoute)
+    redirect(`/map/${createdRoute.mapId}/route/${createdRoute.id}`)
 }

@@ -4,7 +4,7 @@ import { IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapOutput, IApiRouteOu
 import MapCanvas from "./ MapCanvas"
 import { useEffect, useState } from "react"
 import { createLeg, deleteBuoy, updateMap } from "@/actions/map"
-import { idIs, maybeFinishBuoy } from "@/lib/fp"
+import { idIs } from "@/lib/fp"
 import PadlockIcon from "./Icons/PadlockIcon"
 import BuoyIcon from "./Icons/BuoyIcon"
 import useKeyPress from "@/hooks/useKeyPress"
@@ -12,37 +12,32 @@ import { useChange } from "@/hooks/useChange"
 import ChartIcon from "./Icons/ChartIcon"
 import BuoyOptions from "./BuoyOptions"
 import ChartOptions from "./ChartOptions"
-import RouteOptions from "./RouteOptions"
 
-type MapPageClientFunctionsProps = {
+type MapRoutePageClientFunctionsProps = {
     map: IApiMapOutput
+    route: IApiRouteOutput
     buoys: IApiBuoyOutput[]
     legs: IApiLegOutput[]
-    routes: IApiRouteOutput[]
 }
 
-const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
+const MapRoutePageClientFunctions = (props: MapRoutePageClientFunctionsProps) => {
     const {
         map,
+        route,
         buoys,
         legs,
-        routes,
     } = props
 
     const [buoyOptionsOpen, setBuoyOptionsOpen] = useState(false)
     const [chartOptionsOpen, setChartOptionsOpen] = useState(false)
-    const [routeOptionsOpen, setRouteOptionsOpen] = useState(false)
     const [selectedBuoy, setSelectedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
     const [deletedBuoy, setDeletedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
     const [selectedLeg, setSelectedLeg] = useState<IApiLegOutput | undefined>(undefined)
     const [createdLeg, setCreatedLeg] = useState<IApiLegInput | undefined>(undefined)
-    const [startBuoy, setStartBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
-    const [endBuoy, setEndBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
 
     const onSelectBuoy = (buoy?: IApiBuoyOutput) => {
         setSelectedBuoy(buoy)
         setBuoyOptionsOpen(!!buoy)
-        setStartBuoy(buoy)
     }
     const onSelectLeg = (leg?: IApiLegOutput) => {
         setSelectedLeg(leg)
@@ -54,14 +49,7 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
 
     useChange(
         () => {
-            const endBuoy = buoys.find(maybeFinishBuoy)
-            setEndBuoy(endBuoy)
-        },
-        [buoys]
-    )
-    useChange(
-        () => {
-            if (deleteKeyPressed && selectedBuoy && !map.isLocked) {
+            if (deleteKeyPressed && selectedBuoy) {
                 onDeleteBuoy(selectedBuoy)
             }
         },
@@ -139,8 +127,8 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
                             <PadlockIcon isLocked={map.isLocked} onClick={onToggleMapLock} />
                         </span>
                     </h1>
-                    <div className="flex-1 flex flex-col gap-4 mt-4 border-t-2 pt-4">
-                        {!map.isLocked && (<>
+                    {!map.isLocked && (
+                        <div className="flex-1 flex flex-col gap-4 mt-4 border-t-2 pt-4">
                             <div
                                 className="flex gap-4"
                                 onClick={() => setBuoyOptionsOpen(open => !open)}
@@ -176,26 +164,8 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
                                     map={map}
                                 />
                             )}
-                        </>)}
-                        <div className="flex gap-4"
-                            onClick={() => setRouteOptionsOpen(open => !open)}
-                        >
-                            <div className="w-7">
-                                <BuoyIcon/>
-                            </div>
-                            <div className="">
-                                {routeOptionsOpen ? 'Hide route options' : 'Show route options'}
-                            </div>
                         </div>
-                        {routeOptionsOpen && (<>
-                            <RouteOptions
-                                map={map}
-                                routes={routes}
-                                startBuoy={startBuoy}
-                                endBuoy={endBuoy}
-                            />
-                        </>)}
-                    </div>
+                    )}
                 </div>
             </div>
             <div className="border flex-grow flex flex-col">
@@ -216,4 +186,4 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
     )
 }
 
-export default MapPageClientFunctions
+export default MapRoutePageClientFunctions

@@ -39,7 +39,9 @@ function curry<P extends any[], R>(fn: (...args: P) => R) {
 const allOf = (...fns: Function[]) => (v: any) => fns.reduce((pp, fn) => pp && fn(v), true)
 
 export const idIs = (needle: number) => (o: { id: number }): boolean => needle === o.id
-export const nameIs = (needle: string) => (o: { name: string }): boolean => needle === o.id
+export const nameIs = (needle: string) => (o: { name: string }): boolean => needle === o.name
+export const maybeFinishBuoy =  (o: { name: string }): boolean => /finish/i.test(o.name)
+
 export const idIsNot = (needle: number) => (o: { id: number }): boolean => needle !== o.id
 export const and = allOf
 export const project = <O, K extends keyof O>(k: K) => (o: O) => o[k]

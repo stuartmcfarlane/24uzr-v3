@@ -84,3 +84,10 @@ export async function findRoutes() {
     });
 }
 
+export async function findRoutesByMapId(mapId: number) {
+    return prisma.route.findMany({
+        where: {
+            mapId
+        },
+    });
+}

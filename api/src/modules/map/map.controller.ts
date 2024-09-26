@@ -3,6 +3,7 @@ import { CreateMapInput, MapIdParamInput, UpdateMapInput, $ref, MapIdParamSchema
 import { createMap, findMap, findMaps, updateMap } from "./map.service";
 import { findBuoysByMapId } from "../buoy/buoy.service";
 import { findLegsByMapId } from "../leg/leg.service";
+import { findRoutesByMapId } from "../route/route.service";
 
 export async function createMapHandler(
     request: FastifyRequest<{
@@ -68,6 +69,17 @@ export async function getMapLegsHandler(
 ) {
     const { id } = MapIdParamSchema.parse(request.params)
     const legs = await findLegsByMapId(id)
+    
+    return legs;
+}
+
+export async function getMapRoutesHandler(
+    request: FastifyRequest<{
+        Params: MapIdParamInput,
+    }>,
+) {
+    const { id } = MapIdParamSchema.parse(request.params)
+    const legs = await findRoutesByMapId(id)
     
     return legs;
 }

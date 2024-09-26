@@ -49,3 +49,18 @@ export interface IApiLegOutput extends IApiLegInput{
 }
 
 export type IApiLeg = IApiLegInput | IApiLegOutput
+
+export interface IApiRouteInput {
+  mapId: number
+  ownerId: number
+  name: string
+  startBuoyId: number
+  endBuoyId: number
+}
+export interface IApiRouteOutput extends IApiRouteInput{
+  id: number
+  createdAt: string
+  updatedAt: string
+}
+
+export type IApiRoute = IApiRouteInput | IApiRouteOutput

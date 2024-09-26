@@ -66,27 +66,10 @@ const ChartOptions = (props: ChartOptionsProps) => {
                     legName(needle) === legName(haystack)
                 )
                 const legs = uniqueHash(legName, parsedLegs)
-                const mapLegsByName = mapLegs.reduce(
-                    (legsByName, leg) => {
-                        legsByName.set(legName(leg), leg)
-                        return legsByName
-                    },
-                    new Map<string, IApiLegOutput>()
-                )
                 const creatingLegs = legs.filter(
                     leg => !mapLegs.find(isSameLeg(leg))
                 )
-                // const updatingLegs = mapLegs.filter(
-                //     leg => legs.find(isSameLeg(leg))
-                // )
                 await createLegs(creatingLegs)
-                // no need to update legs because they only have start and end
-                // await Promise.all(updatingLegs.map(
-                //     leg => {
-                //         const id = mapLegsByName.get(legName(leg))?.id
-                //         return updateLeg(id!, leg)
-                //     }
-                // ))
             }
             setBulkData(unparsedLegs)
         },

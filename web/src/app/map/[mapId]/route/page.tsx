@@ -1,11 +1,11 @@
 "use server"
 
 import { getSession } from "@/actions/session"
-import MapPageClientFunctions from "@/components/MapPageFunctions"
+import MapRoutePageClientFunctions from "@/components/MapRoutePageFunctions"
 import { apiGetBuoys, apiGetLegs, apiGetMap } from "@/services/api"
 import { redirect } from "next/navigation"
 
-const MapPage = async ({
+const MapRoutePage = async ({
     params
 }: {
     params: { id: string }
@@ -24,11 +24,11 @@ const MapPage = async ({
     const legs = await apiGetLegs(session.apiToken!, map.id)
 
     return (
-        <MapPageClientFunctions
+        <MapRoutePageClientFunctions
             map={map}
             buoys={buoys || []}
             legs={legs || []}
         />
     )
 }
-export default MapPage
+export default MapRoutePage
