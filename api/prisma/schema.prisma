@@ -57,13 +57,14 @@ model Buoy {
 }
 
 model Leg {
-  id          Int  @id @default(autoincrement())
-  map         Map  @relation(fields: [mapId], references: [id])
+  id          Int           @id @default(autoincrement())
+  map         Map           @relation(fields: [mapId], references: [id])
   mapId       Int
-  startBuoy   Buoy @relation(name: "startBuoy", fields: [startBuoyId], references: [id])
+  startBuoy   Buoy          @relation(name: "startBuoy", fields: [startBuoyId], references: [id])
   startBuoyId Int
-  endBuoy     Buoy @relation(name: "endBuoy", fields: [endBuoyId], references: [id])
+  endBuoy     Buoy          @relation(name: "endBuoy", fields: [endBuoyId], references: [id])
   endBuoyId   Int
+  LegsOnRoute LegsOnRoute[]
 }
 
 enum Status {
@@ -93,6 +94,7 @@ model LegsOnRoute {
   route   Route @relation(fields: [routeId], references: [id])
   routeId Int
   legId   Int
+  leg     Leg   @relation(fields: [legId], references: [id])
   index   Int
 
   @@id([routeId, legId])

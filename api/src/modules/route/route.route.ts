@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify";
 import {
     createRouteHandler,
     getRouteHandler,
+    getRouteLegsHandler,
     getRoutesHandler,
     putRouteHandler,
 } from "./route.controller";
@@ -69,6 +70,21 @@ async function routeRoutes(server: FastifyInstance) {
         },
         getRoutesHandler
     );
+    server.get(
+        "/route/:id/legs",
+        {
+            schema: {
+                tags: ['route'],
+                security: [ { bearerAuth: [] } ],
+                response: {
+                    200: $ref("legsOnRouteResponseSchema"),
+                },
+            },
+            preHandler: [server.authenticate],
+        },
+        getRouteLegsHandler
+    );
 }
+
 
 export default routeRoutes;

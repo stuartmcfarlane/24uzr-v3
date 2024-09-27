@@ -1,7 +1,7 @@
 "use client"
 
 import { clientPoint2svgPoint, domRect2rect, fitToClient, rectGrowMargin, latLng2canvas, makePoint, makeRect, makeScreen2svgFactor, points2boundingRect, rect2viewBox, screenUnits2canvasUnits } from "@/lib/graph"
-import { IApiBuoyOutput, IApiLegOutput } from "@/types/api"
+import { IApiBuoyOutput, IApiLegOutput, IApiRouteLegOutput } from "@/types/api"
 import MapBuoy from "./MapBuoy"
 import { MouseEvent, useEffect, useRef, useState } from "react"
 import { rect2SvgRect } from '../../lib/graph';
@@ -17,12 +17,14 @@ import { actualLegs } from "@/lib/legs"
 import { useScrollWheelZoom } from "@/hooks/useScrollWheelZoom"
 import MouseCursor from "./MouseCursor"
 import ArrowMarker from "./ArrowMarker"
+import MapRouteLeg from "./MapRouteLeg"
 
 const DEBUG = false
 
 type MapSvgProps = {
     buoys: IApiBuoyOutput[]
     legs: IApiLegOutput[]
+    routeLegs: IApiRouteLegOutput[]
     selectedBuoy?: IApiBuoyOutput
     onSelectBuoy?: (buoy?: IApiBuoyOutput) => void
     selectedLeg?: IApiLegOutput
@@ -34,6 +36,7 @@ const MapSvg = (props: MapSvgProps) => {
     const {
         buoys,
         legs,
+        routeLegs,
         onSelectBuoy,
         selectedBuoy,
         onSelectLeg,
@@ -180,6 +183,15 @@ const MapSvg = (props: MapSvgProps) => {
                         endBuoy={buoys.find(idIs(leg.endBuoyId))}
                         onSelect={onSelectLeg}
                         isSelected={leg.id === selectedLeg?.id}
+                    />)
+                )}
+                {(routeLegs || []).map((routeLeg) => (
+                    <MapRouteLeg key={routeLeg.leg.id}
+                        routeLeg={routeLeg}
+                        startBuoy={buoys.find(idIs(routeLeg.leg.startBuoyId))}
+                        endBuoy={buoys.find(idIs(routeLeg.leg.endBuoyId))}
+                        onSelect={onSelectLeg}
+                        isSelected={routeLeg.leg.id === selectedLeg?.id}
                     />)
                 )}
                 {mouseDragBuoy.dragging

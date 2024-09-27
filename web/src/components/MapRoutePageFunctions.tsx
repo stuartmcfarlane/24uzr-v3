@@ -1,23 +1,15 @@
 "use client"
 
-import { IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapOutput, IApiRouteOutput } from "@/types/api"
+import { IApiBuoyOutput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput, IApiRouteOutput } from "@/types/api"
 import MapCanvas from "./ MapCanvas"
-import { useEffect, useState } from "react"
-import { createLeg, deleteBuoy, updateMap } from "@/actions/map"
-import { idIs } from "@/lib/fp"
-import PadlockIcon from "./Icons/PadlockIcon"
-import BuoyIcon from "./Icons/BuoyIcon"
-import useKeyPress from "@/hooks/useKeyPress"
-import { useChange } from "@/hooks/useChange"
-import ChartIcon from "./Icons/ChartIcon"
-import BuoyOptions from "./BuoyOptions"
-import ChartOptions from "./ChartOptions"
-import { legsOnRoute } from '../../../api/src/modules/route/route.schema';
+import { useState } from "react"
+import routeRoutes from '../../../api/src/modules/route/route.route';
 
 type MapRoutePageClientFunctionsProps = {
     map: IApiMapOutput
     route: IApiRouteOutput
     buoys: IApiBuoyOutput[]
+    routeLegs: IApiRouteLegOutput[]
 }
 
 const MapRoutePageClientFunctions = (props: MapRoutePageClientFunctionsProps) => {
@@ -25,6 +17,7 @@ const MapRoutePageClientFunctions = (props: MapRoutePageClientFunctionsProps) =>
         map,
         route,
         buoys,
+        routeLegs,
     } = props
 
     const [selectedBuoy, setSelectedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
@@ -36,7 +29,6 @@ const MapRoutePageClientFunctions = (props: MapRoutePageClientFunctionsProps) =>
     const onSelectLeg = (leg?: IApiLegOutput) => {
         setSelectedLeg(leg)
     }
-
 
     return (
         <div className="flex-grow my-10 flex gap-4">
@@ -52,7 +44,8 @@ const MapRoutePageClientFunctions = (props: MapRoutePageClientFunctionsProps) =>
                     <MapCanvas
                         map={map}
                         buoys={buoys}
-                        legs={route.legs}
+                        legs={[]}
+                        routeLegs={routeLegs}
                         selectedBuoy={selectedBuoy}
                         onSelectBuoy={onSelectBuoy}
                         selectedLeg={selectedLeg}

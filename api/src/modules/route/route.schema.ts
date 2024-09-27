@@ -1,10 +1,11 @@
 import { z } from "zod";
 import { buildJsonSchemas } from 'fastify-zod';
-import { LegsOnRouteSchema, RouteCreateInputSchema, StatusSchema } from "../../../prisma/generated/zod";
+import { LegSchema, StatusSchema } from "../../../prisma/generated/zod";
 
 export const legsOnRoute = z.object({
   routeId: z.number().int(),
   legId: z.number().int(),
+  leg: LegSchema,
   index: z.number().int(),
 })
 
@@ -12,6 +13,8 @@ export const legsOnRouteWithoutRoute = z.object({
   legId: z.number().int(),
   index: z.number().int(),
 })
+
+export const legsOnRouteResponseSchema = z.array(legsOnRoute)
 
 const routeInput = {
     name: z.string(),
@@ -61,6 +64,7 @@ export const { schemas: routeSchemas, $ref } = buildJsonSchemas({
     updateRouteSchema,
     routeResponseSchema,
     routesResponseSchema,
+    legsOnRouteResponseSchema,
 }, {
     $id: 'routeSchemas'
 });

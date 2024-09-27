@@ -3,7 +3,7 @@ import { RouteIdParamInput, RouteIdParamSchema, CreateRouteInput, UpdateRouteInp
 import { createRoute, findRoute, findRoutes, updateRoute, updateRouteLegs, updateRouteStatus } from "./route.service";
 import { getShortestRoute, Wind } from "../../services/routeApi";
 import { findBuoy, findBuoysByMapId } from "../buoy/buoy.service";
-import { findLegsByMapId } from "../leg/leg.service";
+import { findLegsByMapId, findLegsByRouteId } from "../leg/leg.service";
 import { Ship } from "@prisma/client";
 import { idIs } from "../../utils/idIs";
 
@@ -69,6 +69,18 @@ export async function getRouteHandler(
     console.log(`found route`, route)
     
     return route;
+}
+
+export async function getRouteLegsHandler(
+    request: FastifyRequest<{
+        Params: RouteIdParamInput,
+    }>,
+) {
+    const { id } = RouteIdParamSchema.parse(request.params)
+    const legs = await findLegsByRouteId(id)
+    console.log(`found legs`, legs)
+    
+    return legs
 }
 
 export async function putRouteHandler(

@@ -48,9 +48,9 @@ export interface IApiLegOutput extends IApiLegInput{
   id: number
 }
 
-export type ApiRouteStatus = ("PENDING" | "FAILED" | "DONE")
-
 export type IApiLeg = IApiLegInput | IApiLegOutput
+
+export type ApiRouteStatus = ("PENDING" | "FAILED" | "DONE")
 
 export interface IApiRouteInput {
   mapId: number
@@ -64,7 +64,20 @@ export interface IApiRouteOutput extends IApiRouteInput{
   status: ApiRouteStatus
   createdAt: string
   updatedAt: string
-  legs: IApiLegOutput[]
+  legs: IApiRouteLegOutput[]
 }
 
 export type IApiRoute = IApiRouteInput | IApiRouteOutput
+
+export interface IApiRouteLegInput {
+  mapId: number
+  routeId: number
+  startBuoyId: number
+  endBuoyId: number
+}
+export interface IApiRouteLegOutput extends IApiRouteLegInput{
+  leg: IApiLegOutput
+}
+
+export type IApiRouteLeg = IApiRouteLegInput | IApiRouteLegOutput
+

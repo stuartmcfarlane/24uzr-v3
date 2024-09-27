@@ -1,4 +1,4 @@
-import { IApiBuoyInput, IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapInput, IApiMapOutput, IApiRouteInput, IApiRouteOutput, IApiUser, IApiUserOutput } from "@/types/api"
+import { IApiBuoyInput, IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapInput, IApiMapOutput, IApiRouteInput, IApiRouteLegOutput, IApiRouteOutput, IApiUser, IApiUserOutput } from "@/types/api"
 
 const makeApiUrl = (uri: string) => `${process.env.NEXT_PUBLIC_API_URL || process.env.API_URL}${uri}`
 
@@ -290,6 +290,20 @@ export const apiGetRoute = async (
     console.log(`<getRoute`, route)
 
     return route
+}
+
+export const apiGetRouteLegs = async (
+    accessToken: string,
+    routeId: number,
+): Promise<IApiRouteLegOutput[]> => {
+
+    const response = await get(accessToken, `/api/route/${routeId}/legs`)
+
+    if (!response.ok) return []
+    
+    const routeLegs = await response.json()
+
+    return routeLegs
 }
 
 export const apiCreateRoute = async (

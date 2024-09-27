@@ -3,7 +3,7 @@ import { IApiBuoyOutput, IApiLegOutput } from "@/types/api"
 
 type MapLegProps = {
     leg: IApiLegOutput
-    returnLeg: IApiLegOutput
+    returnLeg?: IApiLegOutput
     startBuoy?: IApiBuoyOutput
     endBuoy?: IApiBuoyOutput
     onSelect?: (leg?: IApiLegOutput) => void

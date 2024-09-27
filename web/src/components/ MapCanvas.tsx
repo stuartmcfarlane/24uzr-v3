@@ -1,11 +1,12 @@
 "use client"
 
-import { IApiBuoyOutput, IApiLegOutput, IApiMapOutput } from "@/types/api"
+import { IApiBuoyOutput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput } from "@/types/api"
 import MapSvg from "./MapCanvas/MapSvg"
 
 type MapCanvasProps = {
     map: IApiMapOutput
     buoys: IApiBuoyOutput[]
+    routeLegs: IApiRouteLegOutput[]
     legs: IApiLegOutput[]
     selectedBuoy?: IApiBuoyOutput
     onSelectBuoy?: (buoy?: IApiBuoyOutput) => void
@@ -19,6 +20,7 @@ const MapCanvas = (props: MapCanvasProps) => {
         map,
         buoys,
         legs,
+        routeLegs,
         selectedBuoy,
         onSelectBuoy,
         selectedLeg,
@@ -29,6 +31,7 @@ const MapCanvas = (props: MapCanvasProps) => {
     return <MapSvg
         buoys={buoys}
         legs={legs}
+        routeLegs={routeLegs}
         onSelectBuoy={onSelectBuoy}
         selectedBuoy={selectedBuoy}
         onSelectLeg={onSelectLeg}

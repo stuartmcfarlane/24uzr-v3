@@ -1,5 +1,6 @@
 import prisma from "../../utils/prisma";
 import { CreateLegInput, UpdateLegInput } from "./leg.schema";
+import { legsOnRoute } from '../route/route.schema';
 
 export async function createLeg(data: CreateLegInput) {
     const leg = await prisma.leg.create({
@@ -49,6 +50,9 @@ export async function findLegsByMapId(mapId: number) {
 
 export async function findLegsByRouteId(routeId: number) {
     return prisma.legsOnRoute.findMany({
+        include: {
+            leg: true
+        },
         where: {
             routeId
         },
