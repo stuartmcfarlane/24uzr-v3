@@ -12,10 +12,7 @@ export const getAllRoutes = async(
     buoys: Buoy[],
     wind: Wind,
 ) => {
-    const buoysById = buoys.reduce( (buoysById,buoy) => {
-        buoysById[buoy.id] = buoy
-        return buoysById
-    }, {} as { [id: number]: Buoy })
+    const buoysById = indexBy('id')(buoys)
 
     const graph = makeGraph(ship, legs, buoysById, wind)
     
@@ -24,13 +21,13 @@ export const getAllRoutes = async(
 
     console.log('got', allRoutes)
     const routes = {
-        start: allRoutes.start,
-        end: allRoutes.end,
-        paths: allRoutes.paths.map(path => {
+        start: allRoutes.Start,
+        end: allRoutes.End,
+        paths: allRoutes.Paths.map(path => {
             return {
-                length: path.metres,
-                seconds: path.seconds,
-                buoys: path.nodes,
+                length: path.Metres,
+                seconds: path.Seconds,
+                buoys: path.Nodes,
             }
         })
     }
@@ -47,70 +44,88 @@ export const getShortestRoute = async (
     wind: Wind,
 ): Promise<LegsOnRoute[]> => {
 
-    console.log(`>getShortestRoute`)
-    const buoysById = indexBy('id')(buoys)
-    const graph = makeGraph(ship, legs, buoysById, wind)
-    
-    const shortestRoute = (await routeApiPost(`route/shortest?start=${startBuoy.id}&end=${endBuoy.id}`, graph)) as ShortestRouteOutput
-    if (!shortestRoute) return []
+    try {
+        console.log(`>getShortestRoute`)
 
-    console.log('got', shortestRoute)
+        const buoysById = indexBy('id')(buoys)
+        const graph = makeGraph(ship, legs, buoysById, wind)
+        
+        const shortestRoute = (await routeApiPost(`route/shortest?start=${startBuoy.id}&end=${endBuoy.id}`, graph)) as ShortestRouteOutput
+        if (!shortestRoute) return []
 
-    const [startNode, ...tailNodes] = shortestRoute.path.nodes
+        console.log('got', shortestRoute)
 
-    const nodePairs = tailNodes.reduce(
-        (nodePairs, node) => {
-            const start = nodePairs[ nodePairs.length - 1].end
-            const end =  parseInt(node)
-            
-            return [
-                ...nodePairs,
-                { start, end }
-            ]
-        },
-        [ { start: parseInt(startNode), end: parseInt(tailNodes[0])}]
-    )
-    const startEndHash = (start: number, end: number) => `${start}:${end}`
-    const legHash = (leg: Leg) => startEndHash(leg.startBuoyId, leg.endBuoyId)
-    const legsByHash = indexByHash(legHash)(legs)
+        const [startNode, endNode, ...tailNodes] = shortestRoute.Path.Nodes
 
-    const routeLegs = nodePairs.map(
-        ({ start, end }, index) => ({
-            routeId: route.id,
-            legId: legsByHash[startEndHash(start, end)].id,
-            index,
-        })
-    )
+        const nodePairs = tailNodes.reduce(
+            (nodePairs, node) => {
+                console.log(`make pairs`, {node, nodePairs})
+                const start = nodePairs[nodePairs.length - 1].end
+                const end = parseInt(node)
+                
+                return [
+                    ...nodePairs,
+                    { start, end }
+                ]
+            },
+            [{ start: parseInt(startNode), end: parseInt(endNode) }]
+        )
+        const startEndHash = (start: number, end: number) => `${start}:${end}`
+        const legHash = (leg: Leg) => startEndHash(leg.startBuoyId, leg.endBuoyId)
+        const legsByHash = indexByHash(legHash)(legs)
 
-    return routeLegs
+        console.log(`legsByHash`, legsByHash)
+        console.log(`nodePairs`, nodePairs)
+        const routeLegs = nodePairs.map(
+            ({ start, end }, index) => {
+                console.log(`map pairs`, {
+                    route,
+                    hash: startEndHash(start, end),
+                    leg: legsByHash[startEndHash(start, end)],
+                    index
+                })
+                return {
+                    routeId: route.id,
+                    legId: legsByHash[startEndHash(start, end)].id,
+                    index,
+                }
+            }
+        )
+
+        return routeLegs
+    }
+    catch (e) {
+        console.error(e)
+        return []
+    }
 }
 
 type RouteApiPath = {
-    metres: number
-    seconds: number
-    nodes: string[]
+    Metres: number
+    Seconds: number
+    Nodes: string[]
 }
 type RouteApiRoute = {
-    start: string
-    end: string
-    path: RouteApiPath
+    Start: string
+    End: string
+    Path: RouteApiPath
 }
 
 type RouteApiRoutes = {
-    start: string
-    end: string
-    paths: RouteApiPath[]
+    Start: string
+    End: string
+    Paths: RouteApiPath[]
 }
 
 type RouteApiEdge = {
-    start: string
-    end: string
-    metres: number
-    metresPerSecondSE: number
-    metresPerSecondES: number
+    Start: string
+    End: string
+    Metres: number
+    MetresPerSecondSE: number
+    MetresPerSecondES: number
 }
 type RouteApiGraph = {
-    edges: RouteApiEdge[]
+    Edges: RouteApiEdge[]
 }
 
 type AllRoutesInput = RouteApiGraph
@@ -128,7 +143,7 @@ type RouteApiOutput = (
 )
 const makeGraph = (ship: Ship, legs: Leg[], buoysById: { [id: number]: Buoy }, wind: Wind) => {
     return {
-        edges: legs.map((leg) => {
+        Edges: legs.map((leg) => {
 
             const startBuoy = buoysById[leg.startBuoyId]
             const endBuoy = buoysById[leg.endBuoyId]
@@ -140,11 +155,11 @@ const makeGraph = (ship: Ship, legs: Leg[], buoysById: { [id: number]: Buoy }, w
                 ship, wind, endBuoy, startBuoy
             )
             const made = {
-                start: `${leg.startBuoyId}`,
-                end: `${leg.endBuoyId}`,
-                metres,
-                metresPerSecondSE,
-                metresPerSecondES,
+                Start: `${leg.startBuoyId}`,
+                End: `${leg.endBuoyId}`,
+                Metres: metres,
+                MetresPerSecondSE: metresPerSecondSE,
+                MetresPerSecondES: metresPerSecondES,
             }
             return made
         })
@@ -152,16 +167,21 @@ const makeGraph = (ship: Ship, legs: Leg[], buoysById: { [id: number]: Buoy }, w
 }
 
 const routeApiPost = async (uri: string, data: RouteApiInput): Promise<RouteApiOutput> => {
-    console.log(`>routeApiPost ${uri}`, JSON.stringify(data))
-    console.log(` routeApiPost fetch?`, fetch)
-    const response = await fetch(`http://${process.env.ROUTE_API_URL}:${process.env.ROUTE_API_PORT}/${uri}`, {
-        body: JSON.stringify(data)
-    })
-    console.log(` routeApiPost reply`, response)
-    if (!response.ok) return undefined
-    const result = JSON.parse(await response.json()) as RouteApiOutput
-    console.log(` routeApiPost`, result)
-    return result
+    try {
+        const response = await fetch(`http://${process.env.ROUTE_API_URL}:${process.env.ROUTE_API_PORT}/${uri}`, {
+            method: 'post',
+            body: JSON.stringify(data)
+        })
+        if (!response.ok) return undefined
+        const json = await response.json()
+        const result = json as RouteApiOutput
+        return result
+    }
+    catch (e) {
+        console.log(`!routeApiPost`, e)
+        console.error(e)
+        return undefined
+    }
 }
 
 type Vector = [number, number]
