@@ -1,7 +1,11 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { RouteIdParamInput, RouteIdParamSchema, CreateRouteInput, UpdateRouteInput } from "./route.schema";
-import { createRoute, findRoute, findRoutes, updateRoute, updateRouteStatus } from "./route.service";
-import { delay } from "../../utils/timer";
+import { RouteIdParamInput, RouteIdParamSchema, CreateRouteInput, UpdateRouteInput, legsOnRoute } from './route.schema';
+import { createRoute, findRoute, findRoutes, updateRoute, updateRouteLegs, updateRouteStatus } from "./route.service";
+import { getShortestRoute, Wind } from "../../services/routeApi";
+import { findBuoy, findBuoysByMapId } from "../buoy/buoy.service";
+import { findLegsByMapId } from "../leg/leg.service";
+import { Ship } from "@prisma/client";
+import { idIs } from "../../utils/idIs";
 
 export async function createRouteHandler(
     request: FastifyRequest<{
@@ -13,11 +17,37 @@ export async function createRouteHandler(
     
     try {
         const route = await createRoute(body);
-        
-        reply.code(201).send(route);
+        console.log(`created route`, route)
 
-        await delay(10000)
+        reply.code(201).send(route);
+        console.log(`proceeding`)
+
+        const [
+            buoys,
+            legs,
+        ] = await Promise.all([
+            findBuoysByMapId(route.mapId),
+            findLegsByMapId(route.mapId),
+        ])
+        const startBuoy = buoys.find(idIs(route.startBuoyId))
+        const endBuoy = buoys.find(idIs(route.endBuoyId))
+        console.log(`got data`, { buoys, startBuoy, endBuoy, legs, })
+        
+        const ship = {} as Ship
+        const wind = {} as Wind
+
+        console.log(`fetching shortest route...`)
+
+        const legsOnRoute = await getShortestRoute(route, startBuoy!, endBuoy!, ship, legs, buoys, wind)
+
+        console.log(`...fetched shortest route`, legsOnRoute)
+
+        await updateRouteLegs(route.id, legsOnRoute)
+        
+        console.log('done')
         await updateRouteStatus(route.id, 'DONE')
+
+        return reply
     } catch (e) {
         return reply.code(500).send(e);
     }
