@@ -31,7 +31,6 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
 
     const [buoyOptionsOpen, setBuoyOptionsOpen] = useState(false)
     const [chartOptionsOpen, setChartOptionsOpen] = useState(false)
-    const [routeOptionsOpen, setRouteOptionsOpen] = useState(false)
     const [selectedBuoy, setSelectedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
     const [deletedBuoy, setDeletedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
     const [selectedLeg, setSelectedLeg] = useState<IApiLegOutput | undefined>(undefined)
@@ -76,21 +75,6 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
             }
         },
         [deletedBuoy]
-    )
-    useChange(
-        async () => {
-            if (startBuoy) setRouteOptionsOpen(true)
-        },
-        [startBuoy]
-    )
-    useChange(
-        async () => {
-            if (!routeOptionsOpen) {
-                setSelectedBuoy(undefined)
-                setStartBuoy(undefined)
-            }
-        },
-        [routeOptionsOpen]
     )
     useEffect(
         () => {
@@ -192,24 +176,14 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
                                 />
                             )}
                         </>)}
-                        <div className="flex gap-4"
-                            onClick={() => setRouteOptionsOpen(open => !open)}
-                        >
-                            <div className="w-7">
-                                <BuoyIcon/>
-                            </div>
-                            <div className="">
-                                {routeOptionsOpen ? 'Hide route options' : 'Show route options'}
-                            </div>
-                        </div>
-                        {routeOptionsOpen && (<>
+                        {map.isLocked && (
                             <RouteOptions
                                 map={map}
                                 routes={routes}
                                 startBuoy={startBuoy}
                                 endBuoy={endBuoy}
                             />
-                        </>)}
+                        )}
                     </div>
                 </div>
             </div>

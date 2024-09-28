@@ -1,6 +1,7 @@
 import { IApiBuoyOutput, IApiMapOutput, IApiRouteOutput, IApiUserOutput } from "@/types/api"
 import Link from "next/link"
 import { NewRouteTool } from "./NewRouteTool"
+import RouteIcon from "./Icons/RouteIcon"
 
 
 type RouteOptionsProps = {
@@ -18,17 +19,25 @@ const RouteOptions = (props: RouteOptionsProps) => {
     } = props
 
     return (<>
-        {!startBuoy && (
-            <div className="flex flex-col gap-4 flex-grow">
+        {!startBuoy && (<>
+            <div className="flex gap-4">
+                <div className="w-7">
+                    <RouteIcon/>
+                </div>
+                <div className="">
+                    Routes
+                </div>
+            </div>
+            <div className="flex flex-col gap-4">
                 {(routes || []).map(route => (
-                    <div key={route.id} className="">
+                    <div key={route.id} className="ml-11">
                         <Link href={`/map/${map.id}/route/${route.id}`}>
                             {route.name}
                         </Link>
                     </div>
                 ))}
             </div>
-        )}
+        </>)}
         {startBuoy && (
             <NewRouteTool
                 map={map}

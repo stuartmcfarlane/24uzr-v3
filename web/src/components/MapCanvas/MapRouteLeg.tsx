@@ -27,7 +27,7 @@ const MapRouteLeg = (props: MapRouteLegProps) => {
         <line
             {...line2SvgLine([start, end])}
             stroke={'blue'}
-            strokeWidth={3}
+            strokeWidth={2}
             vectorEffect="non-scaling-stroke"
             markerEnd="url(#arrow)"
         />

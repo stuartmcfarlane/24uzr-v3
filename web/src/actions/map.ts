@@ -179,21 +179,24 @@ export const createRouteWithForm = async (formData: FormData): Promise<ActionErr
     const session = await getSession()
 
     const formName = formData.get("name") as string
+    const formDefaultName = formData.get("defaultName") as string
     const formMapId = parseInt(formData.get("mapId") as string)
     const formStartBuoyId = parseInt(formData.get("startBuoyId") as string)
     const formEndBuoyId = parseInt(formData.get("endBuoyId") as string)
 
-    if (!formName ||
-        !session.userId ||
+    if (!session.userId ||
         !formMapId ||
         !formStartBuoyId ||
         !formEndBuoyId
     ) {
         return { error: "Missing data" }
     }
+    if (!formName && !formDefaultName) {
+        return { error: "Missing data" }
+    }
     
     const createdRoute = await apiCreateRoute(session.apiToken!, {
-        name: formName,
+        name: formName || formDefaultName,
         ownerId: session.userId,
         mapId: formMapId,
         startBuoyId: formStartBuoyId,

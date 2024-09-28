@@ -3,6 +3,9 @@
 import { createRouteWithForm } from "@/actions/map"
 import { IApiBuoyOutput, IApiMapOutput } from "@/types/api"
 import BuoyIcon from "./Icons/BuoyIcon"
+import RouteIcon from "./Icons/RouteIcon"
+import { FormEvent, useState } from "react"
+import { useChange } from "@/hooks/useChange"
 
 type NewRouteToolProps = {
     map: IApiMapOutput
@@ -15,14 +18,34 @@ export const NewRouteTool = (props: NewRouteToolProps) => {
         startBuoy,
         endBuoy,
     } = props
-    return (
+
+    const [defaultRouteName, setDefaultRouteName] = useState('route name')
+    useChange(
+        () => {
+            if (startBuoy && endBuoy) {
+                setDefaultRouteName(`${startBuoy.name} -> ${endBuoy.name}`)
+                return
+            }
+            setDefaultRouteName('route name')
+        },
+        [startBuoy, endBuoy]
+    )
+    return (<>
+        <div className="flex gap-4">
+            <div className="w-7">
+                <RouteIcon />
+            </div>
+            <div className="">
+                Create route
+            </div>
+        </div>
         <form action={createRouteWithForm}
             className="flex flex-col"
         >
             <input
                 type="text"
                 name="name"
-                placeholder="route name"
+                placeholder={defaultRouteName}
                 className="ring-2 ring-gray-300 rounded-md p-4 w-full my-2"
             />
             <div className="p-4 w-full my-2 flex">
@@ -47,6 +70,7 @@ export const NewRouteTool = (props: NewRouteToolProps) => {
             <input type="hidden" name="mapId" value={map.id}/>
             <input type="hidden" name="startBuoyId" value={startBuoy?.id}/>
             <input type="hidden" name="endBuoyId" value={endBuoy?.id}/>
+            <input type="hidden" name="defaultName" value={defaultRouteName}/>
         </form>
-    )
+    </>)
 }
