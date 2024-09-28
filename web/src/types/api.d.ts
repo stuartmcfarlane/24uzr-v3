@@ -19,6 +19,7 @@ export type IApiUser = IApiUserInput | IApiUserOutput
 
 export interface IApiMapInput {
   name: string
+  isLocked: boolean
 }
 export interface IApiMapOutput extends IApiMapInput {
   id: number

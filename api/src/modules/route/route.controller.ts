@@ -66,7 +66,6 @@ export async function getRouteHandler(
 ) {
     const { id } = RouteIdParamSchema.parse(request.params)
     const route = await findRoute(id)
-    console.log(`found route`, route)
     
     return route;
 }

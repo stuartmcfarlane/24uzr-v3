@@ -17,16 +17,11 @@ export const geo2decimal = (geo: string): LatLng | undefined => {
 
 export const decimal2geo = (latLng: LatLng) => {
     try {
-        console.error('convert lat,lng => geo not implemented')
         const converted = convert(`${latLng.lat}, ${latLng.lng}`)
-        return {
-            lat: 0,
-            lng: 0,
-        }
+        return  converted.toCoordinateFormat('DMS')
     }
     catch (e) {
-        console.error(e)
-        undefined
+        return `${latLng.lng}, ${latLng.lat}`
     }
     
 }

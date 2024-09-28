@@ -11,6 +11,7 @@ import { project, truthy, unique } from '@/lib/fp';
 import { notEmpty } from '../lib/fp';
 
 export const createMapWithForm = async (formData: FormData): Promise<ActionError> => {
+    console.log(`create map`, formData)
     const session = await getSession()
 
     const formName = formData.get("name") as string
@@ -21,6 +22,7 @@ export const createMapWithForm = async (formData: FormData): Promise<ActionError
     
     const createdMap = await apiCreateMap(session.apiToken!, {
         name: formName,
+        isLocked: false,
     })
     if (!createdMap) return { error: "Failed to create map" }
 

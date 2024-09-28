@@ -1,3 +1,4 @@
+import { decimal2geo } from "./geo"
 import { realEq } from "./math"
 import { vectorAdd } from "./vector"
 import { RefObject } from "react"
@@ -14,6 +15,12 @@ export const latLng2canvas = ({ lat, lng }: LatLng): Point => {
         y: lat * -100,
     }
 }
+export const canvas2latLng = ({ x, y }: Point): LatLng => {
+    return {
+        lng: x / 100,
+        lat: y / -100,
+    }
+}
 export const fmtUndefined = () => '<undefined>'
 export const fmtReal = (n: number, precision: number = 4) => n.toFixed(precision)
 export const fmtPoint = (point?: Point) => (
@@ -21,6 +28,7 @@ export const fmtPoint = (point?: Point) => (
     ? `(${fmtReal(point.x)}, ${fmtReal(point.y)})`
     : fmtUndefined()
 )
+export const fmtLatLng = (latLng?: LatLng): string => !latLng ? fmtUndefined() : decimal2geo(latLng)
 export const fmtVector = (point?: Point) => (
     point
     ? `[${fmtReal(point.x)}, ${fmtReal(point.y)}]`

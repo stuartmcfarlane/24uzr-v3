@@ -31,17 +31,15 @@ const MapLeg = (props: MapLegProps) => {
             <line
                 {...line2SvgLine([start, end])}
                 stroke={'green'}
-                strokeWidth={3}
+                strokeWidth={1}
                 vectorEffect="non-scaling-stroke"
-                markerEnd="url(#arrow)"
-                markerStart="url(#arrow)"
             />
         )
         : (
             <line
                 {...line2SvgLine([start, end])}
                 stroke={'green'}
-                strokeWidth={3}
+                strokeWidth={1}
                 vectorEffect="non-scaling-stroke"
                 markerEnd="url(#arrow)"
             />

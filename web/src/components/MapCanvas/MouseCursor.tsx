@@ -1,6 +1,7 @@
 import { CURSOR_FONT_SIZE, CURSOR_SIZE, CURSOR_TEXT_OFFSET } from "@/lib/constants"
-import { fmtReal, line2SvgLine, makeLine, makePoint, screenUnits2canvasUnits } from "@/lib/graph"
+import { canvas2latLng, fmtReal, line2SvgLine, makeLine, makePoint, screenUnits2canvasUnits } from "@/lib/graph"
 import { vectorAdd } from "@/lib/vector"
+import { fmtLatLng } from '../../lib/graph';
 
 export type MouseCursorProps = {
     point: Point
@@ -36,7 +37,9 @@ const MouseCursor = (props: MouseCursorProps) => {
                 vectorEffect="non-scaling-stroke"
             />
         ))}
-        <text {...vectorAdd({x, y}, textOffset)} fontSize={fontSize}>({fmtReal(x, 2)}, {fmtReal(y, 2)})</text>
+        <text {...vectorAdd(point, textOffset)} fontSize={fontSize}>
+            ({fmtLatLng(canvas2latLng(point))})
+        </text>
     </>
 }
 
