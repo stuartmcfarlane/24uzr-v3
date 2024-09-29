@@ -25,7 +25,7 @@ const DEBUG = false
 type MapSvgProps = {
     buoys: IApiBuoyOutput[]
     legs: IApiLegOutput[]
-    routeLegs: IApiRouteLegOutput[]
+    routeLegs?: IApiRouteLegOutput[]
     selectedBuoy?: IApiBuoyOutput
     onClearSelections?: () => void
     onSelectBuoy?: (buoy?: IApiBuoyOutput) => void

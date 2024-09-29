@@ -2,6 +2,7 @@ import { IApiBuoyOutput, IApiMapOutput, IApiRouteOutput, IApiUserOutput } from "
 import Link from "next/link"
 import { NewRouteTool } from "./NewRouteTool"
 import RouteIcon from "./Icons/RouteIcon"
+import { MouseEvent } from "react"
 
 
 type RouteOptionsProps = {
@@ -9,6 +10,7 @@ type RouteOptionsProps = {
     routes: IApiRouteOutput[]
     startBuoy?: IApiBuoyOutput
     endBuoy?: IApiBuoyOutput
+    onHoverRoute?: (route?: IApiRouteOutput) => void
 }
 const RouteOptions = (props: RouteOptionsProps) => {
     const {
@@ -16,9 +18,12 @@ const RouteOptions = (props: RouteOptionsProps) => {
         routes,
         startBuoy,
         endBuoy,
+        onHoverRoute,
     } = props
 
-    console.log('startBuoy', startBuoy)
+    const onMouseEnter = (route: IApiRouteOutput) => () => onHoverRoute && onHoverRoute(route)
+    const onMouseLeave = (route: IApiRouteOutput) => () => onHoverRoute && onHoverRoute()
+
     return (<>
         {!startBuoy && (<>
             <div className="flex gap-4">
@@ -31,7 +36,12 @@ const RouteOptions = (props: RouteOptionsProps) => {
             </div>
             <div className="flex flex-col gap-4">
                 {(routes || []).map(route => (
-                    <div key={route.id} className="ml-11">
+                    <div
+                        key={route.id}
+                        className="ml-11"
+                        onMouseEnter={onMouseEnter(route)}
+                        onMouseLeave={onMouseLeave(route)}
+                    >
                         <Link href={`/map/${map.id}/route/${route.id}`}>
                             {route.name}
                         </Link>

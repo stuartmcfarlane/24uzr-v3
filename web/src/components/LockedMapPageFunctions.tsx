@@ -29,6 +29,7 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
     const [endBuoy, setEndBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
     const [finishBuoy, setFinishBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
     const [creatingLeg, setCreatingLeg] = useState<{startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput} | undefined>(undefined)
+    const [hoveredRoute, setHoveredRoute] = useState<IApiRouteOutput | undefined>(undefined)
 
     const onClearSelection = () => {
         console.log('onClearSelection')
@@ -65,6 +66,10 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
             isLocked: !map.isLocked,
         })
     }
+    const onHoverRoute = (route?: IApiRouteOutput) => {
+        console.log(`onHoverRoute`, route)
+        setHoveredRoute(route)
+    }
 
     return (
         <div className="flex-grow my-10 flex gap-4">
@@ -82,6 +87,7 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
                             routes={routes}
                             startBuoy={creatingLeg?.startBuoy || startBuoy}
                             endBuoy={creatingLeg?.endBuoy || endBuoy || finishBuoy}
+                            onHoverRoute={onHoverRoute}
                         />
                     </div>
                 </div>
@@ -97,6 +103,7 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
                         onSelectBuoy={onSelectBuoy}
                         onCreateLeg={onCreateLeg}
                         creatingLeg={creatingLeg}
+                        routeLegs={hoveredRoute?.legs}
                     />
                 </div>
             </div>
