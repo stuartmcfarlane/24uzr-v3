@@ -1,7 +1,8 @@
 "use server"
 
 import { getSession } from "@/actions/session"
-import MapPageClientFunctions from "@/components/MapPageFunctions"
+import LockedMapPageClientFunctions from "@/components/LockedMapPageFunctions"
+import UnlockedMapPageClientFunctions from "@/components/UnlockedMapPageFunctions"
 import { apiGetBuoys, apiGetLegs, apiGetMap, apiGetRoutes } from "@/services/api"
 import { redirect } from "next/navigation"
 
@@ -32,11 +33,17 @@ const MapPage = async ({
     }
 
     return (
-        <MapPageClientFunctions
+        map.isLocked
+         ? <LockedMapPageClientFunctions
             map={map}
             buoys={buoys || []}
             legs={legs || []}
             routes={routes || []}
+        />
+         : <UnlockedMapPageClientFunctions
+            map={map}
+            buoys={buoys || []}
+            legs={legs || []}
         />
     )
 }

@@ -14,19 +14,17 @@ import BuoyOptions from "./BuoyOptions"
 import ChartOptions from "./ChartOptions"
 import RouteOptions from "./RouteOptions"
 
-type MapPageClientFunctionsProps = {
+type UnlockedMapPageClientFunctionsProps = {
     map: IApiMapOutput
     buoys: IApiBuoyOutput[]
     legs: IApiLegOutput[]
-    routes: IApiRouteOutput[]
 }
 
-const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
+const UnlockedMapPageClientFunctions = (props: UnlockedMapPageClientFunctionsProps) => {
     const {
         map,
         buoys,
         legs,
-        routes,
     } = props
 
     const [buoyOptionsOpen, setBuoyOptionsOpen] = useState(false)
@@ -36,12 +34,13 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
     const [selectedLeg, setSelectedLeg] = useState<IApiLegOutput | undefined>(undefined)
     const [createdLeg, setCreatedLeg] = useState<IApiLegInput | undefined>(undefined)
     const [startBuoy, setStartBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
-    const [endBuoy, setEndBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
+    const [finishBuoy, setFinishBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
 
     const onSelectBuoy = (buoy?: IApiBuoyOutput) => {
         setSelectedBuoy(buoy)
         setBuoyOptionsOpen(!!buoy)
         setStartBuoy(buoy)
+        
     }
     const onSelectLeg = (leg?: IApiLegOutput) => {
         setSelectedLeg(leg)
@@ -53,8 +52,7 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
 
     useChange(
         () => {
-            const endBuoy = buoys.find(maybeFinishBuoy)
-            setEndBuoy(endBuoy)
+            setFinishBuoy(buoys.find(maybeFinishBuoy))
         },
         [buoys]
     )
@@ -176,14 +174,6 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
                                 />
                             )}
                         </>)}
-                        {map.isLocked && (
-                            <RouteOptions
-                                map={map}
-                                routes={routes}
-                                startBuoy={startBuoy}
-                                endBuoy={endBuoy}
-                            />
-                        )}
                     </div>
                 </div>
             </div>
@@ -205,4 +195,4 @@ const MapPageClientFunctions = (props: MapPageClientFunctionsProps) => {
     )
 }
 
-export default MapPageClientFunctions
+export default UnlockedMapPageClientFunctions

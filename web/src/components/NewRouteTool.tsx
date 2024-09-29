@@ -71,6 +71,7 @@ export const NewRouteTool = (props: NewRouteToolProps) => {
             <input type="hidden" name="startBuoyId" value={startBuoy?.id}/>
             <input type="hidden" name="endBuoyId" value={endBuoy?.id}/>
             <input type="hidden" name="defaultName" value={defaultRouteName}/>
+            <input type="hidden" name="type" value="SHORTEST"/>
         </form>
     </>)
 }

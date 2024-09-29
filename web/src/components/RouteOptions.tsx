@@ -18,6 +18,7 @@ const RouteOptions = (props: RouteOptionsProps) => {
         endBuoy,
     } = props
 
+    console.log('startBuoy', startBuoy)
     return (<>
         {!startBuoy && (<>
             <div className="flex gap-4">

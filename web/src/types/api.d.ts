@@ -52,11 +52,19 @@ export interface IApiLegOutput extends IApiLegInput{
 export type IApiLeg = IApiLegInput | IApiLegOutput
 
 export type ApiRouteStatus = ("PENDING" | "FAILED" | "DONE")
+export type IApiRouteType = ("USER" | "SHORTEST")
 
+export interface IApiRouteInputWithoutName {
+  mapId: number
+  name?: string
+  type: IApiRouteType
+  startBuoyId: number
+  endBuoyId: number
+}
 export interface IApiRouteInput {
   mapId: number
-  ownerId: number
   name: string
+  type: IApiRouteType
   startBuoyId: number
   endBuoyId: number
 }

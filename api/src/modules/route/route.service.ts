@@ -3,30 +3,34 @@ import prisma from "../../utils/prisma";
 import { CreateRouteInput, RouteStatusInput, UpdateRouteInput, legsOnRoute } from './route.schema';
 import { StatusSchema, LegsOnRoute } from '../../../prisma/generated/zod/index';
 
-export async function createRoute(data: CreateRouteInput) {
-    console.log(`createRoute`, data)
+export async function createRoute(route: CreateRouteInput) {
+    console.log(`createRoute`, route)
+    const { type } = route
     const legs = (
-        data.legs
+        route.legs
             ? {
                 legs: {
-                    create: data.legs,
+                    create: route.legs,
                 }
             } :
             {
                 legs: undefined
             }
     )
-    const route = await prisma.route.create({
-        data: {
-            ...data,
-            ...legs,
-        },
+    const status: RouteStatusInput = type === 'USER' ? 'DONE' : 'PENDING'
+    const data = {
+        ...route,
+        status,
+        ...legs,
+    }
+    const created = await prisma.route.create({
+        data,
         include: {
             legs: true
         },
     });
     
-    return route;
+    return created;
 }
 
 export async function findRoute(id: number) {

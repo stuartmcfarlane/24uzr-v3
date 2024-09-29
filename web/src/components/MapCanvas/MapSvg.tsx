@@ -1,7 +1,7 @@
 "use client"
 
 import { clientPoint2svgPoint, domRect2rect, fitToClient, rectGrowMargin, latLng2canvas, makePoint, makeRect, makeScreen2svgFactor, points2boundingRect, rect2viewBox, screenUnits2canvasUnits } from "@/lib/graph"
-import { IApiBuoyOutput, IApiLegOutput, IApiRouteLegOutput } from "@/types/api"
+import { IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiRouteLegOutput } from "@/types/api"
 import MapBuoy from "./MapBuoy"
 import { MouseEvent, useEffect, useRef, useState } from "react"
 import { rect2SvgRect } from '../../lib/graph';
@@ -18,6 +18,7 @@ import { useScrollWheelZoom } from "@/hooks/useScrollWheelZoom"
 import MouseCursor from "./MouseCursor"
 import ArrowMarker from "./ArrowMarker"
 import MapRouteLeg from "./MapRouteLeg"
+import MapCreatingLeg from "./MapCreatingLeg"
 
 const DEBUG = false
 
@@ -26,10 +27,12 @@ type MapSvgProps = {
     legs: IApiLegOutput[]
     routeLegs: IApiRouteLegOutput[]
     selectedBuoy?: IApiBuoyOutput
+    onClearSelections?: () => void
     onSelectBuoy?: (buoy?: IApiBuoyOutput) => void
     selectedLeg?: IApiLegOutput
     onSelectLeg?: (buoy?: IApiLegOutput) => void
     onCreateLeg?: (startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput) => void
+    creatingLeg?: { startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput}
 }
 
 const MapSvg = (props: MapSvgProps) => {
@@ -37,11 +40,13 @@ const MapSvg = (props: MapSvgProps) => {
         buoys,
         legs,
         routeLegs,
+        onClearSelections,
         onSelectBuoy,
         selectedBuoy,
         onSelectLeg,
         selectedLeg,
         onCreateLeg,
+        creatingLeg,
     } = props
 
     const innerBoundingRect = points2boundingRect(
@@ -50,6 +55,7 @@ const MapSvg = (props: MapSvgProps) => {
     
     const containerRef = useRef<HTMLDivElement>(null)
     const svgRef = useRef<SVGSVGElement>(null)
+    const clickCatcherRef = useRef<SVGRectElement>(null)
     const unitRef = useRef<SVGRectElement>(null)
     
     const [viewBoxRect, setViewBoxRect] = useState<Rect | undefined>()
@@ -151,8 +157,10 @@ const MapSvg = (props: MapSvgProps) => {
         [ actualViewBoxRect ]
     )
 
-    const onClick = (e: MouseEvent<SVGSVGElement>) => {
-        if (e.target === svgRef.current) onSelectBuoy && onSelectBuoy()
+    const onClick = (e: MouseEvent<SVGRectElement>) => {
+        if (e.target === clickCatcherRef.current) {
+            onClearSelections && onClearSelections()
+        }
     }
     const mouseSvgPoint = useMouseSvgPosition(svgRef)
 
@@ -164,11 +172,18 @@ const MapSvg = (props: MapSvgProps) => {
                 height={clientDimensions.height}
                 {...rect2viewBox(actualViewBoxRect)}
                 className="map-canvas absolute"
-                onClick={onClick}
             >
                 <defs>
                     <ArrowMarker />
                 </defs>
+                {actualViewBoxRect && (
+                    <rect
+                        ref={clickCatcherRef}
+                        {...rect2SvgRect(actualViewBoxRect)}
+                        fill={'transparent'}
+                        onClick={onClick}
+                    />
+                )}
                 {mouseSvgPoint && (
                     <MouseCursor
                         point={mouseSvgPoint}
@@ -193,6 +208,12 @@ const MapSvg = (props: MapSvgProps) => {
                         onSelect={onSelectLeg}
                         isSelected={routeLeg.leg.id === selectedLeg?.id}
                     />)
+                )}
+                {creatingLeg && (
+                    <MapCreatingLeg
+                        startBuoy={creatingLeg.startBuoy}
+                        endBuoy={creatingLeg.endBuoy}
+                    />
                 )}
                 {mouseDragBuoy.dragging
                     && mouseDragBuoy.mousePosition.end

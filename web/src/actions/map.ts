@@ -5,7 +5,7 @@ import { apiCreateBuoy, apiCreateLeg, apiCreateMap, apiCreateRoute, apiDeleteBuo
 import { ActionError } from '@/types/action';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { IApiBuoyInput, IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapOutput } from '../types/api';
+import { IApiBuoyInput, IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapOutput, IApiRouteType } from '../types/api';
 import { parseNameLatLng } from '@/lib/parsers';
 import { project, truthy, unique } from '@/lib/fp';
 import { notEmpty } from '../lib/fp';
@@ -183,11 +183,13 @@ export const createRouteWithForm = async (formData: FormData): Promise<ActionErr
     const formMapId = parseInt(formData.get("mapId") as string)
     const formStartBuoyId = parseInt(formData.get("startBuoyId") as string)
     const formEndBuoyId = parseInt(formData.get("endBuoyId") as string)
+    const formType = formData.get("type") as IApiRouteType
 
     if (!session.userId ||
         !formMapId ||
         !formStartBuoyId ||
-        !formEndBuoyId
+        !formEndBuoyId ||
+        !formType
     ) {
         return { error: "Missing data" }
     }
@@ -201,6 +203,7 @@ export const createRouteWithForm = async (formData: FormData): Promise<ActionErr
         mapId: formMapId,
         startBuoyId: formStartBuoyId,
         endBuoyId: formEndBuoyId,
+        type: formType,
     })
     if (!createdRoute) return { error: "Failed to create map" }
 

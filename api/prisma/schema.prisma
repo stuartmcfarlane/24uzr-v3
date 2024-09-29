@@ -73,10 +73,16 @@ enum Status {
   DONE
 }
 
+enum RouteType {
+  USER
+  SHORTEST
+}
+
 model Route {
   id          Int           @id @default(autoincrement())
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
+  type        RouteType
   status      Status        @default(PENDING)
   owner       User          @relation(fields: [ownerId], references: [id])
   name        String        @db.VarChar(128)

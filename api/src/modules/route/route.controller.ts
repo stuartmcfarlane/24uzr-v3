@@ -1,8 +1,8 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { RouteIdParamInput, RouteIdParamSchema, CreateRouteInput, UpdateRouteInput, legsOnRoute } from './route.schema';
+import { RouteIdParamInput, RouteIdParamSchema, CreateRouteInput, UpdateRouteInput } from './route.schema';
 import { createRoute, findRoute, findRoutes, updateRoute, updateRouteLegs, updateRouteStatus } from "./route.service";
 import { getShortestRoute, Wind } from "../../services/routeApi";
-import { findBuoy, findBuoysByMapId } from "../buoy/buoy.service";
+import { findBuoysByMapId } from "../buoy/buoy.service";
 import { findLegsByMapId, findLegsByRouteId } from "../leg/leg.service";
 import { Ship } from "@prisma/client";
 import { idIs } from "../../utils/idIs";
@@ -20,6 +20,9 @@ export async function createRouteHandler(
         console.log(`created route`, route)
 
         reply.code(201).send(route);
+        if (route.status !== 'PENDING') {
+            return
+        }
         console.log(`proceeding`)
 
         const [
