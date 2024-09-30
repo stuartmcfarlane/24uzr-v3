@@ -31,14 +31,14 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
     const [creatingLeg, setCreatingLeg] = useState<{startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput} | undefined>(undefined)
     const [hoveredRoute, setHoveredRoute] = useState<IApiRouteOutput | undefined>(undefined)
 
+    if (!map.isLocked) return <></>
+
     const onClearSelection = () => {
-        console.log('onClearSelection')
         setStartBuoy(undefined)
         setEndBuoy(undefined)
         setCreatingLeg(undefined)
     }
     const onSelectBuoy = (buoy?: IApiBuoyOutput) => {
-        console.log('select buoy', { buoy, endBuoy, startBuoy })
         setSelectedBuoy(buoy)
         if (!endBuoy) {
             setStartBuoy(buoy)
@@ -52,7 +52,6 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
         [buoys]
     )
     const onCreateLeg = (startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput) => {
-        console.log('cerate route', { startBuoy, endBuoy })
         setEndBuoy(endBuoy)
         setStartBuoy(startBuoy)
         setCreatingLeg({
@@ -67,7 +66,6 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
         })
     }
     const onHoverRoute = (route?: IApiRouteOutput) => {
-        console.log(`onHoverRoute`, route)
         setHoveredRoute(route)
     }
 

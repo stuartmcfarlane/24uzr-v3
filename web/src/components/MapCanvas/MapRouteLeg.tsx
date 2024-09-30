@@ -1,3 +1,4 @@
+import { ROUTE_LEG_COLOR } from "@/lib/constants"
 import { fmtLine, latLng2canvas, line2SvgLine } from "@/lib/graph"
 import { IApiBuoyOutput, IApiLegOutput, IApiRouteLegOutput } from "@/types/api"
 
@@ -26,7 +27,7 @@ const MapRouteLeg = (props: MapRouteLegProps) => {
     return (
         <line
             {...line2SvgLine([start, end])}
-            stroke={'blue'}
+            stroke={ROUTE_LEG_COLOR}
             strokeWidth={2}
             vectorEffect="non-scaling-stroke"
             markerEnd="url(#arrow)"

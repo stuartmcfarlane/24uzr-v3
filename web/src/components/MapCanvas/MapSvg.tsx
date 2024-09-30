@@ -19,6 +19,7 @@ import MouseCursor from "./MouseCursor"
 import ArrowMarker from "./ArrowMarker"
 import MapRouteLeg from "./MapRouteLeg"
 import MapCreatingLeg from "./MapCreatingLeg"
+import { COLOR_BLUE, COLOR_GREEN } from "@/lib/constants"
 
 const DEBUG = false
 
@@ -267,13 +268,13 @@ const MapSvg = (props: MapSvgProps) => {
                     vectorEffect="non-scaling-stroke"
                 />}
                 {DEBUG && innerBoundingRect && <rect {...rect2SvgRect(innerBoundingRect)}
-                    stroke={'green'}
+                    stroke={COLOR_GREEN}
                     strokeWidth={1}
                     fill={'transparent'}
                     vectorEffect="non-scaling-stroke"
                 />}
                 {DEBUG && viewBoxRect && <rect {...rect2SvgRect(viewBoxRect)}
-                    stroke={'blue'}
+                    stroke={COLOR_BLUE}
                     strokeWidth={1}
                     fill={'transparent'}
                     vectorEffect="non-scaling-stroke"

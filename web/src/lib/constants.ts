@@ -10,3 +10,14 @@ export const BUOY_RADIUS = 3
 export const BUOY_TEXT_OFFSET = makePoint(10, 10)
 export const BUOY_FONT_SIZE = 13
 export const ARROW_MARKER_SIZE = 10
+
+export const COLOR_BLUE = 'rgb(14 165 233)'
+export const COLOR_GREEN = 'rgb(0, 158, 96)'
+export const COLOR_YELLOW = 'yellow'
+export const COLOR_RED = 'red'
+
+export const MAP_LEG_COLOR = COLOR_GREEN
+export const ROUTE_LEG_COLOR = COLOR_BLUE
+export const DRAW_LEG_COLOR = COLOR_BLUE
+export const BUOY_COLOR = COLOR_YELLOW
+export const SELECTED_BUOY_COLOR = COLOR_RED

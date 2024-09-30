@@ -1,3 +1,4 @@
+import { MAP_LEG_COLOR } from "@/lib/constants"
 import { fmtLine, latLng2canvas, line2SvgLine } from "@/lib/graph"
 import { IApiBuoyOutput, IApiLegOutput } from "@/types/api"
 
@@ -30,7 +31,7 @@ const MapLeg = (props: MapLegProps) => {
         ? (
             <line
                 {...line2SvgLine([start, end])}
-                stroke={'green'}
+                stroke={MAP_LEG_COLOR}
                 strokeWidth={1}
                 vectorEffect="non-scaling-stroke"
             />
@@ -38,7 +39,7 @@ const MapLeg = (props: MapLegProps) => {
         : (
             <line
                 {...line2SvgLine([start, end])}
-                stroke={'green'}
+                stroke={MAP_LEG_COLOR}
                 strokeWidth={1}
                 vectorEffect="non-scaling-stroke"
                 markerEnd="url(#arrow)"

@@ -38,7 +38,7 @@ const RouteOptions = (props: RouteOptionsProps) => {
                 {(routes || []).map(route => (
                     <div
                         key={route.id}
-                        className="ml-11"
+                        className="border p-4 hover:bg-24uzr hover:text-white"
                         onMouseEnter={onMouseEnter(route)}
                         onMouseLeave={onMouseLeave(route)}
                     >

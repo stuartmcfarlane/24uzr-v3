@@ -12,7 +12,6 @@ import { useChange } from "@/hooks/useChange"
 import ChartIcon from "./Icons/ChartIcon"
 import BuoyOptions from "./BuoyOptions"
 import ChartOptions from "./ChartOptions"
-import RouteOptions from "./RouteOptions"
 
 type UnlockedMapPageClientFunctionsProps = {
     map: IApiMapOutput
@@ -33,14 +32,10 @@ const UnlockedMapPageClientFunctions = (props: UnlockedMapPageClientFunctionsPro
     const [deletedBuoy, setDeletedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
     const [selectedLeg, setSelectedLeg] = useState<IApiLegOutput | undefined>(undefined)
     const [createdLeg, setCreatedLeg] = useState<IApiLegInput | undefined>(undefined)
-    const [startBuoy, setStartBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
-    const [finishBuoy, setFinishBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
 
     const onSelectBuoy = (buoy?: IApiBuoyOutput) => {
         setSelectedBuoy(buoy)
         setBuoyOptionsOpen(!!buoy)
-        setStartBuoy(buoy)
-        
     }
     const onSelectLeg = (leg?: IApiLegOutput) => {
         setSelectedLeg(leg)
@@ -50,15 +45,11 @@ const UnlockedMapPageClientFunctions = (props: UnlockedMapPageClientFunctionsPro
     }
     const deleteKeyPressed = useKeyPress(["Delete", "Backspace"])
 
+    if (map.isLocked) return <></>
+
     useChange(
         () => {
-            setFinishBuoy(buoys.find(maybeFinishBuoy))
-        },
-        [buoys]
-    )
-    useChange(
-        () => {
-            if (deleteKeyPressed && selectedBuoy && !map.isLocked) {
+            if (deleteKeyPressed && selectedBuoy) {
                 onDeleteBuoy(selectedBuoy)
             }
         },
@@ -112,7 +103,6 @@ const UnlockedMapPageClientFunctions = (props: UnlockedMapPageClientFunctionsPro
         [ buoys, createdLeg ]
     )
     const onCreateLeg = (startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput) => {
-        if (map.isLocked) return
         setCreatedLeg({
             mapId: map.id,
             startBuoyId: startBuoy.id,
@@ -125,6 +115,10 @@ const UnlockedMapPageClientFunctions = (props: UnlockedMapPageClientFunctionsPro
             isLocked: !map.isLocked,
         })
     }
+    const onClearSelection = () => {
+        setSelectedBuoy(undefined)
+        setSelectedLeg(undefined)
+    }
 
     return (
         <div className="flex-grow my-10 flex gap-4">
@@ -133,47 +127,45 @@ const UnlockedMapPageClientFunctions = (props: UnlockedMapPageClientFunctionsPro
                     <h1 className="text-2xl flex gap-4">
                         <span>Map {map?.name} </span>
                         <span className="w-7">
-                            <PadlockIcon isLocked={map.isLocked} onClick={onToggleMapLock} />
+                            <PadlockIcon isLocked={false} onClick={onToggleMapLock} />
                         </span>
                     </h1>
                     <div className="flex-1 flex flex-col gap-4 mt-4 border-t-2 pt-4">
-                        {!map.isLocked && (<>
-                            <div
-                                className="flex gap-4"
-                                onClick={() => setBuoyOptionsOpen(open => !open)}
-                            >
-                                <div className="w-7">
-                                    <BuoyIcon/>
-                                </div>
-                                <div className="">
-                                    {buoyOptionsOpen ? 'Hide buoy options' : 'Show buoy options'}
-                                </div>
+                        <div
+                            className="flex gap-4"
+                            onClick={() => setBuoyOptionsOpen(open => !open)}
+                        >
+                            <div className="w-7">
+                                <BuoyIcon/>
                             </div>
-                            {buoyOptionsOpen && (
-                                <BuoyOptions
-                                    map={map}
-                                    buoy={selectedBuoy}
-                                    onSelectBuoy={onSelectBuoy}
-                                    onDeleteBuoy={onDeleteBuoy}
-                                />
-                            )}
-                            <div
-                                className="flex gap-4"
-                                onClick={() => setChartOptionsOpen(open => !open)}
-                            >
-                                <div className="w-7">
-                                    <ChartIcon/>
-                                </div>
-                                <div className="">
-                                    {chartOptionsOpen ? 'Hide chart options' : 'Show chart options'}
-                                </div>
+                            <div className="">
+                                {buoyOptionsOpen ? 'Hide buoy options' : 'Show buoy options'}
                             </div>
-                            {chartOptionsOpen && (
-                                <ChartOptions
-                                    map={map}
-                                />
-                            )}
-                        </>)}
+                        </div>
+                        {buoyOptionsOpen && (
+                            <BuoyOptions
+                                map={map}
+                                buoy={selectedBuoy}
+                                onSelectBuoy={onSelectBuoy}
+                                onDeleteBuoy={onDeleteBuoy}
+                            />
+                        )}
+                        <div
+                            className="flex gap-4"
+                            onClick={() => setChartOptionsOpen(open => !open)}
+                        >
+                            <div className="w-7">
+                                <ChartIcon/>
+                            </div>
+                            <div className="">
+                                {chartOptionsOpen ? 'Hide chart options' : 'Show chart options'}
+                            </div>
+                        </div>
+                        {chartOptionsOpen && (
+                            <ChartOptions
+                                map={map}
+                            />
+                        )}
                     </div>
                 </div>
             </div>
@@ -183,6 +175,7 @@ const UnlockedMapPageClientFunctions = (props: UnlockedMapPageClientFunctionsPro
                         map={map}
                         buoys={buoys}
                         legs={legs}
+                        onClearSelections={onClearSelection}
                         selectedBuoy={selectedBuoy}
                         onSelectBuoy={onSelectBuoy}
                         selectedLeg={selectedLeg}

@@ -21,7 +21,7 @@ const MapLegDrag = (props: MapLegDragProps) => {
     return <>
         <line
             {...line2SvgLine([start, end])}
-            stroke={'green'}
+            stroke={'rgb(14 165 233)'}
             strokeWidth={endBuoy ? 5 : 2}
             vectorEffect="non-scaling-stroke"
         />

@@ -29,6 +29,10 @@ const MapRoutePageClientFunctions = (props: MapRoutePageClientFunctionsProps) =>
     const onSelectLeg = (leg?: IApiLegOutput) => {
         setSelectedLeg(leg)
     }
+    const onClearSelection = () => {
+        setSelectedBuoy(undefined)
+        setSelectedLeg(undefined)
+    }
 
     return (
         <div className="flex-grow my-10 flex gap-4">
@@ -45,6 +49,7 @@ const MapRoutePageClientFunctions = (props: MapRoutePageClientFunctionsProps) =>
                         map={map}
                         buoys={buoys}
                         legs={[]}
+                        onClearSelections={onClearSelection}
                         routeLegs={routeLegs}
                         selectedBuoy={selectedBuoy}
                         onSelectBuoy={onSelectBuoy}

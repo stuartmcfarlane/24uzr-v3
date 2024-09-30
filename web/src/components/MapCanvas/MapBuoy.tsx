@@ -1,6 +1,6 @@
 "use client"
 
-import { BUOY_CLICK_RADIUS, BUOY_FONT_SIZE, BUOY_RADIUS, BUOY_TEXT_OFFSET } from "@/lib/constants"
+import { BUOY_CLICK_RADIUS, BUOY_COLOR, BUOY_FONT_SIZE, BUOY_RADIUS, BUOY_TEXT_OFFSET, SELECTED_BUOY_COLOR } from "@/lib/constants"
 import { latLng2canvas, makePoint, screenUnits2canvasUnits } from "@/lib/graph"
 import { vectorAdd } from "@/lib/vector"
 import { IApiBuoyOutput } from "@/types/api"
@@ -52,7 +52,7 @@ const MapBuoy = (props: MapBuoyProps & ScaleToViewBoxProps) => {
                 cx={x}
                 cy={y}
                 r={radius}
-                fill={isSelected ? 'red' : 'yellow'}
+                fill={isSelected ? SELECTED_BUOY_COLOR : BUOY_COLOR}
                 stroke={'black'}
                 strokeWidth={hover ? 2 : 1}
                 vectorEffect="non-scaling-stroke"
