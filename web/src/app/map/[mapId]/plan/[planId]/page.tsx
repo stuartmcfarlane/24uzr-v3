@@ -1,10 +1,11 @@
 "use server"
 
 import { getSession } from "@/actions/session"
+import MapPlanPageClientFunctions from "@/components/MapPlanPageFunctions"
 import MapRoutePageClientFunctions from "@/components/MapRoutePageFunctions"
 import { useChange } from "@/hooks/useChange"
 import usePolling from "@/hooks/usePolling"
-import { apiGetBuoys, apiGetLegs, apiGetMap, apiGetRoute, apiGetRouteLegs } from "@/services/api"
+import { apiGetBuoys, apiGetLegs, apiGetMap, apiGetPlan, apiGetRoute, apiGetRouteLegs } from "@/services/api"
 import { redirect } from "next/navigation"
 
 const MapRoutePage = async ({
@@ -12,42 +13,40 @@ const MapRoutePage = async ({
 }: {
         params: {
             mapId: string,
-            routeId: string
+            planId: string
         }
 }) => {
-        
+
+    console.log(params)
     const mapId = parseInt(params.mapId)
-    const routeId = parseInt(params.routeId)
+    const planId = parseInt(params.planId)
     const session = await getSession()
     if (!session.isAdmin) {
         redirect('/')
     }
     const [
         map,
-        route,
+        plan,
         buoys,
-        routeLegs,
     ] = await Promise.all([
         apiGetMap(session.apiToken!, mapId),
-        apiGetRoute(session.apiToken!, routeId),
+        apiGetPlan(session.apiToken!, planId),
         apiGetBuoys(session.apiToken!, mapId),
-        apiGetRouteLegs(session.apiToken!, routeId),
     ])
-    console.log({route, routeLegs})
+    console.log({plan})
     
     if (!map) {
         redirect('/dashboard')
     }
-    if (!route) {
+    if (!plan) {
         redirect(`/map/${mapId}`)
     }
 
     return (
-        <MapRoutePageClientFunctions
+        <MapPlanPageClientFunctions
             map={map}
-            route={route}
+            plan={plan}
             buoys={buoys || []}
-            routeLegs={routeLegs || []}
         />
     )
 }

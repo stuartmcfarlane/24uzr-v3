@@ -18,16 +18,18 @@ export const legsOnRouteResponseSchema = z.array(legsOnRoute)
 
 const routeType = RouteTypeSchema
 
+const routeStatus = StatusSchema
+
 const routeInput = {
     name: z.string(),
     ownerId: z.number(),
     mapId: z.number(),
+    planId: z.number(),
+    status: routeStatus.optional(),
     type: routeType,
     startBuoyId: z.number(),
     endBuoyId: z.number(),
 };
-
-const routeStatus = StatusSchema
 
 const routeGenerated = {
     id: z.number(),

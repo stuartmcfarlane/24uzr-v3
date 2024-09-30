@@ -1,19 +1,19 @@
 "use client"
 
-import { IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapOutput, IApiRouteInput, IApiRouteInputUnchecked, IApiRouteInputWithoutName, IApiRouteOutput } from "@/types/api"
+import { IApiBuoyOutput, IApiLegOutput, IApiMapOutput, IApiPlanOutput } from "@/types/api"
 import MapCanvas from "./ MapCanvas"
 import { useState } from "react"
 import { updateMap } from "@/actions/map"
 import { maybeFinishBuoy } from "@/lib/fp"
 import PadlockIcon from "./Icons/PadlockIcon"
 import { useChange } from "@/hooks/useChange"
-import RouteOptions from "./RouteOptions"
+import PlanOptions from "./PlanOptions"
 
 type LockedMapPageClientFunctionsProps = {
     map: IApiMapOutput
     buoys: IApiBuoyOutput[]
     legs: IApiLegOutput[]
-    routes: IApiRouteOutput[]
+    plans: IApiPlanOutput[]
 }
 
 const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) => {
@@ -21,7 +21,7 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
         map,
         buoys,
         legs,
-        routes,
+        plans,
     } = props
 
     const [selectedBuoy, setSelectedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
@@ -29,7 +29,7 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
     const [endBuoy, setEndBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
     const [finishBuoy, setFinishBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
     const [creatingLeg, setCreatingLeg] = useState<{startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput} | undefined>(undefined)
-    const [hoveredRoute, setHoveredRoute] = useState<IApiRouteOutput | undefined>(undefined)
+    const [hoveredPlan, setHoveredPlan] = useState<IApiPlanOutput | undefined>(undefined)
 
     if (!map.isLocked) return <></>
 
@@ -65,8 +65,8 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
             isLocked: !map.isLocked,
         })
     }
-    const onHoverRoute = (route?: IApiRouteOutput) => {
-        setHoveredRoute(route)
+    const onHoverPlan = (plan?: IApiPlanOutput) => {
+        setHoveredPlan(plan)
     }
 
     return (
@@ -80,12 +80,12 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
                         </span>
                     </h1>
                     <div className="flex-1 flex flex-col gap-4 mt-4 border-t-2 pt-4">
-                        <RouteOptions
+                        <PlanOptions
                             map={map}
-                            routes={routes}
+                            plans={plans}
                             startBuoy={creatingLeg?.startBuoy || startBuoy}
                             endBuoy={creatingLeg?.endBuoy || endBuoy || finishBuoy}
-                            onHoverRoute={onHoverRoute}
+                            onHoverPlan={onHoverPlan}
                         />
                     </div>
                 </div>
@@ -101,7 +101,7 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
                         onSelectBuoy={onSelectBuoy}
                         onCreateLeg={onCreateLeg}
                         creatingLeg={creatingLeg}
-                        routeLegs={hoveredRoute?.legs}
+                        // routeLegs={hoveredPlan?.legs}
                     />
                 </div>
             </div>

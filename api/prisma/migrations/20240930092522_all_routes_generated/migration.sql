@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Route` MODIFY `type` ENUM('USER', 'SHORTEST', 'GENERATED') NOT NULL;

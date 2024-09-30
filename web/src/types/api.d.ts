@@ -56,13 +56,16 @@ export type IApiRouteType = ("USER" | "SHORTEST")
 
 export interface IApiRouteInputWithoutName {
   mapId: number
+  planId: number
   name?: string
   type: IApiRouteType
   startBuoyId: number
   endBuoyId: number
 }
 export interface IApiRouteInput {
+  ownerId?: number
   mapId: number
+  planId: number
   name: string
   type: IApiRouteType
   startBuoyId: number
@@ -89,4 +92,20 @@ export interface IApiRouteLegOutput extends IApiRouteLegInput{
 }
 
 export type IApiRouteLeg = IApiRouteLegInput | IApiRouteLegOutput
+
+export interface IApiPlanInput {
+  ownerId?: number
+  mapId: number
+  name: string
+  startBuoyId: number
+  endBuoyId: number
+}
+export interface IApiPlanOutput extends IApiPlanInput{
+  id: number
+  createdAt: string
+  updatedAt: string
+  routes: IApiRouteOutput[]
+}
+
+export type IApiPlan = IApiPlanInput | IApiPlanOutput
 

@@ -1,51 +1,51 @@
 "use client"
 
-import { createRouteWithForm } from "@/actions/map"
-import { IApiBuoyOutput, IApiPlanOutput } from "@/types/api"
+import { createPlanWithForm } from "@/actions/map"
+import { IApiBuoyOutput, IApiMapOutput } from "@/types/api"
 import BuoyIcon from "./Icons/BuoyIcon"
-import RouteIcon from "./Icons/RouteIcon"
-import { useState } from "react"
+import PlanIcon from "./Icons/PlanIcon"
+import { FormEvent, useState } from "react"
 import { useChange } from "@/hooks/useChange"
 
-type NewRouteToolProps = {
-    plan: IApiPlanOutput
+type NewPlanToolProps = {
+    map: IApiMapOutput
     startBuoy?: IApiBuoyOutput
     endBuoy?: IApiBuoyOutput
 }
-export const NewRouteTool = (props: NewRouteToolProps) => {
+export const NewPlanTool = (props: NewPlanToolProps) => {
     const {
-        plan,
+        map,
         startBuoy,
         endBuoy,
     } = props
 
-    const [defaultRouteName, setDefaultRouteName] = useState('route name')
+    const [defaultPlanName, setDefaultPlanName] = useState('plan name')
     useChange(
         () => {
             if (startBuoy && endBuoy) {
-                setDefaultRouteName(`${startBuoy.name} -> ${endBuoy.name}`)
+                setDefaultPlanName(`${startBuoy.name} -> ${endBuoy.name}`)
                 return
             }
-            setDefaultRouteName('route name')
+            setDefaultPlanName('plan name')
         },
         [startBuoy, endBuoy]
     )
     return (<>
         <div className="flex gap-4">
             <div className="w-7">
-                <RouteIcon />
+                <PlanIcon />
             </div>
             <div className="">
-                Create route
+                Create plan
             </div>
         </div>
-        <form action={createRouteWithForm}
+        <form action={createPlanWithForm}
             className="flex flex-col"
         >
             <input
                 type="text"
                 name="name"
-                placeholder={defaultRouteName}
+                placeholder={defaultPlanName}
                 className="ring-2 ring-gray-300 rounded-md p-4 w-full my-2"
             />
             <div className="p-4 w-full my-2 flex">
@@ -67,12 +67,10 @@ export const NewRouteTool = (props: NewRouteToolProps) => {
             >
                 create
             </button>
-            <input type="hidden" name="mapId" value={plan.mapId}/>
-            <input type="hidden" name="planId" value={plan.id}/>
+            <input type="hidden" name="mapId" value={map.id}/>
             <input type="hidden" name="startBuoyId" value={startBuoy?.id}/>
             <input type="hidden" name="endBuoyId" value={endBuoy?.id}/>
-            <input type="hidden" name="defaultName" value={defaultRouteName}/>
-            <input type="hidden" name="type" value="SHORTEST"/>
+            <input type="hidden" name="defaultName" value={defaultPlanName}/>
         </form>
     </>)
 }

@@ -17,13 +17,11 @@ export async function createRouteHandler(
     
     try {
         const route = await createRoute(body);
-        console.log(`created route`, route)
 
         reply.code(201).send(route);
         if (route.status !== 'PENDING') {
             return
         }
-        console.log(`proceeding`)
 
         const [
             buoys,
@@ -34,20 +32,14 @@ export async function createRouteHandler(
         ])
         const startBuoy = buoys.find(idIs(route.startBuoyId))
         const endBuoy = buoys.find(idIs(route.endBuoyId))
-        console.log(`got data`, { buoys, startBuoy, endBuoy, legs, })
         
         const ship = {} as Ship
         const wind = {} as Wind
 
-        console.log(`fetching shortest route...`)
-
         const legsOnRoute = await getShortestRoute(route, startBuoy!, endBuoy!, ship, legs, buoys, wind)
-
-        console.log(`...fetched shortest route`, legsOnRoute)
 
         await updateRouteLegs(route.id, legsOnRoute)
         
-        console.log('done')
         await updateRouteStatus(route.id, 'DONE')
 
         return reply
@@ -80,7 +72,6 @@ export async function getRouteLegsHandler(
 ) {
     const { id } = RouteIdParamSchema.parse(request.params)
     const legs = await findLegsByRouteId(id)
-    console.log(`found legs`, legs)
     
     return legs
 }

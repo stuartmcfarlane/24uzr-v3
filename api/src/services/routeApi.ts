@@ -1,36 +1,38 @@
-import { Buoy, Leg, LegsOnRoute, Route, Ship } from "@prisma/client"
+import { Buoy, Leg, LegsOnRoute, Plan, Route, Ship } from "@prisma/client"
 import { Decimal } from "@prisma/client/runtime/library"
 import { indexBy, indexByHash } from "../utils/indexBy"
+import { CreateRouteInput } from "../modules/route/route.schema"
 
 export type Wind = {}
 
-export const getAllRoutes = async(
+export const getAllRoutes = async (
+    plan: Plan,
     startBuoy: Buoy,
     endBuoy: Buoy,
     ship: Ship,
     legs: Leg[],
     buoys: Buoy[],
     wind: Wind,
-) => {
+): Promise<CreateRouteInput[]> => {
     const buoysById = indexBy('id')(buoys)
 
     const graph = makeGraph(ship, legs, buoysById, wind)
     
     const allRoutes = (await routeApiPost(`route/all?start=${startBuoy.id}&end=${endBuoy.id}`, graph)) as AllRoutesOutput
-    if (!allRoutes) return undefined
+    if (!allRoutes) return []
 
     console.log('got', allRoutes)
-    const routes = {
-        start: allRoutes.Start,
-        end: allRoutes.End,
-        paths: allRoutes.Paths.map(path => {
-            return {
-                length: path.Metres,
-                seconds: path.Seconds,
-                buoys: path.Nodes,
-            }
-        })
-    }
+    const routes = allRoutes.Paths.map(path2legs(legs)).map((legs, idx) => ({
+        name: `${plan.name} route ${idx}`,
+        ownerId: plan.ownerId,
+        mapId: plan.mapId,
+        planId: plan.id,
+        type: 'GENERATED',
+        status: 'DONE',
+        startBuoyId: plan.startBuoyId,
+        endBuoyId: plan.endBuoyId,
+        legs,
+    } as CreateRouteInput))
     return routes    
 }
 
@@ -55,41 +57,11 @@ export const getShortestRoute = async (
 
         console.log('got', shortestRoute)
 
-        const [startNode, endNode, ...tailNodes] = shortestRoute.Path.Nodes
-
-        const nodePairs = tailNodes.reduce(
-            (nodePairs, node) => {
-                console.log(`make pairs`, {node, nodePairs})
-                const start = nodePairs[nodePairs.length - 1].end
-                const end = parseInt(node)
-                
-                return [
-                    ...nodePairs,
-                    { start, end }
-                ]
-            },
-            [{ start: parseInt(startNode), end: parseInt(endNode) }]
-        )
-        const startEndHash = (start: number, end: number) => `${start}:${end}`
-        const legHash = (leg: Leg) => startEndHash(leg.startBuoyId, leg.endBuoyId)
-        const legsByHash = indexByHash(legHash)(legs)
-
-        console.log(`legsByHash`, legsByHash)
-        console.log(`nodePairs`, nodePairs)
-        const routeLegs = nodePairs.map(
-            ({ start, end }, index) => {
-                console.log(`map pairs`, {
-                    route,
-                    hash: startEndHash(start, end),
-                    leg: legsByHash[startEndHash(start, end)],
-                    index
-                })
-                return {
-                    routeId: route.id,
-                    legId: legsByHash[startEndHash(start, end)].id,
-                    index,
-                }
-            }
+        const routeLegs = path2legs(legs)(shortestRoute.Path).map(
+            leg => ({
+                ...leg,
+                routeId: route.id
+            })
         )
 
         return routeLegs
@@ -181,6 +153,40 @@ const routeApiPost = async (uri: string, data: RouteApiInput): Promise<RouteApiO
         console.log(`!routeApiPost`, e)
         console.error(e)
         return undefined
+    }
+}
+
+const startEndHash = (start: number, end: number) => `${start}:${end}`
+const legHash = (leg: Leg) => startEndHash(leg.startBuoyId, leg.endBuoyId)
+
+const path2legs = (legs: Leg[]) => {
+
+    const legsByHash = indexByHash(legHash)(legs)
+
+    return (path: RouteApiPath) => {
+        const [startNode, endNode, ...tailNodes] = path.Nodes
+
+        const nodePairs = tailNodes.reduce(
+            (nodePairs, node) => {
+                const start = nodePairs[nodePairs.length - 1].end
+                const end = parseInt(node)
+                
+                return [
+                    ...nodePairs,
+                    { start, end }
+                ]
+            },
+            [{ start: parseInt(startNode), end: parseInt(endNode) }]
+        )
+        const routeLegs = nodePairs.map(
+            ({ start, end }, index) => {
+                return {
+                    legId: legsByHash[startEndHash(start, end)].id,
+                    index,
+                }
+            }
+        )
+        return routeLegs
     }
 }
 

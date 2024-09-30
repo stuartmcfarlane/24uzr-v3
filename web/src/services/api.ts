@@ -1,4 +1,4 @@
-import { IApiBuoyInput, IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapInput, IApiMapOutput, IApiRouteInput, IApiRouteLegOutput, IApiRouteOutput, IApiUser, IApiUserOutput } from "@/types/api"
+import { IApiBuoyInput, IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapInput, IApiMapOutput, IApiPlanInput, IApiPlanOutput, IApiRouteInput, IApiRouteLegOutput, IApiRouteOutput, IApiUser, IApiUserOutput } from "@/types/api"
 
 const makeApiUrl = (uri: string) => `${process.env.NEXT_PUBLIC_API_URL || process.env.API_URL}${uri}`
 
@@ -317,5 +317,48 @@ export const apiCreateRoute = async (
     
     const createdRoute = await response.json() as IApiRouteOutput
     return createdRoute
+}
+
+export const apiGetPlans = async (
+    accessToken: string,
+    mapId: number,
+): Promise<IApiPlanOutput[] | null> => {
+
+    const response = await get(accessToken, `/api/map/${mapId}/plans`)
+
+    if (!response.ok) return null
+    
+    const plans = await response.json()
+    console.log(`<getPlans`, plans)
+
+    return  plans
+}
+
+export const apiCreatePlan = async (
+    accessToken: string,
+    plan: IApiPlanInput,
+): Promise<IApiPlanOutput | null> => {
+
+    const response = await post(accessToken, `/api/plans`, plan)
+
+    if (!response.ok) return null
+    
+    const createdPlan = await response.json() as IApiPlanOutput
+    return createdPlan
+}
+
+export const apiGetPlan = async (
+    accessToken: string,
+    planId: number,
+): Promise<IApiPlanOutput | null> => {
+
+    const response = await get(accessToken, `/api/plan/${planId}`)
+
+    if (!response.ok) return null
+    
+    const plan = await response.json()
+    console.log(`<getPlan`, plan)
+
+    return plan
 }
 

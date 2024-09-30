@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation"
 
-const MapRoutePage = async ({
+const MapPlanPage = async ({
     params
 }: {
     params: { id: string }
@@ -8,4 +8,4 @@ const MapRoutePage = async ({
 
     redirect(`/map/${params.id}`)
 }
-export default MapRoutePage
+export default MapPlanPage

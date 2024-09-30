@@ -1,7 +1,7 @@
 "use server"
 
 import { getSession } from './session';
-import { apiCreateBuoy, apiCreateLeg, apiCreateMap, apiCreateRoute, apiDeleteBuoy, apiGetBuoys, apiGetLegs, apiUpdateBuoy, apiUpdateLeg, apiUpdateMap } from '@/services/api';
+import { apiCreateBuoy, apiCreateLeg, apiCreateMap, apiCreatePlan, apiCreateRoute, apiDeleteBuoy, apiGetBuoys, apiGetLegs, apiUpdateBuoy, apiUpdateLeg, apiUpdateMap } from '@/services/api';
 import { ActionError } from '@/types/action';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -176,11 +176,13 @@ export const deleteBuoy = async ({
     return {}
 }
 export const createRouteWithForm = async (formData: FormData): Promise<ActionError> => {
+    console.log(`>createRouteWithForm`)
     const session = await getSession()
 
     const formName = formData.get("name") as string
     const formDefaultName = formData.get("defaultName") as string
     const formMapId = parseInt(formData.get("mapId") as string)
+    const formPlanId = parseInt(formData.get("planId") as string)
     const formStartBuoyId = parseInt(formData.get("startBuoyId") as string)
     const formEndBuoyId = parseInt(formData.get("endBuoyId") as string)
     const formType = formData.get("type") as IApiRouteType
@@ -201,6 +203,7 @@ export const createRouteWithForm = async (formData: FormData): Promise<ActionErr
         name: formName || formDefaultName,
         ownerId: session.userId,
         mapId: formMapId,
+        planId: formPlanId,
         startBuoyId: formStartBuoyId,
         endBuoyId: formEndBuoyId,
         type: formType,
@@ -209,4 +212,37 @@ export const createRouteWithForm = async (formData: FormData): Promise<ActionErr
 
     console.log(`created`, createdRoute)
     redirect(`/map/${createdRoute.mapId}/route/${createdRoute.id}`)
+}
+export const createPlanWithForm = async (formData: FormData): Promise<ActionError> => {
+    console.log(`>createPlanWithForm`)
+    const session = await getSession()
+
+    const formName = formData.get("name") as string
+    const formDefaultName = formData.get("defaultName") as string
+    const formMapId = parseInt(formData.get("mapId") as string)
+    const formStartBuoyId = parseInt(formData.get("startBuoyId") as string)
+    const formEndBuoyId = parseInt(formData.get("endBuoyId") as string)
+
+    if (!session.userId ||
+        !formMapId ||
+        !formStartBuoyId ||
+        !formEndBuoyId
+    ) {
+        return { error: "Missing data" }
+    }
+    if (!formName && !formDefaultName) {
+        return { error: "Missing data" }
+    }
+    
+    const createdPlan = await apiCreatePlan(session.apiToken!, {
+        name: formName || formDefaultName,
+        ownerId: session.userId,
+        mapId: formMapId,
+        startBuoyId: formStartBuoyId,
+        endBuoyId: formEndBuoyId,
+    })
+    if (!createdPlan) return { error: "Failed to create map" }
+
+    console.log(`created`, createdPlan)
+    redirect(`/map/${createdPlan.mapId}/plan/${createdPlan.id}`)
 }

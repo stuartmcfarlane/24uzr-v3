@@ -1,4 +1,4 @@
-import { IApiBuoyOutput, IApiMapOutput, IApiRouteOutput, IApiUserOutput } from "@/types/api"
+import { IApiBuoyOutput, IApiMapOutput, IApiPlanOutput, IApiRouteOutput, IApiUserOutput } from "@/types/api"
 import Link from "next/link"
 import { NewRouteTool } from "./NewRouteTool"
 import RouteIcon from "./Icons/RouteIcon"
@@ -6,7 +6,7 @@ import { MouseEvent } from "react"
 
 
 type RouteOptionsProps = {
-    map: IApiMapOutput
+    plan: IApiPlanOutput
     routes: IApiRouteOutput[]
     startBuoy?: IApiBuoyOutput
     endBuoy?: IApiBuoyOutput
@@ -14,13 +14,14 @@ type RouteOptionsProps = {
 }
 const RouteOptions = (props: RouteOptionsProps) => {
     const {
-        map,
+        plan,
         routes,
         startBuoy,
         endBuoy,
         onHoverRoute,
     } = props
 
+    console.log(`RouteOptions`, plan, routes)
     const onMouseEnter = (route: IApiRouteOutput) => () => onHoverRoute && onHoverRoute(route)
     const onMouseLeave = (route: IApiRouteOutput) => () => onHoverRoute && onHoverRoute()
 
@@ -42,7 +43,7 @@ const RouteOptions = (props: RouteOptionsProps) => {
                         onMouseEnter={onMouseEnter(route)}
                         onMouseLeave={onMouseLeave(route)}
                     >
-                        <Link href={`/map/${map.id}/route/${route.id}`}>
+                        <Link href={`/map/${plan.mapId}/plans/${plan.id}/route/${route.id}`}>
                             {route.name}
                         </Link>
                     </div>
@@ -51,7 +52,7 @@ const RouteOptions = (props: RouteOptionsProps) => {
         </>)}
         {startBuoy && (
             <NewRouteTool
-                map={map}
+                plan={plan}
                 startBuoy={startBuoy}
                 endBuoy={endBuoy}
             />

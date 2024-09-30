@@ -17,7 +17,7 @@ export async function createRoute(route: CreateRouteInput) {
                 legs: undefined
             }
     )
-    const status: RouteStatusInput = type === 'USER' ? 'DONE' : 'PENDING'
+    const status: RouteStatusInput = route.status || type === 'USER' ? 'DONE' : 'PENDING'
     const data = {
         ...route,
         status,

@@ -3,7 +3,7 @@
 import { getSession } from "@/actions/session"
 import LockedMapPageClientFunctions from "@/components/LockedMapPageFunctions"
 import UnlockedMapPageClientFunctions from "@/components/UnlockedMapPageFunctions"
-import { apiGetBuoys, apiGetLegs, apiGetMap, apiGetRoutes } from "@/services/api"
+import { apiGetBuoys, apiGetLegs, apiGetMap, apiGetPlans, apiGetRoutes } from "@/services/api"
 import { redirect } from "next/navigation"
 
 const MapPage = async ({
@@ -19,12 +19,12 @@ const MapPage = async ({
     }
     const [
         map,
-        routes,
+        plans,
         buoys,
         legs,
     ] = await Promise.all([
         apiGetMap(session.apiToken!, id),
-        apiGetRoutes(session.apiToken!, id),
+        apiGetPlans(session.apiToken!, id),
         apiGetBuoys(session.apiToken!, id),
         apiGetLegs(session.apiToken!, id),
     ])
@@ -38,7 +38,7 @@ const MapPage = async ({
             map={map}
             buoys={buoys || []}
             legs={legs || []}
-            routes={routes || []}
+            plans={plans || []}
         />
          : <UnlockedMapPageClientFunctions
             map={map}

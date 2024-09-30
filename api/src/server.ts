@@ -10,12 +10,14 @@ import buoyRoutes from "./modules/buoy/buoy.route";
 import mapRoutes from "./modules/map/map.route";
 import legRoutes from "./modules/leg/leg.route";
 import routeRoutes from "./modules/route/route.route";
+import planRoutes from "./modules/plan/plan.route";
 import { userSchemas } from "./modules/user/user.schema";
 import { shipSchemas } from "./modules/ship/ship.schema";
 import { buoySchemas } from "./modules/buoy/buoy.schema";
 import { mapSchemas } from "./modules/map/map.schema";
 import { legSchemas } from "./modules/leg/leg.schema";
 import { routeSchemas } from "./modules/route/route.schema";
+import { planSchemas } from "./modules/plan/plan.schema";
 import { version } from '../package.json'
 
 declare module "fastify" {
@@ -95,6 +97,7 @@ function buildServer() {
     ...mapSchemas,
     ...legSchemas,
     ...routeSchemas,
+    ...planSchemas,
   ]) {
     server.addSchema(schema);
   }
@@ -119,6 +122,7 @@ function buildServer() {
         { name: 'buoy', description: 'Buoy related end-points' },
         { name: 'map', description: 'Map related end-points' },
         { name: 'route', description: 'Route related end-points' },
+        { name: 'plan', description: 'Plan related end-points' },
       ],
       components: {
         securitySchemes: {
@@ -146,6 +150,7 @@ function buildServer() {
   server.register(mapRoutes, { prefix: "/api" });
   server.register(legRoutes, { prefix: "/api" });
   server.register(routeRoutes, { prefix: "/api" });
+  server.register(planRoutes, { prefix: "/api" });
   
   return server;
 }

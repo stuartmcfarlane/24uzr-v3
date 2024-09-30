@@ -21,6 +21,7 @@ model User {
   isAdmin  Boolean @default(false)
   Ships    Ship[]
   Routes   Route[]
+  Plan     Plan[]
 }
 
 model Ship {
@@ -41,6 +42,7 @@ model Map {
   Buoys     Buoy[]
   Legs      Leg[]
   Routes    Route[]
+  Plan      Plan[]
 }
 
 model Buoy {
@@ -53,7 +55,9 @@ model Buoy {
   legsOut     Leg[]   @relation("startBuoy")
   legsIn      Leg[]   @relation("endBuoy")
   routeStarts Route[] @relation("startBuoy")
-  routeEnd    Route[] @relation("endBuoy")
+  routeEnds   Route[] @relation("endBuoy")
+  planStarts  Plan[]  @relation("startBuoy")
+  planEnds    Plan[]  @relation("endBuoy")
 }
 
 model Leg {
@@ -76,6 +80,7 @@ enum Status {
 enum RouteType {
   USER
   SHORTEST
+  GENERATED
 }
 
 model Route {
@@ -94,6 +99,8 @@ model Route {
   endBuoyId   Int
   legs        LegsOnRoute[]
   ownerId     Int
+  plan        Plan          @relation(fields: [planId], references: [id])
+  planId      Int
 }
 
 model LegsOnRoute {
@@ -104,4 +111,20 @@ model LegsOnRoute {
   index   Int
 
   @@id([routeId, legId])
+}
+
+model Plan {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String   @db.VarChar(128)
+  ownerId     Int
+  owner       User     @relation(fields: [ownerId], references: [id])
+  mapId       Int
+  map         Map      @relation(fields: [mapId], references: [id])
+  routes      Route[]
+  startBuoy   Buoy     @relation(name: "startBuoy", fields: [startBuoyId], references: [id])
+  startBuoyId Int
+  endBuoy     Buoy     @relation(name: "endBuoy", fields: [endBuoyId], references: [id])
+  endBuoyId   Int
 }
