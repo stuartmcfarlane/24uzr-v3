@@ -99,6 +99,7 @@ export interface IApiPlanInput {
   name: string
   startBuoyId: number
   endBuoyId: number
+  raceSecondsRemaining: number
 }
 export interface IApiPlanOutput extends IApiPlanInput{
   id: number

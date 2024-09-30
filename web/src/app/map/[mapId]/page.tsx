@@ -14,9 +14,6 @@ const MapPage = async ({
     const id = parseInt(params.mapId)
     console.log(`map page ${id}`)
     const session = await getSession()
-    if (!session.isAdmin) {
-        redirect('/')
-    }
     const [
         map,
         plans,

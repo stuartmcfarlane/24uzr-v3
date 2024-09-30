@@ -11,6 +11,7 @@ type RouteOptionsProps = {
     startBuoy?: IApiBuoyOutput
     endBuoy?: IApiBuoyOutput
     onHoverRoute?: (route?: IApiRouteOutput) => void
+    selectedRoute?: IApiRouteOutput
 }
 const RouteOptions = (props: RouteOptionsProps) => {
     const {
@@ -19,6 +20,7 @@ const RouteOptions = (props: RouteOptionsProps) => {
         startBuoy,
         endBuoy,
         onHoverRoute,
+        selectedRoute
     } = props
 
     console.log(`RouteOptions`, plan, routes)
@@ -39,11 +41,16 @@ const RouteOptions = (props: RouteOptionsProps) => {
                 {(routes || []).map(route => (
                     <div
                         key={route.id}
-                        className="border p-4 hover:bg-24uzr hover:text-white"
+                        className={`border p-4 hover:bg-24uzr hover:text-white ${(
+                            selectedRoute?.id === route.id
+                                ? '4 bg-24uzr text-white'
+                                : ''
+
+                        )}`}
                         onMouseEnter={onMouseEnter(route)}
                         onMouseLeave={onMouseLeave(route)}
                     >
-                        <Link href={`/map/${plan.mapId}/plans/${plan.id}/route/${route.id}`}>
+                        <Link href={`/map/${plan.mapId}/plan/${plan.id}/route/${route.id}`}>
                             {route.name}
                         </Link>
                     </div>

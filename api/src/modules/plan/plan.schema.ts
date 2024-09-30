@@ -8,6 +8,7 @@ const planInput = {
     mapId: z.number(),
     startBuoyId: z.number(),
     endBuoyId: z.number(),
+    raceSecondsRemaining: z.number(),
 };
 
 const planGenerated = {

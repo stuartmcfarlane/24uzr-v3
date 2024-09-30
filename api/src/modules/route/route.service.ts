@@ -8,14 +8,14 @@ export async function createRoute(route: CreateRouteInput) {
     const { type } = route
     const legs = (
         route.legs
-            ? {
-                legs: {
-                    create: route.legs,
-                }
-            } :
-            {
-                legs: undefined
+        ? {
+            legs: {
+                create: route.legs,
             }
+        } :
+        {
+            legs: undefined
+        }
     )
     const status: RouteStatusInput = route.status || type === 'USER' ? 'DONE' : 'PENDING'
     const data = {
@@ -36,7 +36,16 @@ export async function createRoute(route: CreateRouteInput) {
 export async function findRoute(id: number) {
     return prisma.route.findUnique({
         include: {
-            legs: true
+            legs: {
+                include: {
+                    leg: {
+                        include: {
+                            startBuoy: true,
+                            endBuoy: true,
+                        }
+                    }
+                }
+            }
         },
         where: {
             id,
@@ -47,20 +56,20 @@ export async function findRoute(id: number) {
 export async function updateRoute(id: number, route: UpdateRouteInput) {
     const legs = (
         route.legs
-            ? {
-                legs: {
-                    update: {
-                        where: {
-                            // pffffffff
-                            routeId: id,
-                        },
-                        data: route.legs,
-                    }
+        ? {
+            legs: {
+                update: {
+                    where: {
+                        // pffffffff
+                        routeId: id,
+                    },
+                    data: route.legs,
                 }
-            } :
-            {
-                legs: undefined
             }
+        } :
+        {
+            legs: undefined
+        }
     )
     return prisma.route.update({
         where: {

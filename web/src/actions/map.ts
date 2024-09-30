@@ -217,31 +217,34 @@ export const createPlanWithForm = async (formData: FormData): Promise<ActionErro
     console.log(`>createPlanWithForm`)
     const session = await getSession()
 
-    const formName = formData.get("name") as string
-    const formDefaultName = formData.get("defaultName") as string
-    const formMapId = parseInt(formData.get("mapId") as string)
-    const formStartBuoyId = parseInt(formData.get("startBuoyId") as string)
-    const formEndBuoyId = parseInt(formData.get("endBuoyId") as string)
+    const name = formData.get("name") as string
+    const defaultName = formData.get("defaultName") as string
+    const mapId = parseInt(formData.get("mapId") as string)
+    const startBuoyId = parseInt(formData.get("startBuoyId") as string)
+    const endBuoyId = parseInt(formData.get("endBuoyId") as string)
+    const raceSecondsRemaining = parseInt(formData.get("raceSecondsRemaining") as string)
+    const raceHoursRemaining = parseInt(formData.get("raceHoursRemaining") as string)
 
     if (!session.userId ||
-        !formMapId ||
-        !formStartBuoyId ||
-        !formEndBuoyId
+        !mapId ||
+        !startBuoyId ||
+        !endBuoyId
     ) {
         return { error: "Missing data" }
     }
-    if (!formName && !formDefaultName) {
+    if (!name && !defaultName) {
         return { error: "Missing data" }
     }
     
     const createdPlan = await apiCreatePlan(session.apiToken!, {
-        name: formName || formDefaultName,
+        name: name || defaultName,
         ownerId: session.userId,
-        mapId: formMapId,
-        startBuoyId: formStartBuoyId,
-        endBuoyId: formEndBuoyId,
+        mapId,
+        startBuoyId,
+        endBuoyId,
+        raceSecondsRemaining: raceSecondsRemaining | raceHoursRemaining * 60 * 60,
     })
-    if (!createdPlan) return { error: "Failed to create map" }
+    if (!createdPlan) return { error: "Failed to create plan" }
 
     console.log(`created`, createdPlan)
     redirect(`/map/${createdPlan.mapId}/plan/${createdPlan.id}`)

@@ -48,6 +48,12 @@ export const NewPlanTool = (props: NewPlanToolProps) => {
                 placeholder={defaultPlanName}
                 className="ring-2 ring-gray-300 rounded-md p-4 w-full my-2"
             />
+            <input
+                type="text"
+                name="raceHoursRemaining"
+                placeholder='race remaining hours'
+                className="ring-2 ring-gray-300 rounded-md p-4 w-full my-2"
+            />
             <div className="p-4 w-full my-2 flex">
                 <div>Start</div>
                 <div className="w-7"><BuoyIcon /></div>

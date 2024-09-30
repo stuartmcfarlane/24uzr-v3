@@ -114,17 +114,18 @@ model LegsOnRoute {
 }
 
 model Plan {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  name        String   @db.VarChar(128)
-  ownerId     Int
-  owner       User     @relation(fields: [ownerId], references: [id])
-  mapId       Int
-  map         Map      @relation(fields: [mapId], references: [id])
-  routes      Route[]
-  startBuoy   Buoy     @relation(name: "startBuoy", fields: [startBuoyId], references: [id])
-  startBuoyId Int
-  endBuoy     Buoy     @relation(name: "endBuoy", fields: [endBuoyId], references: [id])
-  endBuoyId   Int
+  id                   Int      @id @default(autoincrement())
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  name                 String   @db.VarChar(128)
+  ownerId              Int
+  owner                User     @relation(fields: [ownerId], references: [id])
+  mapId                Int
+  map                  Map      @relation(fields: [mapId], references: [id])
+  routes               Route[]
+  startBuoy            Buoy     @relation(name: "startBuoy", fields: [startBuoyId], references: [id])
+  startBuoyId          Int
+  endBuoy              Buoy     @relation(name: "endBuoy", fields: [endBuoyId], references: [id])
+  endBuoyId            Int
+  raceSecondsRemaining Int
 }
