@@ -3,6 +3,7 @@ import Link from "next/link"
 import { NewRouteTool } from "./NewRouteTool"
 import RouteIcon from "./Icons/RouteIcon"
 import { MouseEvent } from "react"
+import { fmtNM, route2LengthNm } from "@/lib/route"
 
 
 type RouteOptionsProps = {
@@ -23,7 +24,6 @@ const RouteOptions = (props: RouteOptionsProps) => {
         selectedRoute
     } = props
 
-    console.log(`RouteOptions`, plan, routes)
     const onMouseEnter = (route: IApiRouteOutput) => () => onHoverRoute && onHoverRoute(route)
     const onMouseLeave = (route: IApiRouteOutput) => () => onHoverRoute && onHoverRoute()
 
@@ -41,7 +41,7 @@ const RouteOptions = (props: RouteOptionsProps) => {
                 {(routes || []).map(route => (
                     <div
                         key={route.id}
-                        className={`border p-4 hover:bg-24uzr hover:text-white ${(
+                        className={`flex justify-between border p-2 hover:bg-24uzr hover:text-white ${(
                             selectedRoute?.id === route.id
                                 ? '4 bg-24uzr text-white'
                                 : ''
@@ -50,8 +50,15 @@ const RouteOptions = (props: RouteOptionsProps) => {
                         onMouseEnter={onMouseEnter(route)}
                         onMouseLeave={onMouseLeave(route)}
                     >
-                        <Link href={`/map/${plan.mapId}/plan/${plan.id}/route/${route.id}`}>
-                            {route.name}
+                        <Link className="flex-grow flex flex-col"
+                            href={`/map/${plan.mapId}/plan/${plan.id}/route/${route.id}`}
+                        >
+                            <div className="">
+                                {route.name}
+                            </div>
+                            <div className="text-xs">
+                                {fmtNM(route2LengthNm(route))}
+                            </div>
                         </Link>
                     </div>
                 ))}

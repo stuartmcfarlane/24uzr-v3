@@ -17,9 +17,9 @@ export const getAllRoutes = async (
     const buoysById = indexBy('id')(buoys)
 
     const graph = makeGraph(ship, legs, buoysById, wind)
-    
+    const count = 10
     const allRoutes = (
-        await routeApiPost(`route/all?start=${startBuoy.id}&end=${endBuoy.id}&time=${plan.raceSecondsRemaining}`, graph)
+        await routeApiPost(`route/all?start=${startBuoy.id}&end=${endBuoy.id}&time=${plan.raceSecondsRemaining}&count=${count}`, graph)
     ) as AllRoutesOutput
     if (!allRoutes) return []
 

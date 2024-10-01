@@ -42,7 +42,7 @@ const MapPlanRoutePageClientFunctions = (props: MapPlanRoutePageClientFunctionsP
     return (
         <div className="flex-grow my-10 flex gap-4">
             <div className="flex flex-col">
-                <div className="flex-1 flex flex-col">
+                <div className="flex flex-col">
                     <h1 className="text-2xl flex gap-4">
                         <span>Route {route.name} </span>
                     </h1>
