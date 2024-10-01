@@ -110,3 +110,12 @@ export interface IApiPlanOutput extends IApiPlanInput{
 
 export type IApiPlan = IApiPlanInput | IApiPlanOutput
 
+export interface IApiWindInput {
+  name: string
+}
+export interface IApiWindOutput extends IApiWindInput {
+  id: number
+}
+
+export type IApiWind = IApiWindInput | IApiWindOutput
+

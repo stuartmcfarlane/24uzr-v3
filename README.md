@@ -91,3 +91,17 @@ cd api
 . ../.source
 npx prisma generate
 ```
+
+## Wind
+
+### Data sources
+
+- https://www.euroszeilen.utwente.nl/weer/grib/
+- https://dataplatform.knmi.nl/dataset/harmonie-arome-cy43-p1-1-0/resource/0f8060af-2c24-43eb-b884-e4552d0e77a1
+
+### Parsers
+
+- https://github.com/UdSAES/grib2-simple
+- https://github.com/BlueNetCat/grib22json
+- https://www.npmjs.com/search?q=keywords:grib2
+- https://danwild.github.io/wind-js-leaflet/

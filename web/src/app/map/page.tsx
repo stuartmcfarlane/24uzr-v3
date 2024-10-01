@@ -1,7 +1,7 @@
 import { getSession } from "@/actions/session"
 import { redirect } from "next/navigation"
 
-const MapPage = () => {
+const MapPage = async () => {
 
     const session = await getSession()
     if (!session.isAdmin) {

@@ -1,6 +1,7 @@
 import { getSession } from "@/actions/session"
 import { MapTool } from "@/components/MapTool"
 import { UserTool } from "@/components/UserTool"
+import { WindTool } from "@/components/WindTool"
 
 const DashboardPage = async () => {
     const session = await getSession()
@@ -11,6 +12,7 @@ const DashboardPage = async () => {
             {session.isAdmin && (
                 <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
                     <MapTool/>
+                    <WindTool/>
                     <UserTool/>
                 </div>
             )}

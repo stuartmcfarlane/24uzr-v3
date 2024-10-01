@@ -1,7 +1,7 @@
 "use client"
 
 import { clientPoint2svgPoint, domRect2rect, fitToClient, rectGrowMargin, latLng2canvas, makePoint, makeRect, makeScreen2svgFactor, points2boundingRect, rect2viewBox, screenUnits2canvasUnits } from "@/lib/graph"
-import { IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiRouteLegOutput } from "@/types/api"
+import { IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiRouteLegOutput, IApiWindOutput } from "@/types/api"
 import MapBuoy from "./MapBuoy"
 import { MouseEvent, useEffect, useRef, useState } from "react"
 import { rect2SvgRect } from '../../lib/graph';
@@ -24,8 +24,9 @@ import { COLOR_BLUE, COLOR_GREEN } from "@/lib/constants"
 const DEBUG = false
 
 type MapSvgProps = {
-    buoys: IApiBuoyOutput[]
-    legs: IApiLegOutput[]
+    wind?: IApiWindOutput
+    buoys?: IApiBuoyOutput[]
+    legs?: IApiLegOutput[]
     routeLegs?: IApiRouteLegOutput[]
     selectedBuoy?: IApiBuoyOutput
     onClearSelections?: () => void
@@ -38,6 +39,7 @@ type MapSvgProps = {
 
 const MapSvg = (props: MapSvgProps) => {
     const {
+        wind,
         buoys,
         legs,
         routeLegs,
@@ -51,7 +53,7 @@ const MapSvg = (props: MapSvgProps) => {
     } = props
 
     const innerBoundingRect = points2boundingRect(
-        buoys.map(latLng2canvas)
+        (buoys || []).map(latLng2canvas)
     )
     
     const containerRef = useRef<HTMLDivElement>(null)
@@ -98,7 +100,7 @@ const MapSvg = (props: MapSvgProps) => {
 
     useEffect(
         () => {
-            if (!buoys.length) {
+            if (!buoys?.length) {
                 setBoundingRect(makeRect(0, 0, 100, 100))
                 setInitialBoundingViewBoxRect(makeRect(0, 0, 100, 100))
                 return
@@ -195,8 +197,8 @@ const MapSvg = (props: MapSvgProps) => {
                     <MapLeg key={leg.id}
                         leg={leg}
                         returnLeg={returnLeg}
-                        startBuoy={buoys.find(idIs(leg.startBuoyId))}
-                        endBuoy={buoys.find(idIs(leg.endBuoyId))}
+                        startBuoy={buoys?.find(idIs(leg.startBuoyId))}
+                        endBuoy={buoys?.find(idIs(leg.endBuoyId))}
                         onSelect={onSelectLeg}
                         isSelected={leg.id === selectedLeg?.id}
                     />)
@@ -204,8 +206,8 @@ const MapSvg = (props: MapSvgProps) => {
                 {(routeLegs || []).map((routeLeg) => (
                     <MapRouteLeg key={routeLeg.leg.id}
                         routeLeg={routeLeg}
-                        startBuoy={buoys.find(idIs(routeLeg.leg.startBuoyId))}
-                        endBuoy={buoys.find(idIs(routeLeg.leg.endBuoyId))}
+                        startBuoy={buoys?.find(idIs(routeLeg.leg.startBuoyId))}
+                        endBuoy={buoys?.find(idIs(routeLeg.leg.endBuoyId))}
                         onSelect={onSelectLeg}
                         isSelected={routeLeg.leg.id === selectedLeg?.id}
                     />)
