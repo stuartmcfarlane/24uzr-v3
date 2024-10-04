@@ -94,14 +94,8 @@ npx prisma generate
 
 ## Wind
 
-### Data sources
+Fetch the wind forecast from the KNMI at https://www.euroszeilen.utwente.nl/weer/grib/download/harmonie_xy_ijmg_wind.grb
 
-- https://www.euroszeilen.utwente.nl/weer/grib/
-- https://dataplatform.knmi.nl/dataset/harmonie-arome-cy43-p1-1-0/resource/0f8060af-2c24-43eb-b884-e4552d0e77a1
+Parse it into usable json with knmi/parseHarmony.py
 
-### Parsers
-
-- https://github.com/UdSAES/grib2-simple
-- https://github.com/BlueNetCat/grib22json
-- https://www.npmjs.com/search?q=keywords:grib2
-- https://danwild.github.io/wind-js-leaflet/
+Upload the data using the wind tool in the app.
