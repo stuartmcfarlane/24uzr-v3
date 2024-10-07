@@ -37,7 +37,7 @@ const RouteOptions = (props: RouteOptionsProps) => {
                     Routes
                 </div>
             </div>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 overflow-x-scroll pr-4">
                 {(routes || []).map(route => (
                     <div
                         key={route.id}

@@ -31,8 +31,6 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
     const [creatingLeg, setCreatingLeg] = useState<{startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput} | undefined>(undefined)
     const [hoveredPlan, setHoveredPlan] = useState<IApiPlanOutput | undefined>(undefined)
 
-    if (!map.isLocked) return <></>
-
     const onClearSelection = () => {
         setStartBuoy(undefined)
         setEndBuoy(undefined)
@@ -69,9 +67,11 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
         setHoveredPlan(plan)
     }
 
+    if (!map.isLocked) return <></>
+
     return (
         <div className="flex-grow my-10 flex gap-4">
-            <div className="flex flex-col">
+            <div className="max-h-[calc(100vh-5rem-10rem)] md:max-h-[calc(100vh-5rem-4rem-6rem)] flex flex-col gap-4">
                 <div className="flex-1 flex flex-col">
                     <h1 className="text-2xl flex gap-4">
                         <span>Map {map?.name} </span>
