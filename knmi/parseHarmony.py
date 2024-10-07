@@ -22,6 +22,7 @@ def makeTimestamp(dataDate, validityTime):
     hour = int(validityTime/100)
     min = 0
     return datetime(year, month, day, hour, min).isoformat() + 'Z'
+
 json.dump(
     [
         {
