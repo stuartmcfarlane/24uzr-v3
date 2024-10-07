@@ -62,6 +62,8 @@ const createWindResponseSchema = z.union([
 
 export const getWindsQueryStringSchema = z.object({
     timestamp: z.string().optional(),
+    from: z.string().optional(),
+    until: z.string().optional(),
     lat: z.number().optional(),
     lng: z.number().optional(),
     lat1: z.number().optional(),

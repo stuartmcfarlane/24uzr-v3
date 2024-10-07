@@ -90,8 +90,8 @@ export async function findWind(timestamp: string, lat: number, lng: number) {
     });
 }
 
-export async function findWindByRegion(region: RegionSchema, timestamp?: string) {
-    return prisma.wind.findMany({
+export async function findWindByRegion(region: RegionSchema, from: string, until?: string) {
+    const query = {
         where: {
             lat: {
                 gte: region.lat1,
@@ -102,12 +102,19 @@ export async function findWindByRegion(region: RegionSchema, timestamp?: string)
                 lte: region.lng2,
             },
             ...(
-                timestamp
-                ? { timestamp }
-                : {}
+                until
+                    ? {
+                        timestamp: {
+                            gte: from,
+                            lte: until,
+                        }
+                    }
+                    : { timestamp: from }
             ),
         },
-    });
+    }
+    console.log(`query`, JSON.stringify(query))
+    return prisma.wind.findMany(query);
 }
 
 export async function updateWind(wind: UpdateWindInput ) {

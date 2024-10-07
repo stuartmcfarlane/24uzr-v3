@@ -21,8 +21,10 @@ export async function createWindHandler(
 
 export async function getWindHandler(
     request: FastifyRequest<{
-        Params: {
+        Querystring: {
             timestamp?: string,
+            from?: string,
+            until?: string,
             lat?: string,
             lng?: string,
             lat1?: string,
@@ -32,14 +34,17 @@ export async function getWindHandler(
         },
     }>,
 ) {
-    const { timestamp, lat, lng, lat1, lng1, lat2, lng2 } = getWindsQueryStringSchema.parse(request.params)
+    const { timestamp, from, until, lat, lng, lat1, lng1, lat2, lng2 } = getWindsQueryStringSchema.parse(request.query)
     
+    console.log(`>getWindHandler`, { timestamp, from, until, lat, lng, lat1, lng1, lat2, lng2 })
     const wind = await (
         (lat && lng && timestamp)
-        ? findWind(timestamp, lat, lng)
-            : (lat1 && lng1 && lat2 && lng2)
-                ? findWindByRegion({ lat1, lng1, lat2, lng2 }, timestamp)
-                : []
+            ? findWind(timestamp, lat, lng)
+            : (from && until && lat1 && lng1 && lat2 && lng2)
+                ? findWindByRegion({ lat1, lng1, lat2, lng2 }, from, until)
+                : (timestamp && lat1 && lng1 && lat2 && lng2)
+                    ? findWindByRegion({ lat1, lng1, lat2, lng2 }, timestamp)
+                    : []
     )
     
     return wind;

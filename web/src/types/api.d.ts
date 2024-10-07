@@ -110,12 +110,22 @@ export interface IApiPlanOutput extends IApiPlanInput{
 
 export type IApiPlan = IApiPlanInput | IApiPlanOutput
 
-export interface IApiWindInput {
-  name: string
+export interface IApiWind {
+  timestamp: string
+  lat: number
+  lng: number
+  u: number
+  v: number
 }
-export interface IApiWindOutput extends IApiWindInput {
-  id: number
+export interface IApiBulkWind {
+  timestamp: string
+  data: {
+    lat: number
+    lng: number
+    u: number
+    v: number
+  }[]
 }
 
-export type IApiWind = IApiWindInput | IApiWindOutput
-
+export type IApiWindInput = IApiWind | IApiWind[] | IApiBulkWind | IApiBulkWind[]
+export type IApiWindOutput = IApiWind | IApiWind[] | IApiBulkWind | IApiBulkWind[]

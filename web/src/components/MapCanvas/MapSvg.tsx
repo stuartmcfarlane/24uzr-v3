@@ -24,7 +24,7 @@ import { COLOR_BLUE, COLOR_GREEN } from "@/lib/constants"
 const DEBUG = false
 
 type MapSvgProps = {
-    wind?: IApiWindOutput
+    wind?: IApiWindOutput[]
     buoys?: IApiBuoyOutput[]
     legs?: IApiLegOutput[]
     routeLegs?: IApiRouteLegOutput[]

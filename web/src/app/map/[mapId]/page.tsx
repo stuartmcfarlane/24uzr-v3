@@ -3,7 +3,7 @@
 import { getSession } from "@/actions/session"
 import LockedMapPageClientFunctions from "@/components/LockedMapPageFunctions"
 import UnlockedMapPageClientFunctions from "@/components/UnlockedMapPageFunctions"
-import { apiGetBuoys, apiGetLegs, apiGetMap, apiGetPlans, apiGetRoutes } from "@/services/api"
+import { apiGetBuoys, apiGetLegs, apiGetMap, apiGetPlans, apiGetRoutes, apiGetWind } from "@/services/api"
 import { redirect } from "next/navigation"
 
 const MapPage = async ({
@@ -28,11 +28,13 @@ const MapPage = async ({
     if (!map) {
         redirect('/dashboard')
     }
+    const wind = await apiGetWind(session.apiToken!, 1, map)
 
     return (
         map.isLocked
          ? <LockedMapPageClientFunctions
             map={map}
+            wind={wind || []}
             buoys={buoys || []}
             legs={legs || []}
             plans={plans || []}

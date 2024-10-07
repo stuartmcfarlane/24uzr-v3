@@ -10,7 +10,7 @@ export const geo2decimal = (geo: string): LatLng | undefined => {
     }
     catch (e) {
         console.error(e)
-        undefined
+        return undefined
     }
     
 }

@@ -1,4 +1,5 @@
-import { IApiBuoyInput, IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapInput, IApiMapOutput, IApiPlanInput, IApiPlanOutput, IApiRouteInput, IApiRouteLegOutput, IApiRouteOutput, IApiUser, IApiUserOutput, IApiWind, IApiWindInput, IApiWindOutput } from "@/types/api"
+import { geo2decimal } from "@/lib/geo"
+import { IApiBulkWind, IApiBuoyInput, IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapInput, IApiMapOutput, IApiPlanInput, IApiPlanOutput, IApiRouteInput, IApiRouteLegOutput, IApiRouteOutput, IApiUser, IApiUserOutput, IApiWind, IApiWindInput, IApiWindOutput } from "@/types/api"
 
 const makeApiUrl = (uri: string) => `${process.env.NEXT_PUBLIC_API_URL || process.env.API_URL}${uri}`
 
@@ -360,6 +361,54 @@ export const apiGetPlan = async (
     console.log(`<getPlan`, plan)
 
     return plan
+}
+
+export const apiGetWind = async (
+    accessToken: string,
+    hours: number = 1,
+    map: IApiMapOutput,
+): Promise<IApiBulkWind[]> => {
+
+    const from = new Date().toISOString()
+    const until = new Date(Date.now() + hours * 60 * 60 * 1000).toISOString()
+
+    const p1 = geo2decimal(`52° 21' 39.9" N, 4° 30' 31.4" E`)
+    const p2 = geo2decimal(`53° 23' 22.6" N, 5° 46' 10.0" E`)
+
+    const { lat: lat1, lng: lng1 } = p1!
+    const { lat: lat2, lng: lng2 } = p2!
+
+    const response = await get(
+        accessToken,
+        `/api/winds?from=${from}&until=${until}&lat1=${lat1}&lng1=${lng1}&lat2=${lat2}&lng2=${lng2}`
+    )
+
+    if (!response.ok) return []
+    
+    const wind = await response.json() as IApiWind[]
+
+    console.log(`wind`, wind)
+    const windByTimestamp = wind.reduce(
+        (windByTimestamp, wind: IApiWind) => {
+            if (!windByTimestamp[wind.timestamp]) {
+                console.log(`timestamp`, wind.timestamp)
+                windByTimestamp[wind.timestamp] = []
+            }
+            windByTimestamp[wind.timestamp].push(wind)
+            return windByTimestamp
+        },
+        []
+    )
+
+    const timestamps = Object.keys(windByTimestamp)
+    const winds = timestamps.map(
+        (timestamp: string) => ({
+            timestamp,
+            data: windByTimestamp[timestamp]
+        })
+    )
+
+    return winds
 }
 
 export const apiCreateWind = async (

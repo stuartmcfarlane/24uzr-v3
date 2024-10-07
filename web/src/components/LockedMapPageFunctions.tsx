@@ -1,6 +1,6 @@
 "use client"
 
-import { IApiBuoyOutput, IApiLegOutput, IApiMapOutput, IApiPlanOutput } from "@/types/api"
+import { IApiBuoyOutput, IApiLegOutput, IApiMapOutput, IApiPlanOutput, IApiWindOutput } from "@/types/api"
 import MapCanvas from "./ MapCanvas"
 import { useState } from "react"
 import { updateMap } from "@/actions/map"
@@ -11,6 +11,7 @@ import PlanOptions from "./PlanOptions"
 
 type LockedMapPageClientFunctionsProps = {
     map: IApiMapOutput
+    wind: IApiWindOutput[]
     buoys: IApiBuoyOutput[]
     legs: IApiLegOutput[]
     plans: IApiPlanOutput[]
@@ -19,6 +20,7 @@ type LockedMapPageClientFunctionsProps = {
 const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) => {
     const {
         map,
+        wind,
         buoys,
         legs,
         plans,
@@ -94,6 +96,7 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
                 <div className="flex-1">
                     <MapCanvas
                         map={map}
+                        wind={wind}
                         buoys={buoys}
                         legs={legs}
                         onClearSelections={onClearSelection}
