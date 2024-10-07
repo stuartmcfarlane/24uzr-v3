@@ -1,5 +1,5 @@
-import { clientPoint2svgPoint, fmtPoint, fmtReal, fmtRect, makePoint, rectAspectRatio, rectGrowAroundPoint, rectHeight, rectLimitTo, rectWidth } from "@/lib/graph";
-import { MouseEvent, RefObject, useCallback, useEffect, useRef, useState, WheelEvent } from "react";
+import { clientPoint2svgPoint, makePoint, rectGrowAroundPoint, rectHeight, rectLimitTo, rectWidth } from "@/lib/graph";
+import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { useChange } from "./useChange";
 
 export const useScrollWheelZoom = (
@@ -48,7 +48,8 @@ export const useScrollWheelZoom = (
         return zoomMargin
     }
     const onWheel = useCallback(
-        (e: WheelEventInit) => {
+        (e: WheelEvent) => {
+            e.preventDefault()
             const maxBoundingRect = maxRef.current
             const zoomedViewBoxRect = zoomedRef.current
             if (
@@ -69,17 +70,18 @@ export const useScrollWheelZoom = (
             const maxedRect = rectLimitTo(maxBoundingRect, zoomRect)
             setZoomedViewBoxRect(maxedRect)
         },
-        [svgRef, zoomedViewBoxRect, maxBoundingRect]
+        [svgRef]
     )
     
     useEffect(
         () => {
-            svgRef.current?.addEventListener('wheel', onWheel)
+            const svg = svgRef.current
+            svg?.addEventListener('wheel', onWheel)
             return () => {
-                svgRef.current?.removeEventListener('wheel', onWheel)
+                svg?.removeEventListener('wheel', onWheel)
             }
         },
-        []
+        [svgRef, onWheel]
     )
     return zoomedViewBoxRect
 }
