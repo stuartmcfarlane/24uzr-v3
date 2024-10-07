@@ -1,4 +1,4 @@
-import { uploadGrib } from "@/actions/wind"
+import { uploadWindJson } from "@/actions/wind"
 import { IApiWindOutput } from "@/types/api"
 
 type WindOptionsProps = {
@@ -9,8 +9,9 @@ const WindOptions = (props: WindOptionsProps) => {
         wind,
     } = props
 
+    console.log(`WindOptions`)
     return (
-        <form action={uploadGrib}  className="flex flex-col gap-4 flex-grow">
+        <form action={uploadWindJson}  className="flex flex-col gap-4 flex-grow">
             <button
                 type="submit"
                 className="bg-24uzr text-white p-2 rounded-md disabled:bg-24uzr-disabled disabled:cursor-not-allowed"

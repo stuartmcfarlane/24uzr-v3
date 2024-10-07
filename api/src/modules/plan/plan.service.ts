@@ -5,7 +5,6 @@ import { CreatePlanInput, UpdatePlanInput } from './plan.schema';
 import { createRoute } from "../route/route.service";
 
 export async function createPlan(plan: CreatePlanInput) {
-    console.log(`createPlan`, plan)
     const data = {
         ...plan,
     }
@@ -76,23 +75,6 @@ export async function findPlansByMapId(mapId: number) {
 }
 
 export async function updatePlanRoutes(plan: Plan, routes: CreateRouteInput[]) {
-    console.log(`>updatePlanRoutes`, {plan, routes})
-    // return Promise.all(
-    //     routes.map(
-    //         route => prisma.route.create({
-    //             data: {
-    //                 ...route,
-    //                 ownerId: plan.ownerId,
-    //                 status: 'DONE',
-    //                 planId: plan.id,
-    //                 legs: {
-    //                     create: route.legs,
-    //                 }
-
-    //             }
-    //         })
-    //     )
-    // )
     return Promise.all(
         routes.map(
             route => createRoute({

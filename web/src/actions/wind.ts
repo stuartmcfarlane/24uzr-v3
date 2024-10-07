@@ -1,15 +1,23 @@
-"use server";
-import fs from "node:fs/promises";
-import { revalidatePath } from "next/cache";
+"use server"
 
-const gribLocation = process.env.GRIB_LOCATION || '/tmp'
+import { revalidatePath } from "next/cache"
+import { getSession } from "./session"
+import { apiCreateWind } from "@/services/api"
 
-export async function uploadGrib(formData: FormData) {
-  const file = formData.get("file") as File;
-  const arrayBuffer = await file.arrayBuffer();
-  const buffer = new Uint8Array(arrayBuffer);
+export async function uploadWindJson(formData: FormData) {
+    console.log(`>uploadWindJson`)
+    const file = formData.get("file") as File
+    const arrayBuffer = await file.arrayBuffer()
+    const buffer = Buffer.from(await file.arrayBuffer());
+    // const buffer = new Uint8Array(arrayBuffer)
 
-  await fs.writeFile(`${gribLocation}/${file.name}`, buffer);
+    const session = await getSession()
 
-  revalidatePath("/wind");
+    const json = buffer.toString()
+
+    const winds = JSON.parse(json)
+
+    await apiCreateWind(session.apiToken!, winds)
+    
+    revalidatePath("/wind")
 }

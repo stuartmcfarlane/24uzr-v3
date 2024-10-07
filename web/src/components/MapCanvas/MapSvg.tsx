@@ -1,6 +1,6 @@
 "use client"
 
-import { clientPoint2svgPoint, domRect2rect, fitToClient, rectGrowMargin, latLng2canvas, makePoint, makeRect, makeScreen2svgFactor, points2boundingRect, rect2viewBox, screenUnits2canvasUnits } from "@/lib/graph"
+import { clientPoint2svgPoint, domRect2rect, fitToClient, rectGrowMargin, latLng2canvas, makePoint, makeRect, makeScreen2svgFactor, points2boundingRect, rect2viewBox, screenUnits2canvasUnits, canvas2latLng } from "@/lib/graph"
 import { IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiRouteLegOutput, IApiWindOutput } from "@/types/api"
 import MapBuoy from "./MapBuoy"
 import { MouseEvent, useEffect, useRef, useState } from "react"
@@ -119,6 +119,7 @@ const MapSvg = (props: MapSvgProps) => {
     useEffect(
         () => {
             if (!boundingRect) return
+            console.log(`bounding region`, [canvas2latLng(boundingRect[0]), canvas2latLng(boundingRect[1])])
             const maxBoundingRect = rectGrowMargin(
                 `10%`,
                 boundingRect

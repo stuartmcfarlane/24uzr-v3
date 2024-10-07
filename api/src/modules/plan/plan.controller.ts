@@ -1,9 +1,9 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { PlanIdParamInput, PlanIdParamSchema, CreatePlanInput, UpdatePlanInput } from './plan.schema';
-import { createPlan, findPlan, findPlans, updatePlan, updatePlanLegs, updatePlanRoutes, updatePlanStatus } from "./plan.service";
-import { getAllRoutes, getShortestRoute, Wind } from "../../services/routeApi";
+import { createPlan, findPlan, findPlans, updatePlan, updatePlanRoutes } from "./plan.service";
+import { getAllRoutes, Wind } from "../../services/routeApi";
 import { findBuoysByMapId } from "../buoy/buoy.service";
-import { findLegsByMapId, findLegsByPlanId } from "../leg/leg.service";
+import { findLegsByMapId } from "../leg/leg.service";
 import { Ship } from "@prisma/client";
 import { idIs } from "../../utils/idIs";
 
@@ -56,7 +56,6 @@ export async function getPlanHandler(
 ) {
     const { id } = PlanIdParamSchema.parse(request.params)
     const plan = await findPlan(id)
-    console.log(`!!findPlan `, plan?.routes[0])
     
     return plan;
 }

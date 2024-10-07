@@ -16,7 +16,8 @@
     "next-client-cookies": "^1.1.1",
     "react": "^18",
     "react-dom": "^18",
-    "use-debounce": "^10.0.3"
+    "use-debounce": "^10.0.3",
+    "vgrib2": "^0.1.13"
   },
   "devDependencies": {
     "@types/node": "^20",

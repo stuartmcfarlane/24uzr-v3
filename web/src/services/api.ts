@@ -1,4 +1,4 @@
-import { IApiBuoyInput, IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapInput, IApiMapOutput, IApiPlanInput, IApiPlanOutput, IApiRouteInput, IApiRouteLegOutput, IApiRouteOutput, IApiUser, IApiUserOutput } from "@/types/api"
+import { IApiBuoyInput, IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapInput, IApiMapOutput, IApiPlanInput, IApiPlanOutput, IApiRouteInput, IApiRouteLegOutput, IApiRouteOutput, IApiUser, IApiUserOutput, IApiWind, IApiWindInput, IApiWindOutput } from "@/types/api"
 
 const makeApiUrl = (uri: string) => `${process.env.NEXT_PUBLIC_API_URL || process.env.API_URL}${uri}`
 
@@ -360,5 +360,18 @@ export const apiGetPlan = async (
     console.log(`<getPlan`, plan)
 
     return plan
+}
+
+export const apiCreateWind = async (
+    accessToken: string,
+    wind: IApiWindInput | IApiWindInput[],
+): Promise<IApiWindOutput | IApiWindOutput[] | null> => {
+
+    const response = await post(accessToken, `/api/winds`, wind)
+
+    if (!response.ok) return null
+    
+    const createdWind = await response.json()
+    return createdWind
 }
 

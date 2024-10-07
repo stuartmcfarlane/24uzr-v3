@@ -1,6 +1,7 @@
 import sys
 import pygrib
 import json
+from datetime import datetime
 
 inputFilename = sys.argv[1]
 
@@ -13,14 +14,22 @@ v = grbs.select(indicatorOfParameter=34)
 uData = [ uu.data() for uu in u ]
 vData = [ vv.data() for vv in v ]
 
+#  20241004 5:00
+def makeTimestamp(dataDate, validityTime):
+    year = int(dataDate[:4])
+    month = int(dataDate[4:6])
+    day = int(dataDate[6:8])
+    hour = int(validityTime/100)
+    min = 0
+    return datetime(year, month, day, hour, min).isoformat() + 'Z'
 json.dump(
     [
         {
-            "timestamp": f"{u[iTime].dataDate} {int(u[iTime].validityTime / 100)}:00",
+            "timestamp": makeTimestamp(f"{u[iTime].dataDate}", u[iTime].validityTime),
             "data" : [
                 {
                     "lat": "%.4f" % uData[iTime][1][iLat][iLon],
-                    "lon": "%.4f" % uData[iTime][2][iLat][iLon],
+                    "lng": "%.4f" % uData[iTime][2][iLat][iLon],
                     "u": "%.4f" % uData[iTime][0][iLat][iLon],
                     "v": "%.4f" % vData[iTime][0][iLat][iLon],
                 }

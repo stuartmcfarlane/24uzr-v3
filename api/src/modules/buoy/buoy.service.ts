@@ -10,7 +10,6 @@ export async function createBuoy(data: CreateBuoyInput) {
 }
 
 export async function findBuoy(id: number) {
-    console.log(`find buoy ${id}`)
     return prisma.buoy.findUnique({
         relationLoadStrategy: 'join',
         where: {

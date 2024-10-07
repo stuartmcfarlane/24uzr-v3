@@ -4,7 +4,6 @@ import { CreateRouteInput, RouteStatusInput, UpdateRouteInput, legsOnRoute } fro
 import { StatusSchema, LegsOnRoute } from '../../../prisma/generated/zod/index';
 
 export async function createRoute(route: CreateRouteInput) {
-    console.log(`createRoute`, route)
     const { type } = route
     const legs = (
         route.legs

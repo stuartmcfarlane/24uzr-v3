@@ -11,6 +11,7 @@ import mapRoutes from "./modules/map/map.route";
 import legRoutes from "./modules/leg/leg.route";
 import routeRoutes from "./modules/route/route.route";
 import planRoutes from "./modules/plan/plan.route";
+import windRoutes from "./modules/wind/wind.route";
 import { userSchemas } from "./modules/user/user.schema";
 import { shipSchemas } from "./modules/ship/ship.schema";
 import { buoySchemas } from "./modules/buoy/buoy.schema";
@@ -18,6 +19,7 @@ import { mapSchemas } from "./modules/map/map.schema";
 import { legSchemas } from "./modules/leg/leg.schema";
 import { routeSchemas } from "./modules/route/route.schema";
 import { planSchemas } from "./modules/plan/plan.schema";
+import { windSchemas } from "./modules/wind/wind.schema";
 import { version } from '../package.json'
 
 declare module "fastify" {
@@ -44,6 +46,7 @@ declare module "@fastify/jwt" {
 
 function buildServer() {
   const server = Fastify({
+    bodyLimit: 37457280, // === 10MB
     logger: true
   });
   
@@ -98,6 +101,7 @@ function buildServer() {
     ...legSchemas,
     ...routeSchemas,
     ...planSchemas,
+    ...windSchemas,
   ]) {
     server.addSchema(schema);
   }
@@ -151,6 +155,7 @@ function buildServer() {
   server.register(legRoutes, { prefix: "/api" });
   server.register(routeRoutes, { prefix: "/api" });
   server.register(planRoutes, { prefix: "/api" });
+  server.register(windRoutes, { prefix: "/api" });
   
   return server;
 }

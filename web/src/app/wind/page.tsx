@@ -1,9 +1,7 @@
 import { getSession } from "@/actions/session"
 import MapCanvas from "@/components/ MapCanvas"
 import WindOptions from "@/components/WindOptions"
-import { IApiWindOutput } from "@/types/api"
 import { redirect } from "next/navigation"
-import { useState } from "react"
 
 const WindPage = async () => {
 

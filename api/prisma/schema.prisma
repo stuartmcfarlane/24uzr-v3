@@ -129,3 +129,16 @@ model Plan {
   endBuoyId            Int
   raceSecondsRemaining Int
 }
+
+model Wind {
+  timestamp DateTime
+  lat       Decimal  @db.Decimal(10, 8)
+  lng       Decimal  @db.Decimal(11, 8)
+  u         Float
+  v         Float
+
+  @@id([timestamp, lat, lng])
+  @@index([timestamp])
+  @@index([lat])
+  @@index([lng])
+}

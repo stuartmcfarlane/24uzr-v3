@@ -51,6 +51,8 @@ export const LegsOnRouteScalarFieldEnumSchema = z.enum(['routeId','legId','index
 
 export const PlanScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','name','ownerId','mapId','startBuoyId','endBuoyId','raceSecondsRemaining']);
 
+export const WindScalarFieldEnumSchema = z.enum(['timestamp','lat','lng','u','v']);
+
 export const SortOrderSchema = z.enum(['asc','desc']);
 
 export const NullsOrderSchema = z.enum(['first','last']);
@@ -186,6 +188,20 @@ export const PlanSchema = z.object({
 })
 
 export type Plan = z.infer<typeof PlanSchema>
+
+/////////////////////////////////////////
+// WIND SCHEMA
+/////////////////////////////////////////
+
+export const WindSchema = z.object({
+  timestamp: z.coerce.date(),
+  lat: z.instanceof(Prisma.Decimal, { message: "Field 'lat' must be a Decimal. Location: ['Models', 'Wind']"}),
+  lng: z.instanceof(Prisma.Decimal, { message: "Field 'lng' must be a Decimal. Location: ['Models', 'Wind']"}),
+  u: z.number(),
+  v: z.number(),
+})
+
+export type Wind = z.infer<typeof WindSchema>
 
 /////////////////////////////////////////
 // SELECT & INCLUDE
@@ -483,6 +499,17 @@ export const PlanSelectSchema: z.ZodType<Prisma.PlanSelect> = z.object({
   startBuoy: z.union([z.boolean(),z.lazy(() => BuoyArgsSchema)]).optional(),
   endBuoy: z.union([z.boolean(),z.lazy(() => BuoyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => PlanCountOutputTypeArgsSchema)]).optional(),
+}).strict()
+
+// WIND
+//------------------------------------------------------
+
+export const WindSelectSchema: z.ZodType<Prisma.WindSelect> = z.object({
+  timestamp: z.boolean().optional(),
+  lat: z.boolean().optional(),
+  lng: z.boolean().optional(),
+  u: z.boolean().optional(),
+  v: z.boolean().optional(),
 }).strict()
 
 
@@ -1092,6 +1119,64 @@ export const PlanScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.PlanScal
   raceSecondsRemaining: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
 }).strict();
 
+export const WindWhereInputSchema: z.ZodType<Prisma.WindWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => WindWhereInputSchema),z.lazy(() => WindWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => WindWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => WindWhereInputSchema),z.lazy(() => WindWhereInputSchema).array() ]).optional(),
+  timestamp: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  lat: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  lng: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  u: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+  v: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+}).strict();
+
+export const WindOrderByWithRelationInputSchema: z.ZodType<Prisma.WindOrderByWithRelationInput> = z.object({
+  timestamp: z.lazy(() => SortOrderSchema).optional(),
+  lat: z.lazy(() => SortOrderSchema).optional(),
+  lng: z.lazy(() => SortOrderSchema).optional(),
+  u: z.lazy(() => SortOrderSchema).optional(),
+  v: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const WindWhereUniqueInputSchema: z.ZodType<Prisma.WindWhereUniqueInput> = z.object({
+  timestamp_lat_lng: z.lazy(() => WindTimestampLatLngCompoundUniqueInputSchema)
+})
+.and(z.object({
+  timestamp_lat_lng: z.lazy(() => WindTimestampLatLngCompoundUniqueInputSchema).optional(),
+  AND: z.union([ z.lazy(() => WindWhereInputSchema),z.lazy(() => WindWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => WindWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => WindWhereInputSchema),z.lazy(() => WindWhereInputSchema).array() ]).optional(),
+  timestamp: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  lat: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  lng: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  u: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+  v: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+}).strict());
+
+export const WindOrderByWithAggregationInputSchema: z.ZodType<Prisma.WindOrderByWithAggregationInput> = z.object({
+  timestamp: z.lazy(() => SortOrderSchema).optional(),
+  lat: z.lazy(() => SortOrderSchema).optional(),
+  lng: z.lazy(() => SortOrderSchema).optional(),
+  u: z.lazy(() => SortOrderSchema).optional(),
+  v: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => WindCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => WindAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => WindMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => WindMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => WindSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const WindScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.WindScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => WindScalarWhereWithAggregatesInputSchema),z.lazy(() => WindScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => WindScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => WindScalarWhereWithAggregatesInputSchema),z.lazy(() => WindScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  timestamp: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  lat: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  lng: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  u: z.union([ z.lazy(() => FloatWithAggregatesFilterSchema),z.number() ]).optional(),
+  v: z.union([ z.lazy(() => FloatWithAggregatesFilterSchema),z.number() ]).optional(),
+}).strict();
+
 export const UserCreateInputSchema: z.ZodType<Prisma.UserCreateInput> = z.object({
   email: z.string(),
   name: z.string().optional().nullable(),
@@ -1621,6 +1706,62 @@ export const PlanUncheckedUpdateManyInputSchema: z.ZodType<Prisma.PlanUncheckedU
   startBuoyId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   endBuoyId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   raceSecondsRemaining: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const WindCreateInputSchema: z.ZodType<Prisma.WindCreateInput> = z.object({
+  timestamp: z.coerce.date(),
+  lat: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  lng: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  u: z.number(),
+  v: z.number()
+}).strict();
+
+export const WindUncheckedCreateInputSchema: z.ZodType<Prisma.WindUncheckedCreateInput> = z.object({
+  timestamp: z.coerce.date(),
+  lat: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  lng: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  u: z.number(),
+  v: z.number()
+}).strict();
+
+export const WindUpdateInputSchema: z.ZodType<Prisma.WindUpdateInput> = z.object({
+  timestamp: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  lat: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  lng: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  u: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  v: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const WindUncheckedUpdateInputSchema: z.ZodType<Prisma.WindUncheckedUpdateInput> = z.object({
+  timestamp: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  lat: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  lng: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  u: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  v: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const WindCreateManyInputSchema: z.ZodType<Prisma.WindCreateManyInput> = z.object({
+  timestamp: z.coerce.date(),
+  lat: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  lng: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  u: z.number(),
+  v: z.number()
+}).strict();
+
+export const WindUpdateManyMutationInputSchema: z.ZodType<Prisma.WindUpdateManyMutationInput> = z.object({
+  timestamp: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  lat: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  lng: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  u: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  v: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const WindUncheckedUpdateManyInputSchema: z.ZodType<Prisma.WindUncheckedUpdateManyInput> = z.object({
+  timestamp: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  lat: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  lng: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  u: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  v: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const IntFilterSchema: z.ZodType<Prisma.IntFilter> = z.object({
@@ -2227,6 +2368,77 @@ export const PlanSumOrderByAggregateInputSchema: z.ZodType<Prisma.PlanSumOrderBy
   startBuoyId: z.lazy(() => SortOrderSchema).optional(),
   endBuoyId: z.lazy(() => SortOrderSchema).optional(),
   raceSecondsRemaining: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const FloatFilterSchema: z.ZodType<Prisma.FloatFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedFloatFilterSchema) ]).optional(),
+}).strict();
+
+export const WindTimestampLatLngCompoundUniqueInputSchema: z.ZodType<Prisma.WindTimestampLatLngCompoundUniqueInput> = z.object({
+  timestamp: z.coerce.date(),
+  lat: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  lng: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' })
+}).strict();
+
+export const WindCountOrderByAggregateInputSchema: z.ZodType<Prisma.WindCountOrderByAggregateInput> = z.object({
+  timestamp: z.lazy(() => SortOrderSchema).optional(),
+  lat: z.lazy(() => SortOrderSchema).optional(),
+  lng: z.lazy(() => SortOrderSchema).optional(),
+  u: z.lazy(() => SortOrderSchema).optional(),
+  v: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const WindAvgOrderByAggregateInputSchema: z.ZodType<Prisma.WindAvgOrderByAggregateInput> = z.object({
+  lat: z.lazy(() => SortOrderSchema).optional(),
+  lng: z.lazy(() => SortOrderSchema).optional(),
+  u: z.lazy(() => SortOrderSchema).optional(),
+  v: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const WindMaxOrderByAggregateInputSchema: z.ZodType<Prisma.WindMaxOrderByAggregateInput> = z.object({
+  timestamp: z.lazy(() => SortOrderSchema).optional(),
+  lat: z.lazy(() => SortOrderSchema).optional(),
+  lng: z.lazy(() => SortOrderSchema).optional(),
+  u: z.lazy(() => SortOrderSchema).optional(),
+  v: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const WindMinOrderByAggregateInputSchema: z.ZodType<Prisma.WindMinOrderByAggregateInput> = z.object({
+  timestamp: z.lazy(() => SortOrderSchema).optional(),
+  lat: z.lazy(() => SortOrderSchema).optional(),
+  lng: z.lazy(() => SortOrderSchema).optional(),
+  u: z.lazy(() => SortOrderSchema).optional(),
+  v: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const WindSumOrderByAggregateInputSchema: z.ZodType<Prisma.WindSumOrderByAggregateInput> = z.object({
+  lat: z.lazy(() => SortOrderSchema).optional(),
+  lng: z.lazy(() => SortOrderSchema).optional(),
+  u: z.lazy(() => SortOrderSchema).optional(),
+  v: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const FloatWithAggregatesFilterSchema: z.ZodType<Prisma.FloatWithAggregatesFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedFloatWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _avg: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _sum: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _min: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _max: z.lazy(() => NestedFloatFilterSchema).optional()
 }).strict();
 
 export const ShipCreateNestedManyWithoutOwnerInputSchema: z.ZodType<Prisma.ShipCreateNestedManyWithoutOwnerInput> = z.object({
@@ -3165,6 +3377,14 @@ export const RouteUncheckedUpdateManyWithoutPlanNestedInputSchema: z.ZodType<Pri
   deleteMany: z.union([ z.lazy(() => RouteScalarWhereInputSchema),z.lazy(() => RouteScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
+export const FloatFieldUpdateOperationsInputSchema: z.ZodType<Prisma.FloatFieldUpdateOperationsInput> = z.object({
+  set: z.number().optional(),
+  increment: z.number().optional(),
+  decrement: z.number().optional(),
+  multiply: z.number().optional(),
+  divide: z.number().optional()
+}).strict();
+
 export const NestedIntFilterSchema: z.ZodType<Prisma.NestedIntFilter> = z.object({
   equals: z.number().optional(),
   in: z.number().array().optional(),
@@ -3373,6 +3593,22 @@ export const NestedEnumStatusWithAggregatesFilterSchema: z.ZodType<Prisma.Nested
   _count: z.lazy(() => NestedIntFilterSchema).optional(),
   _min: z.lazy(() => NestedEnumStatusFilterSchema).optional(),
   _max: z.lazy(() => NestedEnumStatusFilterSchema).optional()
+}).strict();
+
+export const NestedFloatWithAggregatesFilterSchema: z.ZodType<Prisma.NestedFloatWithAggregatesFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedFloatWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _avg: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _sum: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _min: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _max: z.lazy(() => NestedFloatFilterSchema).optional()
 }).strict();
 
 export const ShipCreateWithoutOwnerInputSchema: z.ZodType<Prisma.ShipCreateWithoutOwnerInput> = z.object({
@@ -6330,6 +6566,68 @@ export const PlanFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.PlanFindUniqueOrT
   relationLoadStrategy: RelationLoadStrategySchema.optional(),
 }).strict() ;
 
+export const WindFindFirstArgsSchema: z.ZodType<Prisma.WindFindFirstArgs> = z.object({
+  select: WindSelectSchema.optional(),
+  where: WindWhereInputSchema.optional(),
+  orderBy: z.union([ WindOrderByWithRelationInputSchema.array(),WindOrderByWithRelationInputSchema ]).optional(),
+  cursor: WindWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ WindScalarFieldEnumSchema,WindScalarFieldEnumSchema.array() ]).optional(),
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const WindFindFirstOrThrowArgsSchema: z.ZodType<Prisma.WindFindFirstOrThrowArgs> = z.object({
+  select: WindSelectSchema.optional(),
+  where: WindWhereInputSchema.optional(),
+  orderBy: z.union([ WindOrderByWithRelationInputSchema.array(),WindOrderByWithRelationInputSchema ]).optional(),
+  cursor: WindWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ WindScalarFieldEnumSchema,WindScalarFieldEnumSchema.array() ]).optional(),
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const WindFindManyArgsSchema: z.ZodType<Prisma.WindFindManyArgs> = z.object({
+  select: WindSelectSchema.optional(),
+  where: WindWhereInputSchema.optional(),
+  orderBy: z.union([ WindOrderByWithRelationInputSchema.array(),WindOrderByWithRelationInputSchema ]).optional(),
+  cursor: WindWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ WindScalarFieldEnumSchema,WindScalarFieldEnumSchema.array() ]).optional(),
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const WindAggregateArgsSchema: z.ZodType<Prisma.WindAggregateArgs> = z.object({
+  where: WindWhereInputSchema.optional(),
+  orderBy: z.union([ WindOrderByWithRelationInputSchema.array(),WindOrderByWithRelationInputSchema ]).optional(),
+  cursor: WindWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const WindGroupByArgsSchema: z.ZodType<Prisma.WindGroupByArgs> = z.object({
+  where: WindWhereInputSchema.optional(),
+  orderBy: z.union([ WindOrderByWithAggregationInputSchema.array(),WindOrderByWithAggregationInputSchema ]).optional(),
+  by: WindScalarFieldEnumSchema.array(),
+  having: WindScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const WindFindUniqueArgsSchema: z.ZodType<Prisma.WindFindUniqueArgs> = z.object({
+  select: WindSelectSchema.optional(),
+  where: WindWhereUniqueInputSchema,
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const WindFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.WindFindUniqueOrThrowArgs> = z.object({
+  select: WindSelectSchema.optional(),
+  where: WindWhereUniqueInputSchema,
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
 export const UserCreateArgsSchema: z.ZodType<Prisma.UserCreateArgs> = z.object({
   select: UserSelectSchema.optional(),
   include: UserIncludeSchema.optional(),
@@ -6688,4 +6986,45 @@ export const PlanUpdateManyArgsSchema: z.ZodType<Prisma.PlanUpdateManyArgs> = z.
 
 export const PlanDeleteManyArgsSchema: z.ZodType<Prisma.PlanDeleteManyArgs> = z.object({
   where: PlanWhereInputSchema.optional(),
+}).strict() ;
+
+export const WindCreateArgsSchema: z.ZodType<Prisma.WindCreateArgs> = z.object({
+  select: WindSelectSchema.optional(),
+  data: z.union([ WindCreateInputSchema,WindUncheckedCreateInputSchema ]),
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const WindUpsertArgsSchema: z.ZodType<Prisma.WindUpsertArgs> = z.object({
+  select: WindSelectSchema.optional(),
+  where: WindWhereUniqueInputSchema,
+  create: z.union([ WindCreateInputSchema,WindUncheckedCreateInputSchema ]),
+  update: z.union([ WindUpdateInputSchema,WindUncheckedUpdateInputSchema ]),
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const WindCreateManyArgsSchema: z.ZodType<Prisma.WindCreateManyArgs> = z.object({
+  data: z.union([ WindCreateManyInputSchema,WindCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const WindDeleteArgsSchema: z.ZodType<Prisma.WindDeleteArgs> = z.object({
+  select: WindSelectSchema.optional(),
+  where: WindWhereUniqueInputSchema,
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const WindUpdateArgsSchema: z.ZodType<Prisma.WindUpdateArgs> = z.object({
+  select: WindSelectSchema.optional(),
+  data: z.union([ WindUpdateInputSchema,WindUncheckedUpdateInputSchema ]),
+  where: WindWhereUniqueInputSchema,
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const WindUpdateManyArgsSchema: z.ZodType<Prisma.WindUpdateManyArgs> = z.object({
+  data: z.union([ WindUpdateManyMutationInputSchema,WindUncheckedUpdateManyInputSchema ]),
+  where: WindWhereInputSchema.optional(),
+}).strict() ;
+
+export const WindDeleteManyArgsSchema: z.ZodType<Prisma.WindDeleteManyArgs> = z.object({
+  where: WindWhereInputSchema.optional(),
 }).strict() ;
