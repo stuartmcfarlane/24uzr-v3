@@ -121,10 +121,10 @@ const UnlockedMapPageClientFunctions = (props: UnlockedMapPageClientFunctionsPro
     }
 
     return (
-        <div className="flex-grow my-10 flex gap-4">
+        <div className="flex-grow my-8 flex gap-4">
             <div className="flex flex-col">
                 <div className="flex-1 flex flex-col">
-                    <h1 className="text-2xl flex gap-4">
+                    <h1 className="text-lg flex gap-4">
                         <span>Map {map?.name} </span>
                         <span className="w-7">
                             <PadlockIcon isLocked={false} onClick={onToggleMapLock} />

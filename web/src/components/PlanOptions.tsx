@@ -38,7 +38,7 @@ const PlanOptions = (props: PlanOptionsProps) => {
                 {(plans || []).map(plan => (
                     <div
                         key={plan.id}
-                        className="border p-4 hover:bg-24uzr hover:text-white"
+                        className="border p-2 hover:bg-24uzr hover:text-white"
                         onMouseEnter={onMouseEnter(plan)}
                         onMouseLeave={onMouseLeave(plan)}
                     >

@@ -10,10 +10,10 @@ const WindPage = async () => {
         redirect('/')
     }
     return (
-        <div className="flex-grow my-10 flex gap-4">
+        <div className="flex-grow my-8 flex gap-4">
             <div className="flex flex-col">
                 <div className="flex-1 flex flex-col">
-                    <h1 className="text-2xl flex gap-4">
+                    <h1 className="text-lg flex gap-4">
                         Wind
                     </h1>
                     <div className="flex-1 flex flex-col gap-4 mt-4 border-t-2 pt-4">

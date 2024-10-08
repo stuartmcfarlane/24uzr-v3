@@ -15,7 +15,7 @@ const ProfilePage = async () => {
     const user = await apiGetUser(session.apiToken!)
 
     return (
-        <div className="my-10">
+        <div className="my-8">
             <h1 className="text-center md:text-left text-2xl">Profile</h1>
             <UserDetails user={user}/>
         </div>

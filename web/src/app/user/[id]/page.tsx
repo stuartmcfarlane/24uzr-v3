@@ -19,7 +19,7 @@ const UserPage = async ({
     const user = await apiGetUser(session.apiToken!, id)
 
     return (
-        <div className="my-10">
+        <div className="my-8">
             <h1 className="text-2xl">User {user?.name}</h1>
             <UserDetails user={user}/>
         </div>

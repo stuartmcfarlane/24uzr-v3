@@ -43,7 +43,7 @@ const RouteOptions = (props: RouteOptionsProps) => {
                         key={route.id}
                         className={`flex justify-between border p-2 hover:bg-24uzr hover:text-white ${(
                             selectedRoute?.id === route.id
-                                ? '4 bg-24uzr text-white'
+                                ? ' bg-24uzr text-white'
                                 : ''
 
                         )}`}

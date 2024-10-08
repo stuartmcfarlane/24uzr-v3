@@ -72,10 +72,10 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
     if (!map.isLocked) return <></>
 
     return (
-        <div className="flex-grow my-10 flex gap-4">
-            <div className="max-h-[calc(100vh-5rem-10rem)] md:max-h-[calc(100vh-5rem-4rem-6rem)] flex flex-col gap-4">
+        <div className="flex-grow my-8 flex gap-4">
+            <div className="max-h-[calc(100vh-5rem-6rem)] md:max-h-[calc(100vh-5rem-4rem-2rem)] flex flex-col gap-4">
                 <div className="flex-1 flex flex-col">
-                    <h1 className="text-2xl flex gap-4">
+                    <h1 className="text-lg flex gap-4">
                         <span>Map {map?.name} </span>
                         <span className="w-7">
                             <PadlockIcon isLocked={map.isLocked} onClick={onToggleMapLock} />
