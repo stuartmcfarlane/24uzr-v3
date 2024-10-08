@@ -2,6 +2,8 @@
 
 import { IApiBulkWind, IApiBuoyOutput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput, IApiWindOutput } from "@/types/api"
 import MapSvg from "./MapCanvas/MapSvg"
+import WindLegend from "./WindLegend"
+import { useState } from "react"
 
 type MapCanvasProps = {
     wind?: IApiBulkWind[]
@@ -34,19 +36,29 @@ const MapCanvas = (props: MapCanvasProps) => {
         creatingLeg,
     } = props
 
-    return <MapSvg
-        wind={wind}
-        buoys={buoys}
-        legs={legs}
-        routeLegs={routeLegs}
-        onClearSelections={onClearSelections}
-        onSelectBuoy={onSelectBuoy}
-        selectedBuoy={selectedBuoy}
-        onSelectLeg={onSelectLeg}
-        selectedLeg={selectedLeg}
-        onCreateLeg={onCreateLeg}
-        creatingLeg={creatingLeg}
-    />
+    const [showWind, setShowWind] = useState(false)
+    const onShowWind = (showWind: boolean) => setShowWind(showWind)
+    return (
+        <div className="border flex-grow flex flex-col">
+            <div className="flex-1">
+                <MapSvg
+                    wind={wind}
+                    buoys={buoys}
+                    legs={legs}
+                    routeLegs={routeLegs}
+                    onClearSelections={onClearSelections}
+                    onSelectBuoy={onSelectBuoy}
+                    selectedBuoy={selectedBuoy}
+                    onSelectLeg={onSelectLeg}
+                    selectedLeg={selectedLeg}
+                    onCreateLeg={onCreateLeg}
+                    creatingLeg={creatingLeg}
+                    showWind={showWind}
+                />
+            </div>
+            <WindLegend showWind={showWind} onShowWind={onShowWind}/>
+        </div>
+    )
 }
 
 export default MapCanvas

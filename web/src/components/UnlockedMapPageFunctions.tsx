@@ -169,21 +169,17 @@ const UnlockedMapPageClientFunctions = (props: UnlockedMapPageClientFunctionsPro
                     </div>
                 </div>
             </div>
-            <div className="border flex-grow flex flex-col">
-                <div className="flex-1">
-                    <MapCanvas
-                        map={map}
-                        buoys={buoys}
-                        legs={legs}
-                        onClearSelections={onClearSelection}
-                        selectedBuoy={selectedBuoy}
-                        onSelectBuoy={onSelectBuoy}
-                        selectedLeg={selectedLeg}
-                        onSelectLeg={onSelectLeg}
-                        onCreateLeg={onCreateLeg}
-                    />
-                </div>
-            </div>
+            <MapCanvas
+                map={map}
+                buoys={buoys}
+                legs={legs}
+                onClearSelections={onClearSelection}
+                selectedBuoy={selectedBuoy}
+                onSelectBuoy={onSelectBuoy}
+                selectedLeg={selectedLeg}
+                onSelectLeg={onSelectLeg}
+                onCreateLeg={onCreateLeg}
+            />
         </div>
     )
 }

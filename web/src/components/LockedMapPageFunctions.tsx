@@ -92,22 +92,18 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
                     </div>
                 </div>
             </div>
-            <div className="border flex-grow flex flex-col">
-                <div className="flex-1">
-                    <MapCanvas
-                        map={map}
-                        wind={wind}
-                        buoys={buoys}
-                        legs={legs}
-                        onClearSelections={onClearSelection}
-                        selectedBuoy={selectedBuoy}
-                        onSelectBuoy={onSelectBuoy}
-                        onCreateLeg={onCreateLeg}
-                        creatingLeg={creatingLeg}
-                        // routeLegs={hoveredPlan?.legs}
-                    />
-                </div>
-            </div>
+            <MapCanvas
+                map={map}
+                wind={wind}
+                buoys={buoys}
+                legs={legs}
+                onClearSelections={onClearSelection}
+                selectedBuoy={selectedBuoy}
+                onSelectBuoy={onSelectBuoy}
+                onCreateLeg={onCreateLeg}
+                creatingLeg={creatingLeg}
+                // routeLegs={hoveredPlan?.legs}
+            />
         </div>
     )
 }

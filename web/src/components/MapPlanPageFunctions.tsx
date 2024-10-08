@@ -1,12 +1,13 @@
 "use client"
 
-import { IApiBuoyOutput, IApiLegOutput, IApiMapOutput, IApiPlanOutput, IApiRouteOutput } from "@/types/api"
+import { IApiBulkWind, IApiBuoyOutput, IApiLegOutput, IApiMapOutput, IApiPlanOutput, IApiRouteOutput } from "@/types/api"
 import MapCanvas from "./ MapCanvas"
 import { useState } from "react"
 import RouteOptions from "./RouteOptions"
 
 type MapPlanPageClientFunctionsProps = {
     map: IApiMapOutput
+    wind: IApiBulkWind[]
     plan: IApiPlanOutput
     buoys: IApiBuoyOutput[]
 }
@@ -14,6 +15,7 @@ type MapPlanPageClientFunctionsProps = {
 const MapPlanPageClientFunctions = (props: MapPlanPageClientFunctionsProps) => {
     const {
         map,
+        wind,
         plan,
         buoys,
     } = props
@@ -50,21 +52,18 @@ const MapPlanPageClientFunctions = (props: MapPlanPageClientFunctionsProps) => {
                     onHoverRoute={onHoverRoute}
                 />
             </div>
-            <div className="border flex-grow flex flex-col">
-                <div className="flex-1">
-                    <MapCanvas
-                        map={map}
-                        buoys={buoys}
-                        legs={[]}
-                        onClearSelections={onClearSelection}
-                        selectedBuoy={selectedBuoy}
-                        onSelectBuoy={onSelectBuoy}
-                        selectedLeg={selectedLeg}
-                        onSelectLeg={onSelectLeg}
-                        routeLegs={hoveredRoute?.legs}
-                    />
-                </div>
-            </div>
+            <MapCanvas
+                map={map}
+                wind={wind}
+                buoys={buoys}
+                legs={[]}
+                onClearSelections={onClearSelection}
+                selectedBuoy={selectedBuoy}
+                onSelectBuoy={onSelectBuoy}
+                selectedLeg={selectedLeg}
+                onSelectLeg={onSelectLeg}
+                routeLegs={hoveredRoute?.legs}
+            />
         </div>
     )
 }

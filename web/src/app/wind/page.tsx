@@ -21,11 +21,7 @@ const WindPage = async () => {
                     </div>
                 </div>
             </div>
-            <div className="border flex-grow flex flex-col">
-                <div className="flex-1">
-                    <MapCanvas />
-                </div>
-            </div>
+            <MapCanvas />
         </div>
     )
 }

@@ -2,7 +2,7 @@
 
 import { getSession } from "@/actions/session"
 import MapPlanPageClientFunctions from "@/components/MapPlanPageFunctions"
-import { apiGetBuoys, apiGetMap, apiGetPlan } from "@/services/api"
+import { apiGetBuoys, apiGetMap, apiGetPlan, apiGetWind } from "@/services/api"
 import { redirect } from "next/navigation"
 
 const MapPlanPage = async ({
@@ -35,10 +35,12 @@ const MapPlanPage = async ({
     if (!plan) {
         redirect(`/map/${mapId}`)
     }
+    const wind = await apiGetWind(session.apiToken!, 1, map)
 
     return (
         <MapPlanPageClientFunctions
             map={map}
+            wind={wind}
             plan={plan}
             buoys={buoys || []}
         />

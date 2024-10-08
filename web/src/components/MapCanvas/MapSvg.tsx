@@ -35,7 +35,8 @@ type MapSvgProps = {
     selectedLeg?: IApiLegOutput
     onSelectLeg?: (buoy?: IApiLegOutput) => void
     onCreateLeg?: (startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput) => void
-    creatingLeg?: { startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput}
+    creatingLeg?: { startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput }
+    showWind?: boolean
 }
 
 const MapSvg = (props: MapSvgProps) => {
@@ -51,6 +52,7 @@ const MapSvg = (props: MapSvgProps) => {
         selectedLeg,
         onCreateLeg,
         creatingLeg,
+        showWind,
     } = props
 
     const innerBoundingRect = points2boundingRect(
@@ -189,6 +191,12 @@ const MapSvg = (props: MapSvgProps) => {
                         onClick={onClick}
                     />
                 )}
+                {showWind && wind && (
+                    <MapWind
+                        wind={wind}
+                        screen2svgFactor={screen2svgFactor}
+                    />
+                )}
                 {mouseSvgPoint && (
                     <MouseCursor
                         point={mouseSvgPoint}
@@ -240,12 +248,6 @@ const MapSvg = (props: MapSvgProps) => {
                         onHover={onHoverBuoy}
                         isSelected={buoy.id === selectedBuoy?.id}
                     />)
-                )}
-                {wind && (
-                    <MapWind
-                        wind={wind}
-                        screen2svgFactor={screen2svgFactor}
-                    />
                 )}
                 {DEBUG && viewBoxRect && <>
                     <rect ref={unitRef}

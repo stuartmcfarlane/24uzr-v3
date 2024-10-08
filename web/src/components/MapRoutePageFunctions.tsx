@@ -43,21 +43,17 @@ const MapRoutePageClientFunctions = (props: MapRoutePageClientFunctionsProps) =>
                     </h1>
                 </div>
             </div>
-            <div className="border flex-grow flex flex-col">
-                <div className="flex-1">
-                    <MapCanvas
-                        map={map}
-                        buoys={buoys}
-                        legs={[]}
-                        onClearSelections={onClearSelection}
-                        routeLegs={routeLegs}
-                        selectedBuoy={selectedBuoy}
-                        onSelectBuoy={onSelectBuoy}
-                        selectedLeg={selectedLeg}
-                        onSelectLeg={onSelectLeg}
-                    />
-                </div>
-            </div>
+            <MapCanvas
+                map={map}
+                buoys={buoys}
+                legs={[]}
+                onClearSelections={onClearSelection}
+                routeLegs={routeLegs}
+                selectedBuoy={selectedBuoy}
+                onSelectBuoy={onSelectBuoy}
+                selectedLeg={selectedLeg}
+                onSelectLeg={onSelectLeg}
+            />
         </div>
     )
 }

@@ -1,12 +1,13 @@
 "use client"
 
-import { IApiBuoyOutput, IApiLegOutput, IApiMapOutput, IApiPlanOutput, IApiRouteOutput } from "@/types/api"
+import { IApiBulkWind, IApiBuoyOutput, IApiLegOutput, IApiMapOutput, IApiPlanOutput, IApiRouteOutput } from "@/types/api"
 import MapCanvas from "./ MapCanvas"
 import { useState } from "react"
 import RouteOptions from "./RouteOptions"
 
 type MapPlanRoutePageClientFunctionsProps = {
     map: IApiMapOutput
+    wind: IApiBulkWind[]
     plan: IApiPlanOutput
     route: IApiRouteOutput
     buoys: IApiBuoyOutput[]
@@ -15,6 +16,7 @@ type MapPlanRoutePageClientFunctionsProps = {
 const MapPlanRoutePageClientFunctions = (props: MapPlanRoutePageClientFunctionsProps) => {
     const {
         map,
+        wind,
         plan,
         route,
         buoys,
@@ -54,21 +56,18 @@ const MapPlanRoutePageClientFunctions = (props: MapPlanRoutePageClientFunctionsP
                     selectedRoute={route}
                 />
             </div>
-            <div className="border flex-grow flex flex-col">
-                <div className="flex-1">
-                    <MapCanvas
-                        map={map}
-                        buoys={buoys}
-                        legs={[]}
-                        onClearSelections={onClearSelection}
-                        selectedBuoy={selectedBuoy}
-                        onSelectBuoy={onSelectBuoy}
-                        selectedLeg={selectedLeg}
-                        onSelectLeg={onSelectLeg}
-                        routeLegs={route.legs}
-                    />
-                </div>
-            </div>
+            <MapCanvas
+                map={map}
+                wind={wind}
+                buoys={buoys}
+                legs={[]}
+                onClearSelections={onClearSelection}
+                selectedBuoy={selectedBuoy}
+                onSelectBuoy={onSelectBuoy}
+                selectedLeg={selectedLeg}
+                onSelectLeg={onSelectLeg}
+                routeLegs={route.legs}
+            />
         </div>
     )
 }

@@ -6,7 +6,7 @@ import MapPlanRoutePageClientFunctions from "@/components/MapPlanRoutePageFuncti
 import MapRoutePageClientFunctions from "@/components/MapRoutePageFunctions"
 import { useChange } from "@/hooks/useChange"
 import usePolling from "@/hooks/usePolling"
-import { apiGetBuoys, apiGetLegs, apiGetMap, apiGetPlan, apiGetRoute, apiGetRouteLegs } from "@/services/api"
+import { apiGetBuoys, apiGetLegs, apiGetMap, apiGetPlan, apiGetRoute, apiGetRouteLegs, apiGetWind } from "@/services/api"
 import { redirect } from "next/navigation"
 
 const MapPlanRoutePage = async ({
@@ -46,10 +46,12 @@ const MapPlanRoutePage = async ({
     if (!route) {
         redirect(`/map/${mapId}/plan/${planId}`)
     }
+    const wind = await apiGetWind(session.apiToken!, 1, map)
 
     return (
         <MapPlanRoutePageClientFunctions
             map={map}
+            wind={wind}
             plan={plan}
             buoys={buoys || []}
             route={route}
