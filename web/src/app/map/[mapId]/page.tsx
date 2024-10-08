@@ -28,7 +28,7 @@ const MapPage = async ({
     if (!map) {
         redirect('/dashboard')
     }
-    const wind = await apiGetWind(session.apiToken!, 1, map)
+    const wind = await apiGetWind(session.apiToken!, 12, map)
 
     return (
         map.isLocked

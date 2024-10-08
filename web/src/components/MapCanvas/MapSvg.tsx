@@ -37,6 +37,7 @@ type MapSvgProps = {
     onCreateLeg?: (startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput) => void
     creatingLeg?: { startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput }
     showWind?: boolean
+    timeDelta?: number
 }
 
 const MapSvg = (props: MapSvgProps) => {
@@ -53,6 +54,7 @@ const MapSvg = (props: MapSvgProps) => {
         onCreateLeg,
         creatingLeg,
         showWind,
+        timeDelta,
     } = props
 
     const innerBoundingRect = points2boundingRect(
@@ -195,6 +197,7 @@ const MapSvg = (props: MapSvgProps) => {
                     <MapWind
                         wind={wind}
                         screen2svgFactor={screen2svgFactor}
+                        timeDelta={timeDelta}
                     />
                 )}
                 {mouseSvgPoint && (

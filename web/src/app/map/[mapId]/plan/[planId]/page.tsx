@@ -35,7 +35,7 @@ const MapPlanPage = async ({
     if (!plan) {
         redirect(`/map/${mapId}`)
     }
-    const wind = await apiGetWind(session.apiToken!, 1, map)
+    const wind = await apiGetWind(session.apiToken!, 12, map)
 
     return (
         <MapPlanPageClientFunctions

@@ -5,16 +5,18 @@ type MapWindProps = {
     wind: IApiBulkWind[]
     selectedTime?: string
     screen2svgFactor: number
+    timeDelta?: number
 
 }
 const MapWind = (props: MapWindProps) => {
     const {
         wind,
-        selectedTime,
-        screen2svgFactor
+        screen2svgFactor,
+        timeDelta,
     } = props
 
-    const timestamp = selectedTime || wind.map(w => w.timestamp)[0]
+    const timestamps = wind.map(w => w.timestamp)
+    const timestamp = timestamps[timeDelta || 0]
     const shownWind = wind && wind.find(w => w.timestamp === timestamp)
     return (<>
         {shownWind && shownWind.data.map(

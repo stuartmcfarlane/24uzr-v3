@@ -37,7 +37,9 @@ const MapCanvas = (props: MapCanvasProps) => {
     } = props
 
     const [showWind, setShowWind] = useState(false)
+    const [timeDelta, setTimeDelta] = useState(0)
     const onShowWind = (showWind: boolean) => setShowWind(showWind)
+    const onTimeDelta = (timeDelta: number) => setTimeDelta(timeDelta)
     return (
         <div className="border flex-grow flex flex-col">
             <div className="flex-1">
@@ -54,9 +56,16 @@ const MapCanvas = (props: MapCanvasProps) => {
                     onCreateLeg={onCreateLeg}
                     creatingLeg={creatingLeg}
                     showWind={showWind}
+                    timeDelta={timeDelta}
                 />
             </div>
-            <WindLegend showWind={showWind} onShowWind={onShowWind}/>
+            <WindLegend
+                wind={wind || []}
+                showWind={showWind}
+                onShowWind={onShowWind}
+                timeDelta={timeDelta}
+                onTimeDelta={onTimeDelta}
+            />
         </div>
     )
 }
