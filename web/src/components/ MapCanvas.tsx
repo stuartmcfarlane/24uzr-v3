@@ -1,10 +1,10 @@
 "use client"
 
-import { IApiBuoyOutput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput, IApiWindOutput } from "@/types/api"
+import { IApiBulkWind, IApiBuoyOutput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput, IApiWindOutput } from "@/types/api"
 import MapSvg from "./MapCanvas/MapSvg"
 
 type MapCanvasProps = {
-    wind?: IApiWindOutput[]
+    wind?: IApiBulkWind[]
     map?: IApiMapOutput
     buoys?: IApiBuoyOutput[]
     routeLegs?: IApiRouteLegOutput[]

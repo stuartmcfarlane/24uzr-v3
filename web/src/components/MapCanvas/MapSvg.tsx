@@ -1,7 +1,7 @@
 "use client"
 
 import { clientPoint2svgPoint, domRect2rect, fitToClient, rectGrowMargin, latLng2canvas, makePoint, makeRect, makeScreen2svgFactor, points2boundingRect, rect2viewBox, screenUnits2canvasUnits, canvas2latLng } from "@/lib/graph"
-import { IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiRouteLegOutput, IApiWindOutput } from "@/types/api"
+import { IApiBulkWind, IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiRouteLegOutput, IApiWindOutput } from "@/types/api"
 import MapBuoy from "./MapBuoy"
 import { MouseEvent, useEffect, useRef, useState } from "react"
 import { rect2SvgRect } from '../../lib/graph';
@@ -20,11 +20,12 @@ import ArrowMarker from "./ArrowMarker"
 import MapRouteLeg from "./MapRouteLeg"
 import MapCreatingLeg from "./MapCreatingLeg"
 import { COLOR_BLUE, COLOR_GREEN } from "@/lib/constants"
+import MapWind from "./MapWind"
 
 const DEBUG = false
 
 type MapSvgProps = {
-    wind?: IApiWindOutput[]
+    wind?: IApiBulkWind[]
     buoys?: IApiBuoyOutput[]
     legs?: IApiLegOutput[]
     routeLegs?: IApiRouteLegOutput[]
@@ -239,6 +240,12 @@ const MapSvg = (props: MapSvgProps) => {
                         onHover={onHoverBuoy}
                         isSelected={buoy.id === selectedBuoy?.id}
                     />)
+                )}
+                {wind && (
+                    <MapWind
+                        wind={wind}
+                        screen2svgFactor={screen2svgFactor}
+                    />
                 )}
                 {DEBUG && viewBoxRect && <>
                     <rect ref={unitRef}

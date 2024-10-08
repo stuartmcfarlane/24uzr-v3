@@ -111,7 +111,6 @@ export interface IApiPlanOutput extends IApiPlanInput{
 export type IApiPlan = IApiPlanInput | IApiPlanOutput
 
 export interface IApiWind {
-  timestamp: string
   lat: number
   lng: number
   u: number
@@ -119,13 +118,12 @@ export interface IApiWind {
 }
 export interface IApiBulkWind {
   timestamp: string
-  data: {
-    lat: number
-    lng: number
-    u: number
-    v: number
-  }[]
+  data: IApiWind[]
 }
 
-export type IApiWindInput = IApiWind | IApiWind[] | IApiBulkWind | IApiBulkWind[]
-export type IApiWindOutput = IApiWind | IApiWind[] | IApiBulkWind | IApiBulkWind[]
+export interface IApiWindInput extends IApiWind {
+  timestamp: string
+}
+export interface IApiWindOutput extends IApiWind {
+  timestamp: string
+}

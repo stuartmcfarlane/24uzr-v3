@@ -1,5 +1,7 @@
 import { makePoint } from "./graph"
 
+export const ZOOM_SPEED_FACTOR = 5
+
 export const CURSOR_SIZE = 10
 export const CURSOR_TEXT_OFFSET = makePoint(10, 10)
 export const CURSOR_FONT_SIZE = 10
@@ -21,3 +23,6 @@ export const ROUTE_LEG_COLOR = COLOR_BLUE
 export const DRAW_LEG_COLOR = COLOR_BLUE
 export const BUOY_COLOR = COLOR_YELLOW
 export const SELECTED_BUOY_COLOR = COLOR_RED
+
+export const WIND_ARROW_LENGTH = 10
+export const WIND_ARROW_WIDTH = 1

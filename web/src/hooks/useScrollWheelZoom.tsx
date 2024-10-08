@@ -1,6 +1,7 @@
 import { clientPoint2svgPoint, makePoint, rectGrowAroundPoint, rectHeight, rectLimitTo, rectWidth } from "@/lib/graph";
 import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { useChange } from "./useChange";
+import { ZOOM_SPEED_FACTOR } from '../lib/constants';
 
 export const useScrollWheelZoom = (
     svgRef: RefObject<SVGSVGElement>,
@@ -36,7 +37,7 @@ export const useScrollWheelZoom = (
     const scrollDelta2zoomMargin = (rect: Rect, δ: number): number => {
         const Δ = Math.sign(δ) * Math.sqrt(Math.sign(δ) * δ)
         
-        const zoomTick = rectWidth(rect) / 500
+        const zoomTick = ZOOM_SPEED_FACTOR * rectWidth(rect) / 500
         const zoomMargin = Δ * zoomTick
         if (zoomMargin < 0) {
             const zoomSpace = Math.min(rectWidth(rect), rectHeight(rect))

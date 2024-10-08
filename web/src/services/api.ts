@@ -385,19 +385,17 @@ export const apiGetWind = async (
 
     if (!response.ok) return []
     
-    const wind = await response.json() as IApiWind[]
+    const wind = await response.json() as IApiWindOutput[]
 
-    console.log(`wind`, wind)
     const windByTimestamp = wind.reduce(
-        (windByTimestamp, wind: IApiWind) => {
+        (windByTimestamp, wind: IApiWindOutput) => {
             if (!windByTimestamp[wind.timestamp]) {
-                console.log(`timestamp`, wind.timestamp)
                 windByTimestamp[wind.timestamp] = []
             }
             windByTimestamp[wind.timestamp].push(wind)
             return windByTimestamp
         },
-        []
+        [] as {[timestamp: string]: IApiWind}[]
     )
 
     const timestamps = Object.keys(windByTimestamp)

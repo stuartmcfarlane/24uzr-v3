@@ -1,6 +1,6 @@
 "use client"
 
-import { IApiBuoyOutput, IApiLegOutput, IApiMapOutput, IApiPlanOutput, IApiWindOutput } from "@/types/api"
+import { IApiBulkWind, IApiBuoyOutput, IApiLegOutput, IApiMapOutput, IApiPlanOutput, IApiWindOutput } from "@/types/api"
 import MapCanvas from "./ MapCanvas"
 import { useState } from "react"
 import { updateMap } from "@/actions/map"
@@ -11,7 +11,7 @@ import PlanOptions from "./PlanOptions"
 
 type LockedMapPageClientFunctionsProps = {
     map: IApiMapOutput
-    wind: IApiWindOutput[]
+    wind: IApiBulkWind[]
     buoys: IApiBuoyOutput[]
     legs: IApiLegOutput[]
     plans: IApiPlanOutput[]

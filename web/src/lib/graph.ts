@@ -1,9 +1,10 @@
 import { decimal2geo } from "./geo"
 import { realEq } from "./math"
-import { vectorAdd } from "./vector"
+import { vectorAdd, Vector } from './vector';
 import { RefObject } from "react"
 
 export const makePoint = (x: number, y: number) => ({ x, y })
+export const makeVector = makePoint
 export const makeRect = (x: number, y: number, width: number, height: number):Rect => [
     makePoint(x, y),
     makePoint(x + width, y + height),
@@ -350,3 +351,7 @@ export const rectLimitTo = (limitRect: Rect, rect: Rect): Rect => {
     ]
     return result
 }
+export const vectorMagnitude = ({
+    x, y
+}: Vector): number => Math.sqrt(x * x + y * y)
+export const unitVector = (v: Vector): Vector => vectorScale(1 / vectorMagnitude(v), v)
