@@ -69,6 +69,15 @@ cd web
 npm run dev
 ```
 
+Start a terminal for the route server. You can kill it with ctrl-c
+
+```bash
+cd route
+. .source
+go build
+./24uzr-route-server
+```
+
 ## Migrations
 
 Database migrations are generated from the schema definition using the following command
@@ -98,7 +107,3 @@ npx prisma generate
 ## Wind
 
 Wind is fetched every 15 minutes from the KNMI and written to the database.
-
-## Route server
-
-The route server
