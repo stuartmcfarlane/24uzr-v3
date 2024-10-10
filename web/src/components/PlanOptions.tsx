@@ -34,7 +34,7 @@ const PlanOptions = (props: PlanOptionsProps) => {
                     Plans
                 </div>
             </div>
-            <div className="flex flex-col gap-4 overflow-x-scroll pr-4">
+            <div className="flex flex-col gap-4 overflow-y-auto pr-4">
                 {(plans || []).map(plan => (
                     <div
                         key={plan.id}

@@ -124,7 +124,6 @@ const MapSvg = (props: MapSvgProps) => {
     useEffect(
         () => {
             if (!boundingRect) return
-            console.log(`bounding region`, [canvas2latLng(boundingRect[0]), canvas2latLng(boundingRect[1])])
             const maxBoundingRect = rectGrowMargin(
                 `10%`,
                 boundingRect
@@ -198,6 +197,7 @@ const MapSvg = (props: MapSvgProps) => {
                         wind={wind}
                         screen2svgFactor={screen2svgFactor}
                         timeDelta={timeDelta}
+                        boundingRect={boundingRect}
                     />
                 )}
                 {mouseSvgPoint && (

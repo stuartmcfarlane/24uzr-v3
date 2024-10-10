@@ -14,7 +14,6 @@ const MapPlanPage = async ({
         }
 }) => {
 
-    console.log(params)
     const mapId = parseInt(params.mapId)
     const planId = parseInt(params.planId)
     const session = await getSession()
@@ -27,7 +26,6 @@ const MapPlanPage = async ({
         apiGetPlan(session.apiToken!, planId),
         apiGetBuoys(session.apiToken!, mapId),
     ])
-    console.log({plan})
     
     if (!map) {
         redirect('/dashboard')

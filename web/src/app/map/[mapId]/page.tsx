@@ -12,7 +12,6 @@ const MapPage = async ({
     params: { mapId: string }
 }) => {
     const id = parseInt(params.mapId)
-    console.log(`map page ${id}`)
     const session = await getSession()
     const [
         map,

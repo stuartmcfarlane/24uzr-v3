@@ -45,6 +45,9 @@ export const fmtLine = (line?: Line) => (
     ? `<Line ${fmtPoint(line[0])} -> ${fmtPoint(line[1])}>`
     : fmtUndefined()
 )
+export const fmtTimestamp = (timestamp: string) => {
+    return new Date(timestamp).toLocaleString()
+}
 export const rectPoint = (rect: Rect): Point => rect[0]
 export const rectWidth = ([ { x: x1 },{ x: x2 } ]: Rect): number => x2 - x1
 export const rectHeight = ([{ y: y1, }, { y: y2, }]: Rect): number => y2 - y1

@@ -21,6 +21,7 @@ import { routeSchemas } from "./modules/route/route.schema";
 import { planSchemas } from "./modules/plan/plan.schema";
 import { windSchemas } from "./modules/wind/wind.schema";
 import { version } from '../package.json'
+import { createCronJobs } from "./cron";
 
 declare module "fastify" {
   interface FastifyRequest {
@@ -156,7 +157,9 @@ function buildServer() {
   server.register(routeRoutes, { prefix: "/api" });
   server.register(planRoutes, { prefix: "/api" });
   server.register(windRoutes, { prefix: "/api" });
-  
+
+  createCronJobs(server)
+
   return server;
 }
 

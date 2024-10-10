@@ -9,7 +9,6 @@ const WindOptions = (props: WindOptionsProps) => {
         wind,
     } = props
 
-    console.log(`WindOptions`)
     return (
         <form action={uploadWindJson}  className="flex flex-col gap-4 flex-grow">
             <button

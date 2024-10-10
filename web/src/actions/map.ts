@@ -11,7 +11,6 @@ import { project, truthy, unique } from '@/lib/fp';
 import { notEmpty } from '../lib/fp';
 
 export const createMapWithForm = async (formData: FormData): Promise<ActionError> => {
-    console.log(`create map`, formData)
     const session = await getSession()
 
     const formName = formData.get("name") as string
@@ -176,7 +175,6 @@ export const deleteBuoy = async ({
     return {}
 }
 export const createRouteWithForm = async (formData: FormData): Promise<ActionError> => {
-    console.log(`>createRouteWithForm`)
     const session = await getSession()
 
     const formName = formData.get("name") as string
@@ -210,11 +208,9 @@ export const createRouteWithForm = async (formData: FormData): Promise<ActionErr
     })
     if (!createdRoute) return { error: "Failed to create map" }
 
-    console.log(`created`, createdRoute)
     redirect(`/map/${createdRoute.mapId}/route/${createdRoute.id}`)
 }
 export const createPlanWithForm = async (formData: FormData): Promise<ActionError> => {
-    console.log(`>createPlanWithForm`)
     const session = await getSession()
 
     const name = formData.get("name") as string
@@ -246,6 +242,5 @@ export const createPlanWithForm = async (formData: FormData): Promise<ActionErro
     })
     if (!createdPlan) return { error: "Failed to create plan" }
 
-    console.log(`created`, createdPlan)
     redirect(`/map/${createdPlan.mapId}/plan/${createdPlan.id}`)
 }

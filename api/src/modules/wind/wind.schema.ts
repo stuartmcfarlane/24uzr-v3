@@ -2,20 +2,20 @@ import { nullable, z } from "zod"
 import { buildJsonSchemas } from 'fastify-zod'
 
 const regionInput = {
-    lat1: z.number(),    
-    lng1: z.number(),    
-    lat2: z.number(),    
-    lng2: z.number(),    
+    lat1: z.coerce.number(),    
+    lng1: z.coerce.number(),    
+    lat2: z.coerce.number(),    
+    lng2: z.coerce.number(),    
 }
 
 const regionSchema = z.object(regionInput)
 
 const windInput = {
     timestamp: z.string(),
-    lat: z.number(),
-    lng: z.number(),
-    u: z.number(),
-    v: z.number(),
+    lat: z.coerce.number(),
+    lng: z.coerce.number(),
+    u: z.coerce.number(),
+    v: z.coerce.number(),
 }
 
 const windGenerated = {
@@ -25,21 +25,23 @@ const createSingleWindSchema = z.object({
     ...windInput
 })
 
-const createBulkWindSchema = z.array(
-    z.object({
-        timestamp: z.string(),
-        data: z.array(
-            z.object({
-                lat: z.number(),
-                lng: z.number(),
-                u: z.number(),
-                v: z.number(),
-            })
-        )
-    })
-)
+const createSingleBulkWindSchema = z.object({
+    timestamp: z.string(),
+    data: z.array(
+        z.object({
+            lat: z.coerce.number(),
+            lng: z.coerce.number(),
+            u: z.coerce.number(),
+            v: z.coerce.number(),
+        })
+    )
+})
+const createBulkWindSchema = z.union([
+    createSingleBulkWindSchema,
+    z.array(createSingleBulkWindSchema)
+])
 
-const createWindSchema = z.union([
+export const createWindSchema = z.union([
     createSingleWindSchema,
     createBulkWindSchema,
 ])

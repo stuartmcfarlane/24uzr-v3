@@ -5,11 +5,8 @@ import { getSession } from "./session"
 import { apiCreateWind } from "@/services/api"
 
 export async function uploadWindJson(formData: FormData) {
-    console.log(`>uploadWindJson`)
     const file = formData.get("file") as File
-    const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(await file.arrayBuffer());
-    // const buffer = new Uint8Array(arrayBuffer)
 
     const session = await getSession()
 

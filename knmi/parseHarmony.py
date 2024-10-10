@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys
 import pygrib
 import json
@@ -23,6 +25,10 @@ def makeTimestamp(dataDate, validityTime):
     min = 0
     return datetime(year, month, day, hour, min).isoformat() + 'Z'
 
+outputFile = sys.stdout
+if (len(sys.argv) > 2):
+    outputFile = open(sys.argv[2], "w")
+
 json.dump(
     [
         {
@@ -40,5 +46,5 @@ json.dump(
         }
         for iTime in range(len(u))
     ],
-    sys.stdout
+    outputFile
 )

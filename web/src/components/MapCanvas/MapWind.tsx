@@ -6,13 +6,14 @@ type MapWindProps = {
     selectedTime?: string
     screen2svgFactor: number
     timeDelta?: number
-
+    boundingRect?: Rect
 }
 const MapWind = (props: MapWindProps) => {
     const {
         wind,
         screen2svgFactor,
         timeDelta,
+        boundingRect,
     } = props
 
     const timestamps = wind.map(w => w.timestamp)

@@ -60,17 +60,6 @@ export async function getPlanHandler(
     return plan;
 }
 
-export async function getPlanLegsHandler(
-    request: FastifyRequest<{
-        Params: PlanIdParamInput,
-    }>,
-) {
-    const { id } = PlanIdParamSchema.parse(request.params)
-    const legs = await findLegsByPlanId(id)
-    
-    return legs
-}
-
 export async function putPlanHandler(
     request: FastifyRequest<{
         Params: PlanIdParamInput,

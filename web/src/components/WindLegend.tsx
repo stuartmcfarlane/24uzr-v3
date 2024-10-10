@@ -1,3 +1,4 @@
+import { fmtTimestamp } from "@/lib/graph"
 import { IApiBulkWind } from "@/types/api"
 import { ChangeEvent, MouseEvent, useState } from "react"
 
@@ -52,13 +53,14 @@ const WindLegend = (props: WindLegendProps) => {
                         type="text"
                         value={timeDelta}
                         onChange={onChangeTimeDelta}
-                        className="w-16 text-center"
+                        className="w-10 text-center"
                     />
                     <button
                         onClick={() => onTimeDelta && onTimeDelta(Math.min(maxDelta, timeDelta + 1))}
                         disabled={timeDelta >= maxDelta}
                         className="border-2 rounded-sm px-4"
                     >+</button>
+                    <div>{fmtTimestamp(wind[timeDelta].timestamp)}</div>
                 </div>
             )}
             <div className="flex">

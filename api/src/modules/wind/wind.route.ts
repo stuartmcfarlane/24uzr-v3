@@ -2,7 +2,6 @@ import { FastifyInstance } from "fastify";
 import {
     createWindHandler,
     getWindHandler,
-    getWindsHandler,
     putWindHandler,
 } from "./wind.controller";
 import { $ref } from "./wind.schema";

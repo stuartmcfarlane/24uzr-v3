@@ -14,8 +14,7 @@ export const route2LengthNm = (route: IApiRouteOutput): number => {
 }
 
 const meters2nM = (meters: number) => meters * 0.000539957
-function distanceLatLng(start: LatLng, end: LatLng) {
-    console.log(`>distanceLatLng`, start, end)
+export function distanceLatLng(start: LatLng, end: LatLng) {
     const { lat: lat1, lng: lng1 } = start
     const { lat: lat2, lng: lng2 } = end
     var R = 6371e3 // metres
@@ -30,7 +29,6 @@ function distanceLatLng(start: LatLng, end: LatLng) {
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
 
     var d = R * c
-    console.log(`<distanceLatLng`, d)
     return d // meters
 }
 const degrees2radians = (d: number) => d * Math.PI / 180

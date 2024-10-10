@@ -1,7 +1,7 @@
 import prisma from "../../utils/prisma";
 import { CreateBulkWindInput, CreateSingleWindInput, CreateWindInput, RegionSchema, UpdateWindInput } from './wind.schema';
 
-const bulkData2dbData = (data: CreateBulkWindInput) => data.reduce(
+const bulkData2dbData = (data: CreateBulkWindInput): CreateSingleWindInput[] => (Array.isArray(data) ? data : [data]).reduce(
     (dbData, { data, timestamp }) => [
         ...dbData,
         ...data.map(
@@ -14,30 +14,33 @@ const bulkData2dbData = (data: CreateBulkWindInput) => data.reduce(
     [] as CreateSingleWindInput[]
 )
 
+export async function createSingleWind(data: CreateSingleWindInput) {
+    return prisma.wind.upsert({
+        where: {
+            timestamp_lat_lng: {
+                timestamp: (data as CreateSingleWindInput).timestamp,
+                lat: (data as CreateSingleWindInput).lat,
+                lng: data.lng,
+            }
+        },
+        create: {
+            timestamp: data.timestamp,
+            lat: data.lat,
+            lng: data.lng,
+            u: data.u,
+            v: data.v,
+        },
+        update: {
+            u: data.u,
+            v: data.v,
+        }
+    })
+}
 export async function createWind(data: CreateWindInput) {
     const wind = await (
         Array.isArray(data)
             ? createMuchWind(data)
-            : prisma.wind.upsert({
-                where: {
-                    timestamp_lat_lng: {
-                        timestamp: data.timestamp,
-                        lat: data.lat,
-                        lng: data.lng,
-                    }
-                },
-                create: {
-                    timestamp: data.timestamp,
-                    lat: data.lat,
-                    lng: data.lng,
-                    u: data.u,
-                    v: data.v,
-                },
-                update: {
-                    u: data.u,
-                    v: data.v,
-                }
-            })
+            : createSingleWind(data as CreateSingleWindInput)
     )
     
     return wind;
@@ -53,7 +56,7 @@ const chunk = <T>(size: number, a: T[]) => {
 async function createMuchWind(bulkData: CreateBulkWindInput) {
     try {
         const data = bulkData2dbData(bulkData)
-        const timestamps = bulkData.map(({timestamp}) => timestamp)
+        const timestamps = (Array.isArray(bulkData) ? bulkData : [bulkData]).map(({timestamp}: {timestamp: string}) => timestamp)
 
         await prisma.wind.deleteMany({
             where: {
@@ -72,7 +75,6 @@ async function createMuchWind(bulkData: CreateBulkWindInput) {
         )
     }
     catch (err) {
-        console.log(err)
         console.error(err)
     }
     return []
@@ -113,7 +115,6 @@ export async function findWindByRegion(region: RegionSchema, from: string, until
             ),
         },
     }
-    console.log(`query`, JSON.stringify(query))
     return prisma.wind.findMany(query);
 }
 
@@ -130,3 +131,14 @@ export async function updateWind(wind: UpdateWindInput ) {
     });
 }
 
+export async function deleteOldWind() {
+    const ONE_DAY = 24 * 60 * 60 * 1000
+    const oldTimestamp = (new Date(Date.now() - ONE_DAY)).toISOString()
+    return prisma.wind.deleteMany({
+        where: {
+            timestamp: {
+                lt: oldTimestamp
+            },
+        },
+    });
+}

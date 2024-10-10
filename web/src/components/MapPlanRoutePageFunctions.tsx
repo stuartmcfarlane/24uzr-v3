@@ -40,7 +40,6 @@ const MapPlanRoutePageClientFunctions = (props: MapPlanRoutePageClientFunctionsP
         setHoveredRoute(route)
     }
 
-    console.log(`route`, route)
     return (
         <div className="flex-grow my-8 flex gap-4">
             <div className="max-h-[calc(100vh-5rem-6rem)] md:max-h-[calc(100vh-5rem-4rem-2rem)] flex flex-col gap-4">

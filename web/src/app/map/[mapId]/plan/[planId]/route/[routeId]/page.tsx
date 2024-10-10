@@ -19,7 +19,6 @@ const MapPlanRoutePage = async ({
         }
 }) => {
 
-    console.log(params)
     const mapId = parseInt(params.mapId)
     const planId = parseInt(params.planId)
     const routeId = parseInt(params.routeId)
@@ -35,7 +34,6 @@ const MapPlanRoutePage = async ({
         apiGetRoute(session.apiToken!, routeId),
         apiGetBuoys(session.apiToken!, mapId),
     ])
-    console.log({plan})
     
     if (!map) {
         redirect('/dashboard')

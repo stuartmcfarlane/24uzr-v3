@@ -1,4 +1,5 @@
 import { geo2decimal } from "@/lib/geo"
+import { wind2resolution } from "@/lib/wind"
 import { IApiBulkWind, IApiBuoyInput, IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapInput, IApiMapOutput, IApiPlanInput, IApiPlanOutput, IApiRouteInput, IApiRouteLegOutput, IApiRouteOutput, IApiUser, IApiUserOutput, IApiWind, IApiWindInput, IApiWindOutput } from "@/types/api"
 
 const makeApiUrl = (uri: string) => `${process.env.NEXT_PUBLIC_API_URL || process.env.API_URL}${uri}`
@@ -273,7 +274,6 @@ export const apiGetRoutes = async (
     if (!response.ok) return null
     
     const routes = await response.json()
-    console.log(`<getRoutes`, routes)
 
     return  routes
 }
@@ -288,7 +288,6 @@ export const apiGetRoute = async (
     if (!response.ok) return null
     
     const route = await response.json()
-    console.log(`<getRoute`, route)
 
     return route
 }
@@ -330,7 +329,6 @@ export const apiGetPlans = async (
     if (!response.ok) return null
     
     const plans = await response.json()
-    console.log(`<getPlans`, plans)
 
     return  plans
 }
@@ -358,7 +356,6 @@ export const apiGetPlan = async (
     if (!response.ok) return null
     
     const plan = await response.json()
-    console.log(`<getPlan`, plan)
 
     return plan
 }
@@ -386,6 +383,7 @@ export const apiGetWind = async (
     if (!response.ok) return []
     
     const wind = await response.json() as IApiWindOutput[]
+    if (!wind.length) return []
 
     const windByTimestamp = wind.reduce(
         (windByTimestamp, wind: IApiWindOutput) => {
@@ -398,10 +396,12 @@ export const apiGetWind = async (
         [] as {[timestamp: string]: IApiWind}[]
     )
 
-    const timestamps = Object.keys(windByTimestamp)
+    const timestamps = Object.keys(windByTimestamp) as string[]
+    const resolution = wind2resolution(windByTimestamp[timestamps[0]])
     const winds = timestamps.map(
         (timestamp: string) => ({
             timestamp,
+            resolution,
             data: windByTimestamp[timestamp]
         })
     )

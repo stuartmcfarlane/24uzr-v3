@@ -23,7 +23,6 @@ export const getAllRoutes = async (
     ) as AllRoutesOutput
     if (!allRoutes) return []
 
-    console.log('got', allRoutes)
     const routes = allRoutes.Paths.map(path2legs(legs)).map((legs, idx) => ({
         name: `${plan.name} route ${idx}`,
         ownerId: plan.ownerId,
@@ -49,7 +48,6 @@ export const getShortestRoute = async (
 ): Promise<LegsOnRoute[]> => {
 
     try {
-        console.log(`>getShortestRoute`)
 
         const buoysById = indexBy('id')(buoys)
         const graph = makeGraph(ship, legs, buoysById, wind)
@@ -57,7 +55,6 @@ export const getShortestRoute = async (
         const shortestRoute = (await routeApiPost(`route/shortest?start=${startBuoy.id}&end=${endBuoy.id}`, graph)) as ShortestRouteOutput
         if (!shortestRoute) return []
 
-        console.log('got', shortestRoute)
 
         const routeLegs = path2legs(legs)(shortestRoute.Path).map(
             leg => ({
@@ -69,7 +66,6 @@ export const getShortestRoute = async (
         return routeLegs
     }
     catch (e) {
-        console.error(e)
         return []
     }
 }
@@ -152,8 +148,6 @@ const routeApiPost = async (uri: string, data: RouteApiInput): Promise<RouteApiO
         return result
     }
     catch (e) {
-        console.log(`!routeApiPost`, e)
-        console.error(e)
         return undefined
     }
 }
@@ -204,7 +198,6 @@ type LatLng = {
     lng: Decimal
 }
 const getMetres = (start: LatLng, end: LatLng) => {
-    console.log(`>getMeters`)
     return distanceLatLng(start, end)
 }
 const windAtLocation = (wind: Wind, start: LatLng): Vector => [1, 1]
@@ -220,7 +213,6 @@ const getMetresPerSecondVMG = (
     const windAtStart = windAtLocation(wind, start)
     const shipDegrees = bearingLatLan(start, end)
     const knotsVMG = shipKnotsVMG(ship, shipDegrees, windAtStart)
-    console.log('speed', wind, knots2metersPerSecond(knotsVMG))
     return knots2metersPerSecond(knotsVMG)
 }
 
@@ -228,7 +220,6 @@ const degrees2radians = (d: number) => d * Math.PI / 180
 const radians2degrees = (r: number) => r * 180 / Math.PI
 
 function distanceLatLng(start: LatLng, end: LatLng) {
-    console.log(`>distanceLatLng`, start, end)
     const { lat: lat1, lng: lng1 } = start
     const { lat: lat2, lng: lng2 } = end
     var R = 6371e3 // metres
@@ -243,7 +234,6 @@ function distanceLatLng(start: LatLng, end: LatLng) {
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
 
     var d = R * c
-    console.log(`<distanceLatLng`, d)
     return d
 }
 

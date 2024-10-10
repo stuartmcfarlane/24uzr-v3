@@ -16,9 +16,9 @@ async function main() {
       host: '0.0.0.0',
     });
     
-    console.log(`Server ready at http://localhost:3000`);
+    server.log.info(`Server ready at http://localhost:3000`);
   } catch (e) {
-    console.error(e);
+    server.log.error(e);
     process.exit(1);
   }
 }

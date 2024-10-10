@@ -36,7 +36,6 @@ export async function getWindHandler(
 ) {
     const { timestamp, from, until, lat, lng, lat1, lng1, lat2, lng2 } = getWindsQueryStringSchema.parse(request.query)
     
-    console.log(`>getWindHandler`, { timestamp, from, until, lat, lng, lat1, lng1, lat2, lng2 })
     const wind = await (
         (lat && lng && timestamp)
             ? findWind(timestamp, lat, lng)
