@@ -66,7 +66,7 @@ async function createMuchWind(bulkData: CreateBulkWindInput) {
             }
         })
 
-        const chunks = chunk(10, data)
+        const chunks = chunk(100, data)
 
         await Promise.all(
             chunks.map(

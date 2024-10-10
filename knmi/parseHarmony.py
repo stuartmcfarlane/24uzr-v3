@@ -3,7 +3,7 @@
 import sys
 import pygrib
 import json
-from datetime import datetime
+import datetime
 
 inputFilename = sys.argv[1]
 
@@ -17,13 +17,9 @@ uData = [ uu.data() for uu in u ]
 vData = [ vv.data() for vv in v ]
 
 #  20241004 5:00
-def makeTimestamp(dataDate, validityTime):
-    year = int(dataDate[:4])
-    month = int(dataDate[4:6])
-    day = int(dataDate[6:8])
-    hour = int(validityTime/100)
-    min = 0
-    return datetime(year, month, day, hour, min).isoformat() + 'Z'
+def makeTimestamp(u):
+    timestamp = u.validDate + datetime.timedelta(hours=u.startStep)
+    return timestamp.isoformat() + 'Z'
 
 outputFile = sys.stdout
 if (len(sys.argv) > 2):
@@ -32,7 +28,7 @@ if (len(sys.argv) > 2):
 json.dump(
     [
         {
-            "timestamp": makeTimestamp(f"{u[iTime].dataDate}", u[iTime].validityTime),
+            "timestamp": makeTimestamp(u[iTime]),
             "data" : [
                 {
                     "lat": "%.4f" % uData[iTime][1][iLat][iLon],

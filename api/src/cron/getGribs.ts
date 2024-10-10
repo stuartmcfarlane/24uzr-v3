@@ -13,7 +13,7 @@ const PARSE_GRIB_CMD = process.env.PARSE_GRIB_CMD
 
 export const getGribs = async (server: FastifyInstance) => {
     try {
-        fetchGribsFile(server)
+        await fetchGribsFile(server)
         await parseGribsToJson(server)
 
         const jsonFile = await readFile(TMP_JSON_FILE)
@@ -26,13 +26,14 @@ export const getGribs = async (server: FastifyInstance) => {
             return ww
         })
         await createWind(windInput)
+
         await deleteOldWind()
+        await rm(TMP_JSON_FILE)
+        await rm(TMP_GRB_FILE)
     }
     catch (err) {
         server.log.error(err)
     }
-    await rm(TMP_JSON_FILE)
-    await rm(TMP_GRB_FILE)
 }
 
 const fetchGribsFile = async (server: FastifyInstance) => {
