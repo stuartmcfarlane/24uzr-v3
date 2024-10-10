@@ -8,7 +8,7 @@ export const createCronJobs = (server: FastifyInstance) => {
         jobs: [
             {
                 name: 'get gribs',
-                cronTime: '0 * * * *',
+                cronTime: '*/15 * * * *',
                 onTick: (server: FastifyInstance) => {
                     getGribs(server)
                 },

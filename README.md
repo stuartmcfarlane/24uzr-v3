@@ -19,8 +19,11 @@ JWT_SECRET=supersecret
 COOKIE_SECRET=superdupersecret
 IRON_SESSION_PASSWORD=secretironsessionpassword-must-be-32-characters-long
 API_URL=http://localhost:3000
-NEXT_PUBLIC_API_URL=http://localhost:3000
 NODE_ENV=development
+ROUTE_API_URL=localhost
+ROUTE_API_PORT=3002
+NEXT_PUBLIC_API_URL=http://localhost:3000
+PARSE_GRIB_CMD=/Users/stuart/dev/24uzr-2024/24uzr-v3/knmi/parseHarmony.py
 ```
 
 The api and web servers also need a bit of environment to work properly. Make sure you
@@ -47,7 +50,7 @@ quick-start
 
 ## Running the development servers
 
-The api and the web client shoud be run in separate terminals.
+The api and the web client should be run in separate terminals.
 
 The servers will automatically recompile and restart when you edit the source.
 
@@ -94,8 +97,8 @@ npx prisma generate
 
 ## Wind
 
-Fetch the wind forecast from the KNMI at https://www.euroszeilen.utwente.nl/weer/grib/download/harmonie_xy_ijmg_wind.grb
+Wind is fetched every 15 minutes from the KNMI and written to the database.
 
-Parse it into usable json with knmi/parseHarmony.py
+## Route server
 
-Upload the data using the wind tool in the app.
+The route server
