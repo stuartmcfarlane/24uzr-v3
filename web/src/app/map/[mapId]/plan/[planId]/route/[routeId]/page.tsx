@@ -1,12 +1,8 @@
 "use server"
 
 import { getSession } from "@/actions/session"
-import MapPlanPageClientFunctions from "@/components/MapPlanPageFunctions"
 import MapPlanRoutePageClientFunctions from "@/components/MapPlanRoutePageFunctions"
-import MapRoutePageClientFunctions from "@/components/MapRoutePageFunctions"
-import { useChange } from "@/hooks/useChange"
-import usePolling from "@/hooks/usePolling"
-import { apiGetBuoys, apiGetLegs, apiGetMap, apiGetPlan, apiGetRoute, apiGetRouteLegs, apiGetWind } from "@/services/api"
+import { apiGetBuoys, apiGetMap, apiGetPlan, apiGetRoute, apiGetWind } from "@/services/api"
 import { redirect } from "next/navigation"
 
 const MapPlanRoutePage = async ({

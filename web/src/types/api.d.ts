@@ -116,14 +116,23 @@ export interface IApiWind {
   u: number
   v: number
 }
+export interface IApiSingleWind extends IApiWind{
+  timestamp: string
+}
 export interface IApiBulkWind {
   timestamp: string
   data: IApiWind[]
 }
 
-export interface IApiWindInput extends IApiWind {
-  timestamp: string
-}
-export interface IApiWindOutput extends IApiWind {
-  timestamp: string
-}
+export type IApiWindInput = (
+  IApiSingleWind |
+  IApiSingleWind[] |
+  IApiBulkWind |
+  IApiBulkWind[]
+)
+export type IApiWindOutput = (
+  IApiSingleWind |
+  IApiSingleWind[] |
+  IApiBulkWind |
+  IApiBulkWind[]
+)

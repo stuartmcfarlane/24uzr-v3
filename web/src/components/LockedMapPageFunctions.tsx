@@ -32,6 +32,9 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
     const [finishBuoy, setFinishBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
     const [creatingLeg, setCreatingLeg] = useState<{startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput} | undefined>(undefined)
     const [hoveredPlan, setHoveredPlan] = useState<IApiPlanOutput | undefined>(undefined)
+    const [showWind, setShowWind] = useState(true)
+
+    const onShowWind = (showWind: boolean) => setShowWind(showWind)
 
     const onClearSelection = () => {
         setStartBuoy(undefined)
@@ -102,7 +105,9 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
                 onSelectBuoy={onSelectBuoy}
                 onCreateLeg={onCreateLeg}
                 creatingLeg={creatingLeg}
-                // routeLegs={hoveredPlan?.legs}
+                showWind={showWind}
+                onShowWind={onShowWind}
+            
             />
         </div>
     )

@@ -25,6 +25,9 @@ const MapPlanRoutePageClientFunctions = (props: MapPlanRoutePageClientFunctionsP
     const [selectedBuoy, setSelectedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
     const [selectedLeg, setSelectedLeg] = useState<IApiLegOutput | undefined>(undefined)
     const [hoveredRoute, setHoveredRoute] = useState<IApiRouteOutput | undefined>(undefined)
+    const [showWind, setShowWind] = useState(true)
+
+    const onShowWind = (showWind: boolean) => setShowWind(showWind)
 
     const onSelectBuoy = (buoy?: IApiBuoyOutput) => {
         setSelectedBuoy(buoy)
@@ -66,6 +69,8 @@ const MapPlanRoutePageClientFunctions = (props: MapPlanRoutePageClientFunctionsP
                 selectedLeg={selectedLeg}
                 onSelectLeg={onSelectLeg}
                 routeLegs={route.legs}
+                showWind={showWind}
+                onShowWind={onShowWind}
             />
         </div>
     )

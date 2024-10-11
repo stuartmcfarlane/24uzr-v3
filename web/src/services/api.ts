@@ -1,6 +1,6 @@
 import { geo2decimal } from "@/lib/geo"
 import { wind2resolution } from "@/lib/wind"
-import { IApiBulkWind, IApiBuoyInput, IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapInput, IApiMapOutput, IApiPlanInput, IApiPlanOutput, IApiRouteInput, IApiRouteLegOutput, IApiRouteOutput, IApiUser, IApiUserOutput, IApiWind, IApiWindInput, IApiWindOutput } from "@/types/api"
+import { IApiBulkWind, IApiBuoyInput, IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapInput, IApiMapOutput, IApiPlanInput, IApiPlanOutput, IApiRouteInput, IApiRouteLegOutput, IApiRouteOutput, IApiSingleWind, IApiUser, IApiUserOutput, IApiWind, IApiWindInput, IApiWindOutput } from "@/types/api"
 
 const makeApiUrl = (uri: string) => `${process.env.NEXT_PUBLIC_API_URL || process.env.API_URL}${uri}`
 
@@ -366,8 +366,9 @@ export const apiGetWind = async (
     map: IApiMapOutput,
 ): Promise<IApiBulkWind[]> => {
 
-    const from = new Date().toISOString()
-    const until = new Date(Date.now() + hours * 60 * 60 * 1000).toISOString()
+    const now = Date.now()
+    const from = new Date(now - 1 * 60 * 60 * 1000).toISOString()
+    const until = new Date(now + hours * 60 * 60 * 1000).toISOString()
 
     const p1 = geo2decimal(`52° 21' 39.9" N, 4° 30' 31.4" E`)
     const p2 = geo2decimal(`53° 23' 22.6" N, 5° 46' 10.0" E`)
@@ -382,18 +383,18 @@ export const apiGetWind = async (
 
     if (!response.ok) return []
     
-    const wind = await response.json() as IApiWindOutput[]
+    const wind = await response.json() as IApiSingleWind[]
     if (!wind.length) return []
 
     const windByTimestamp = wind.reduce(
-        (windByTimestamp, wind: IApiWindOutput) => {
+        (windByTimestamp, wind) => {
             if (!windByTimestamp[wind.timestamp]) {
                 windByTimestamp[wind.timestamp] = []
             }
             windByTimestamp[wind.timestamp].push(wind)
             return windByTimestamp
         },
-        [] as {[timestamp: string]: IApiWind}[]
+        {} as {[k: string]: IApiSingleWind[]}
     )
 
     const timestamps = Object.keys(windByTimestamp) as string[]

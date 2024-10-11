@@ -26,7 +26,7 @@ type Curry<P extends any[], R> =
         ? Curry<Cast<Drop<Length<T>, P>, any[]>, R>
         : R;
 
-function curry<P extends any[], R>(fn: (...args: P) => R) {
+export function curry<P extends any[], R>(fn: (...args: P) => R) {
     return ((...args: any[]) => {
         if (args.length >= fn.length) {
             return (fn as Function)(...args) as R;
@@ -61,6 +61,3 @@ export const notEmpty = <TValue>(value: TValue | null | undefined): value is TVa
 }
 export const truthy = (a:any) => !!a
 export const withField = (o1: {}) => (o2: {}) => ({ ...o2, ...o1})
-export {
-    curry,
-}

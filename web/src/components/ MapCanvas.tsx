@@ -17,7 +17,9 @@ type MapCanvasProps = {
     selectedLeg?: IApiLegOutput
     onSelectLeg?: (buoy?: IApiLegOutput) => void
     onCreateLeg?: (startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput) => void
-    creatingLeg?: { startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput}
+    creatingLeg?: { startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput }
+    showWind?: boolean
+    onShowWind?: (showWind: boolean) => void
 }
 
 const MapCanvas = (props: MapCanvasProps) => {
@@ -34,11 +36,11 @@ const MapCanvas = (props: MapCanvasProps) => {
         onSelectLeg,
         onCreateLeg,
         creatingLeg,
+        showWind,
+        onShowWind,
     } = props
 
-    const [showWind, setShowWind] = useState(false)
     const [timeDelta, setTimeDelta] = useState(0)
-    const onShowWind = (showWind: boolean) => setShowWind(showWind)
     const onTimeDelta = (timeDelta: number) => setTimeDelta(timeDelta)
     return (
         <div className="border flex-grow flex flex-col">
