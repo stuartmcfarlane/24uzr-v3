@@ -107,3 +107,7 @@ npx prisma generate
 ## Wind
 
 Wind is fetched every 15 minutes from the KNMI and written to the database.
+
+The wind data is produced by the Harmonie model.
+
+https://hirlam.github.io/HarmonieSystemDocumentation/dev/ForecastModel/Outputlist/

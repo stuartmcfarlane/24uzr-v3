@@ -74,6 +74,7 @@ export const getWindsQueryStringSchema = z.object({
     lng2: z.number().optional(),
 })
 
+export type CreateSingleBulkWindInput = z.infer<typeof createSingleBulkWindSchema>
 export type CreateBulkWindInput = z.infer<typeof createBulkWindSchema>
 export type CreateSingleWindInput = z.infer<typeof createSingleWindSchema>
 export type CreateWindInput = z.infer<typeof createWindSchema>
