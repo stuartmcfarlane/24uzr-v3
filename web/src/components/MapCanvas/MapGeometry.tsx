@@ -21,7 +21,7 @@ const lineString2svg = (key: string, coordinates: number[][]) => {
       stroke={COAST_LINE_COLOR}
       strokeWidth={1}
       vectorEffect="non-scaling-stroke"
-      fill={'none'}
+      fill={'green'}
    />
 }
 const multiLineString2svg = (key: string, coordinates: number[][][]) => {

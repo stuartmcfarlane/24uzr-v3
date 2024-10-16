@@ -23,7 +23,7 @@ import { COLOR_BLUE, COLOR_GREEN } from "@/lib/constants"
 import MapWind from "./MapWind"
 import MapGeometry from "./MapGeometry"
 
-const DEBUG = true  
+const DEBUG = false
 
 type MapSvgProps = {
     map?: IApiMapOutput

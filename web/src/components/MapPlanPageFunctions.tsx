@@ -1,6 +1,6 @@
 "use client"
 
-import { IApiBulkWind, IApiBuoyOutput, IApiLegOutput, IApiMapOutput, IApiPlanOutput, IApiRouteOutput } from "@/types/api"
+import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiPlanOutput, IApiRouteOutput } from "@/types/api"
 import MapCanvas from "./ MapCanvas"
 import { useState } from "react"
 import RouteOptions from "./RouteOptions"
@@ -10,6 +10,7 @@ type MapPlanPageClientFunctionsProps = {
     wind: IApiBulkWind[]
     plan: IApiPlanOutput
     buoys: IApiBuoyOutput[]
+    geometry: IApiGeometryOutput
 }
 
 const MapPlanPageClientFunctions = (props: MapPlanPageClientFunctionsProps) => {
@@ -18,6 +19,7 @@ const MapPlanPageClientFunctions = (props: MapPlanPageClientFunctionsProps) => {
         wind,
         plan,
         buoys,
+        geometry,
     } = props
 
     const [selectedBuoy, setSelectedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
@@ -57,6 +59,7 @@ const MapPlanPageClientFunctions = (props: MapPlanPageClientFunctionsProps) => {
             </div>
             <MapCanvas
                 map={map}
+                geometry={geometry}
                 wind={wind}
                 buoys={buoys}
                 legs={[]}

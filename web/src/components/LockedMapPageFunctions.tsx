@@ -1,6 +1,6 @@
 "use client"
 
-import { IApiBulkWind, IApiBuoyOutput, IApiLegOutput, IApiMapOutput, IApiPlanOutput, IApiWindOutput } from "@/types/api"
+import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiPlanOutput, IApiWindOutput } from "@/types/api"
 import MapCanvas from "./ MapCanvas"
 import { useState } from "react"
 import { updateMap } from "@/actions/map"
@@ -15,6 +15,7 @@ type LockedMapPageClientFunctionsProps = {
     buoys: IApiBuoyOutput[]
     legs: IApiLegOutput[]
     plans: IApiPlanOutput[]
+    geometry: IApiGeometryOutput
 }
 
 const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) => {
@@ -24,6 +25,7 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
         buoys,
         legs,
         plans,
+        geometry,
     } = props
 
     const [selectedBuoy, setSelectedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
@@ -97,6 +99,7 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
             </div>
             <MapCanvas
                 map={map}
+                geometry={geometry}
                 wind={wind}
                 buoys={buoys}
                 legs={legs}

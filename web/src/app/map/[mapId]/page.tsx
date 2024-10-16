@@ -39,6 +39,7 @@ const MapPage = async ({
             buoys={buoys || []}
             legs={legs || []}
             plans={plans || []}
+            geometry={geometry || []}
         />
          : <UnlockedMapPageClientFunctions
             map={map}

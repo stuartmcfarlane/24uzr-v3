@@ -2,7 +2,7 @@
 
 import { getSession } from "@/actions/session"
 import MapPlanPageClientFunctions from "@/components/MapPlanPageFunctions"
-import { apiGetBuoys, apiGetMap, apiGetPlan, apiGetWind } from "@/services/api"
+import { apiGetBuoys, apiGetGeometry, apiGetMap, apiGetPlan, apiGetWind } from "@/services/api"
 import { redirect } from "next/navigation"
 
 const MapPlanPage = async ({
@@ -21,10 +21,12 @@ const MapPlanPage = async ({
         map,
         plan,
         buoys,
+        geometry,
     ] = await Promise.all([
         apiGetMap(session.apiToken!, mapId),
         apiGetPlan(session.apiToken!, planId),
         apiGetBuoys(session.apiToken!, mapId),
+        apiGetGeometry(session.apiToken!, mapId),
     ])
     
     if (!map) {
@@ -38,6 +40,7 @@ const MapPlanPage = async ({
     return (
         <MapPlanPageClientFunctions
             map={map}
+            geometry={geometry}
             wind={wind}
             plan={plan}
             buoys={buoys || []}
