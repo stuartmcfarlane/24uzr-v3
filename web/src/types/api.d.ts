@@ -20,6 +20,10 @@ export type IApiUser = IApiUserInput | IApiUserOutput
 export interface IApiMapInput {
   name: string
   isLocked: boolean
+  lat1: number
+  lng1: number
+  lat2: number
+  lng2: number
 }
 export interface IApiMapOutput extends IApiMapInput {
   id: number

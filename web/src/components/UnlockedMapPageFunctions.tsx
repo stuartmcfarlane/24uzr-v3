@@ -1,6 +1,6 @@
 "use client"
 
-import { IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapOutput, IApiRouteOutput } from "@/types/api"
+import { IApiBuoyOutput, IApiGeometryOutput, IApiLegInput, IApiLegOutput, IApiMapOutput, IApiRouteOutput } from "@/types/api"
 import MapCanvas from "./ MapCanvas"
 import { useEffect, useState } from "react"
 import { createLeg, deleteBuoy, updateMap } from "@/actions/map"
@@ -19,6 +19,7 @@ type UnlockedMapPageClientFunctionsProps = {
     map: IApiMapOutput
     buoys: IApiBuoyOutput[]
     legs: IApiLegOutput[]
+    geometry: IApiGeometryOutput[]
 }
 
 const UnlockedMapPageClientFunctions = (props: UnlockedMapPageClientFunctionsProps) => {
@@ -26,6 +27,7 @@ const UnlockedMapPageClientFunctions = (props: UnlockedMapPageClientFunctionsPro
         map,
         buoys,
         legs,
+        geometry,
     } = props
 
     const [buoyOptionsOpen, setBuoyOptionsOpen] = useState(false)
@@ -192,6 +194,7 @@ const UnlockedMapPageClientFunctions = (props: UnlockedMapPageClientFunctionsPro
                 map={map}
                 buoys={buoys}
                 legs={legs}
+                geometry={geometry}
                 onClearSelections={onClearSelection}
                 selectedBuoy={selectedBuoy}
                 onSelectBuoy={onSelectBuoy}

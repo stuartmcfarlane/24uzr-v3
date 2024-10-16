@@ -1,6 +1,6 @@
 "use client"
 
-import { IApiBulkWind, IApiBuoyOutput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput, IApiWindOutput } from "@/types/api"
+import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput, IApiWindOutput } from "@/types/api"
 import MapSvg from "./MapCanvas/MapSvg"
 import WindLegend from "./WindLegend"
 import { useState } from "react"
@@ -11,6 +11,7 @@ type MapCanvasProps = {
     buoys?: IApiBuoyOutput[]
     routeLegs?: IApiRouteLegOutput[]
     legs?: IApiLegOutput[]
+    geometry: IApiGeometryOutput[]
     onClearSelections?: () => void
     selectedBuoy?: IApiBuoyOutput
     onSelectBuoy?: (buoy?: IApiBuoyOutput) => void
@@ -28,6 +29,7 @@ const MapCanvas = (props: MapCanvasProps) => {
         map,
         buoys,
         legs,
+        geometry,
         routeLegs,
         onClearSelections,
         selectedBuoy,
@@ -46,9 +48,11 @@ const MapCanvas = (props: MapCanvasProps) => {
         <div className="border flex-grow flex flex-col">
             <div className="flex-1">
                 <MapSvg
+                    map={map}
                     wind={wind}
                     buoys={buoys}
                     legs={legs}
+                    geometry={geometry}
                     routeLegs={routeLegs}
                     onClearSelections={onClearSelections}
                     onSelectBuoy={onSelectBuoy}

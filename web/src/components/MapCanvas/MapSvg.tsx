@@ -1,7 +1,7 @@
 "use client"
 
-import { clientPoint2svgPoint, domRect2rect, fitToClient, rectGrowMargin, latLng2canvas, makePoint, makeRect, makeScreen2svgFactor, points2boundingRect, rect2viewBox, screenUnits2canvasUnits, canvas2latLng } from "@/lib/graph"
-import { IApiBulkWind, IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiRouteLegOutput, IApiWindOutput } from "@/types/api"
+import { clientPoint2svgPoint, domRect2rect, fitToClient, rectGrowMargin, latLng2canvas, makePoint, makeRect, makeScreen2svgFactor, points2boundingRect, rect2viewBox, screenUnits2canvasUnits, canvas2latLng, latLng2canvasA, rectWidth, fmtRect, makeRectSafe } from "@/lib/graph"
+import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegInput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput, IApiWindOutput } from "@/types/api"
 import MapBuoy from "./MapBuoy"
 import { MouseEvent, useEffect, useRef, useState } from "react"
 import { rect2SvgRect } from '../../lib/graph';
@@ -21,15 +21,17 @@ import MapRouteLeg from "./MapRouteLeg"
 import MapCreatingLeg from "./MapCreatingLeg"
 import { COLOR_BLUE, COLOR_GREEN } from "@/lib/constants"
 import MapWind from "./MapWind"
-import MapCoastline from "./MapCoastline"
+import MapGeometry from "./MapGeometry"
 
-const DEBUG = false
+const DEBUG = true  
 
 type MapSvgProps = {
+    map?: IApiMapOutput
     wind?: IApiBulkWind[]
     buoys?: IApiBuoyOutput[]
     legs?: IApiLegOutput[]
     routeLegs?: IApiRouteLegOutput[]
+    geometry: IApiGeometryOutput[]
     selectedBuoy?: IApiBuoyOutput
     onClearSelections?: () => void
     onSelectBuoy?: (buoy?: IApiBuoyOutput) => void
@@ -43,10 +45,12 @@ type MapSvgProps = {
 
 const MapSvg = (props: MapSvgProps) => {
     const {
+        map,
         wind,
         buoys,
         legs,
         routeLegs,
+        geometry,
         onClearSelections,
         onSelectBuoy,
         selectedBuoy,
@@ -58,10 +62,6 @@ const MapSvg = (props: MapSvgProps) => {
         timeDelta,
     } = props
 
-    const innerBoundingRect = points2boundingRect(
-        (buoys || []).map(latLng2canvas)
-    )
-    
     const containerRef = useRef<HTMLDivElement>(null)
     const svgRef = useRef<SVGSVGElement>(null)
     const clickCatcherRef = useRef<SVGRectElement>(null)
@@ -106,6 +106,15 @@ const MapSvg = (props: MapSvgProps) => {
 
     useEffect(
         () => {
+            if (map && (map.lat1 || map.lat2 || map.lng1 || map.lng2)) {
+                const p1 = latLng2canvas({ lng: map.lng1, lat: map.lat1})
+                const p2 = latLng2canvas({ lng: map.lng2, lat: map.lat2 })
+                const boundingRect = makeRectSafe(p1, p2)
+                setBoundingRect(boundingRect)
+                setInitialBoundingViewBoxRect(boundingRect)
+                return
+            }
+
             if (!buoys?.length) {
                 setBoundingRect(makeRect(0, 0, 100, 100))
                 setInitialBoundingViewBoxRect(makeRect(0, 0, 100, 100))
@@ -120,7 +129,7 @@ const MapSvg = (props: MapSvgProps) => {
             setBoundingRect(boundingRect)
             setInitialBoundingViewBoxRect(boundingRect)
         },
-        [ buoys ]
+        [ buoys, map ]
     )
     useEffect(
         () => {
@@ -186,7 +195,7 @@ const MapSvg = (props: MapSvgProps) => {
                     <ArrowMarker />
                 </defs>
                 <g>
-                    <MapCoastline />
+                    <MapGeometry geometry={geometry}  />
                 </g>
                 {actualViewBoxRect && (
                     <rect
@@ -282,12 +291,6 @@ const MapSvg = (props: MapSvgProps) => {
                 </>}
                 {DEBUG && boundingRect && <rect {...rect2SvgRect(boundingRect)}
                     stroke={'black'}
-                    strokeWidth={1}
-                    fill={'transparent'}
-                    vectorEffect="non-scaling-stroke"
-                />}
-                {DEBUG && innerBoundingRect && <rect {...rect2SvgRect(innerBoundingRect)}
-                    stroke={COLOR_GREEN}
                     strokeWidth={1}
                     fill={'transparent'}
                     vectorEffect="non-scaling-stroke"

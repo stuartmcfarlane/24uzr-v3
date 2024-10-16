@@ -278,6 +278,20 @@ export const apiGetRoutes = async (
     return  routes
 }
 
+export const apiGetGeometry = async (
+    accessToken: string,
+    mapId: number,
+): Promise<IApiGeometryOutput[] | null> => {
+
+    const response = await get(accessToken, `/api/map/${mapId}/geometry`)
+
+    if (!response.ok) return null
+    
+    const geometry = await response.json()
+
+    return  geometry
+}
+
 export const apiGetRoute = async (
     accessToken: string,
     routeId: number,

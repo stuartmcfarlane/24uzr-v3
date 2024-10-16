@@ -1,11 +1,14 @@
 import { z } from "zod"
-import { GeoJsonFeatureCollectionSchema, GeoJsonSchema } from "../../utils/zod-geojson"
+import { GeoJsonFeatureCollectionSchema, GeoJsonFeatureSchema, GeoJsonSchema } from "../../utils/geojson.schema"
 import { buildJsonSchemas } from 'fastify-zod'
 
 const geometryInput = {
     mapId: z.number(),
     name: z.string(),
-    geojson: GeoJsonFeatureCollectionSchema,
+    geojson: z.union([
+        GeoJsonFeatureCollectionSchema,
+        GeoJsonFeatureSchema,
+    ])
 }
 
 const geometryGenerated = {

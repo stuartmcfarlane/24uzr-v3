@@ -5,6 +5,7 @@ import { findBuoysByMapId } from "../buoy/buoy.service";
 import { findLegsByMapId } from "../leg/leg.service";
 import { findRoutesByMapId } from "../route/route.service";
 import { findPlansByMapId } from "../plan/plan.service";
+import { findGeometryByMapId } from "../geometry/geometry.service";
 
 export async function createMapHandler(
     request: FastifyRequest<{
@@ -84,6 +85,7 @@ export async function getMapRoutesHandler(
     
     return routes;
 }
+
 export async function getMapPlansHandler(
     request: FastifyRequest<{
         Params: MapIdParamInput,
@@ -93,4 +95,15 @@ export async function getMapPlansHandler(
     const plans = await findPlansByMapId(id)
     
     return plans;
+}
+
+export async function getMapGeometryHandler(
+    request: FastifyRequest<{
+        Params: MapIdParamInput,
+    }>,
+) {
+    const { id } = MapIdParamSchema.parse(request.params)
+    const geometry = await findGeometryByMapId(id)
+    
+    return geometry;
 }

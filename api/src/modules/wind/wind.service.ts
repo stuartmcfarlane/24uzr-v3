@@ -1,5 +1,6 @@
 import prisma from "../../utils/prisma";
-import { CreateBulkWindInput, CreateSingleWindInput, CreateWindInput, RegionSchema, UpdateWindInput } from './wind.schema';
+import { Region } from "../../utils/region";
+import { CreateBulkWindInput, CreateSingleWindInput, CreateWindInput, UpdateWindInput } from './wind.schema';
 
 const bulkData2dbData = (data: CreateBulkWindInput): CreateSingleWindInput[] => (Array.isArray(data) ? data : [data]).reduce(
     (dbData, { data, timestamp }) => [
@@ -92,7 +93,7 @@ export async function findWind(timestamp: string, lat: number, lng: number) {
     });
 }
 
-export async function findWindByRegion(region: RegionSchema, from: string, until?: string) {
+export async function findWindByRegion(region: Region, from: string, until?: string) {
     const query = {
         where: {
             lat: {

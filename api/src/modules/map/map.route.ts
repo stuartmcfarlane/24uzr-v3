@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify";
 import {
   createMapHandler,
   getMapBuoysHandler,
+  getMapGeometryHandler,
   getMapHandler,
   getMapLegsHandler,
   getMapPlansHandler,
@@ -135,6 +136,21 @@ async function mapRoutes(server: FastifyInstance) {
       preHandler: [server.authenticate],
     },
     getMapPlansHandler
+  );
+  server.get(
+    "/map/:id/geometry",
+    {
+      schema: {
+        tags: ['map'],
+        security: [
+          {
+            bearerAuth: [],
+          }
+        ],
+      },
+      preHandler: [server.authenticate],
+    },
+    getMapGeometryHandler
   );
 }
 

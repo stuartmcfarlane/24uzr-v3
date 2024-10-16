@@ -1,14 +1,5 @@
-import { nullable, z } from "zod"
+import { z } from "zod"
 import { buildJsonSchemas } from 'fastify-zod'
-
-const regionInput = {
-    lat1: z.coerce.number(),    
-    lng1: z.coerce.number(),    
-    lat2: z.coerce.number(),    
-    lng2: z.coerce.number(),    
-}
-
-const regionSchema = z.object(regionInput)
 
 const windInput = {
     timestamp: z.string(),
@@ -79,7 +70,6 @@ export type CreateBulkWindInput = z.infer<typeof createBulkWindSchema>
 export type CreateSingleWindInput = z.infer<typeof createSingleWindSchema>
 export type CreateWindInput = z.infer<typeof createWindSchema>
 export type UpdateWindInput = z.infer<typeof updateWindSchema>
-export type RegionSchema = z.infer<typeof regionSchema>
 
 export const { schemas: windSchemas, $ref } = buildJsonSchemas({
     createWindSchema,

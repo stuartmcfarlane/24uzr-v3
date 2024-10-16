@@ -111,7 +111,7 @@ export type GeoJsonFeature = z.infer<typeof GeoJsonFeatureSchema>
  * https://tools.ietf.org/html/rfc7946
  */
 export const GeoJsonFeatureCollectionSchema = object({
-    type: literal('FeatureCollection'),
+    type: literal('FeatureCollection').optional(),
 	features: z.array(GeoJsonFeatureSchema),
 })
 export type GeoJsonFeatureCollection = z.infer<typeof GeoJsonFeatureCollectionSchema>

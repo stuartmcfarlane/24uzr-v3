@@ -5,24 +5,32 @@ import { RefObject } from "react"
 
 export const makePoint = (x: number, y: number) => ({ x, y })
 export const makeVector = makePoint
+export const makeRectSafe = (p1: Point, p2: Point): Rect => makeRect(
+    Math.min(p1.x, p2.x),
+    Math.min(p1.y, p2.y),
+    Math.abs(p1.x - p2.x),
+    Math.abs(p1.y - p2.y),
+)
 export const makeRect = (x: number, y: number, width: number, height: number):Rect => [
     makePoint(x, y),
     makePoint(x + width, y + height),
 ]
-export const makeLine = (p1: Point, p2: Point): Line => [ p1, p2 ]
+export const makeLine = (p1: Point, p2: Point): Line => [p1, p2]
+const LNG_FACTOR = 1
+const LAT_FACTOR = -1
 export const latLng2canvasA = ([lng, lat]: [number, number]): [number, number] => {
-    return [ lng * 100, lat * -100]
+    return [ lng * LNG_FACTOR, lat * LAT_FACTOR]
 }
 export const latLng2canvas = ({ lat, lng }: LatLng): Point => {
     return {
-        x: lng * 100,
-        y: lat * -100,
+        x: lng * LNG_FACTOR,
+        y: lat * LAT_FACTOR,
     }
 }
 export const canvas2latLng = ({ x, y }: Point): LatLng => {
     return {
-        lng: x / 100,
-        lat: y / -100,
+        lng: x / LNG_FACTOR,
+        lat: y / LAT_FACTOR,
     }
 }
 export const fmtUndefined = () => '<undefined>'
