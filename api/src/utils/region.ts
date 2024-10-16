@@ -67,11 +67,10 @@ const feature2region = (feature: GeoJsonFeature): Region => {
 
 export const geojson2region = (geojson: GeoJsonFeatureCollection | GeoJsonFeature): Region => {
     const features = 'features' in geojson ? geojson.features : [geojson]
-    const regions = features.map(feature2region)
-    console.log(`regions`, regions)
-
-    return regions.reduce(
-        regionUnion,
-        makeRegion([Infinity, Infinity], [-Infinity, -Infinity])
-    )
+    return features
+        .map(feature2region)
+        .reduce(
+            regionUnion,
+            makeRegion([Infinity, Infinity], [-Infinity, -Infinity])
+        )
 }

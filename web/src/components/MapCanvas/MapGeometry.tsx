@@ -6,6 +6,37 @@ import { GeoJsonFeatureCollection } from '../../../../api/src/utils/geojson.sche
 type MapGeometryProps = {
    geometry: IApiGeometryOutput[]
 }
+
+const lineString2svg = (key: string, coordinates: number[][]) => {
+   const [head, ...tail] = coordinates.map(
+      (p) => {
+         const lng = (p as number[])[0]
+         const lat = (p as number[])[1]
+         return latLng2canvasA([lng, lat])
+      }
+   )
+   return <path
+      key={key}
+      d={`M ${head[0]} ${head[1]} ${tail.map(p => ` L ${p[0]} ${p[1]}`)} Z`}
+      stroke={COAST_LINE_COLOR}
+      strokeWidth={1}
+      vectorEffect="non-scaling-stroke"
+      fill={'none'}
+   />
+}
+const multiLineString2svg = (key: string, coordinates: number[][][]) => {
+   return coordinates.map(
+      (coordinates, key2) => lineString2svg(`${key}:${key2}`, coordinates)
+   )
+}
+const polygon2svg = multiLineString2svg
+
+const multiPolygon2svg = (key: string, coordinates: number[][][][]) => {
+   return coordinates.map(
+      (coordinates, key2) => polygon2svg(`${key}:${key2}`, coordinates)
+   )
+}
+
 const MapGeometry = (props: MapGeometryProps) => {
    const {
       geometry
@@ -17,21 +48,10 @@ const MapGeometry = (props: MapGeometryProps) => {
             const featureCollection = geometry.geojson as GeoJsonFeatureCollection
             return featureCollection.features.map(
                (feature, key) => {
-                  const [head, ...tail] = feature.geometry.coordinates.map(
-                     (p) => {
-                        const lng = (p as number[])[0]
-                        const lat = (p as number[])[1]
-                        return latLng2canvasA([lng, lat])
-                     }
-                  )
-                  return <path
-                     key={key}
-                     d={`M ${head[0]} ${head[1]} ${tail.map(p => ` L ${p[0]} ${p[1]}`)} Z`}
-                     stroke={COAST_LINE_COLOR}
-                     strokeWidth={1}
-                     vectorEffect="non-scaling-stroke"
-                     fill={'none'}
-                  />
+                  if (feature.geometry.type === "LineString") return lineString2svg('${key}', feature.geometry.coordinates)
+                  if (feature.geometry.type === "MultiLineString") return multiLineString2svg(`${key}`, feature.geometry.coordinates)
+                  if (feature.geometry.type === "Polygon") return polygon2svg(`${key}`, feature.geometry.coordinates)
+                  if (feature.geometry.type === "MultiPolygon") return multiPolygon2svg(`${key}`, feature.geometry.coordinates)
                }
             )
          }
