@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@types/geojson": "^7946.0.14",
     "geo-coordinates-parser": "^1.7.3",
     "iron-session": "^8.0.3",
     "jose": "^5.9.2",

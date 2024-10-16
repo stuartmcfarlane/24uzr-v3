@@ -136,3 +136,6 @@ export type IApiWindOutput = (
   IApiBulkWind |
   IApiBulkWind[]
 )
+
+export type IApiGeometryInput = any
+export type IApiGeometryOutput = any

@@ -34,15 +34,16 @@ model Ship {
 }
 
 model Map {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  isLocked  Boolean  @default(false)
-  name      String   @db.VarChar(128)
+  id        Int        @id @default(autoincrement())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  isLocked  Boolean    @default(false)
+  name      String     @db.VarChar(128)
   Buoys     Buoy[]
   Legs      Leg[]
   Routes    Route[]
   Plan      Plan[]
+  Geometry  Geometry[]
 }
 
 model Buoy {
@@ -141,4 +142,14 @@ model Wind {
   @@index([timestamp])
   @@index([lat])
   @@index([lng])
+}
+
+model Geometry {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  mapId     Int
+  name      String   @db.VarChar(128)
+  map       Map      @relation(fields: [mapId], references: [id])
+  geojson   Json
 }

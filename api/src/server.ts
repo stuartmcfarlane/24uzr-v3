@@ -12,6 +12,7 @@ import legRoutes from "./modules/leg/leg.route";
 import routeRoutes from "./modules/route/route.route";
 import planRoutes from "./modules/plan/plan.route";
 import windRoutes from "./modules/wind/wind.route";
+import geometryRoutes from "./modules/geometry/geometry.route";
 import { userSchemas } from "./modules/user/user.schema";
 import { shipSchemas } from "./modules/ship/ship.schema";
 import { buoySchemas } from "./modules/buoy/buoy.schema";
@@ -20,6 +21,7 @@ import { legSchemas } from "./modules/leg/leg.schema";
 import { routeSchemas } from "./modules/route/route.schema";
 import { planSchemas } from "./modules/plan/plan.schema";
 import { windSchemas } from "./modules/wind/wind.schema";
+import { geometrySchemas } from "./modules/geometry/geometry.schema";
 import { version } from '../package.json'
 import { createCronJobs } from "./cron";
 
@@ -103,6 +105,7 @@ function buildServer() {
     ...routeSchemas,
     ...planSchemas,
     ...windSchemas,
+    ...geometrySchemas,
   ]) {
     server.addSchema(schema);
   }
@@ -157,6 +160,7 @@ function buildServer() {
   server.register(routeRoutes, { prefix: "/api" });
   server.register(planRoutes, { prefix: "/api" });
   server.register(windRoutes, { prefix: "/api" });
+  server.register(geometryRoutes, { prefix: "/api" });
 
   createCronJobs(server)
 

@@ -12,6 +12,8 @@ import { useChange } from "@/hooks/useChange"
 import ChartIcon from "./Icons/ChartIcon"
 import BuoyOptions from "./BuoyOptions"
 import ChartOptions from "./ChartOptions"
+import GeometryIcon from "./Icons/GeometryIcon"
+import GeometryOptions from "./GeometryOptions"
 
 type UnlockedMapPageClientFunctionsProps = {
     map: IApiMapOutput
@@ -27,6 +29,7 @@ const UnlockedMapPageClientFunctions = (props: UnlockedMapPageClientFunctionsPro
     } = props
 
     const [buoyOptionsOpen, setBuoyOptionsOpen] = useState(false)
+    const [geometryOptionsOpen, setGeometryOptionsOpen] = useState(false)
     const [chartOptionsOpen, setChartOptionsOpen] = useState(false)
     const [selectedBuoy, setSelectedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
     const [deletedBuoy, setDeletedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
@@ -131,6 +134,22 @@ const UnlockedMapPageClientFunctions = (props: UnlockedMapPageClientFunctionsPro
                         </span>
                     </h1>
                     <div className="flex-1 flex flex-col gap-4 mt-4 border-t-2 pt-4">
+                        <div
+                            className="flex gap-4"
+                            onClick={() => setGeometryOptionsOpen(open => !open)}
+                        >
+                            <div className="w-7">
+                                <GeometryIcon/>
+                            </div>
+                            <div className="">
+                                {geometryOptionsOpen ? 'Hide geometry options' : 'Show geometry options'}
+                            </div>
+                        </div>
+                        {geometryOptionsOpen && (
+                            <GeometryOptions
+                                map={map}
+                            />
+                        )}
                         <div
                             className="flex gap-4"
                             onClick={() => setBuoyOptionsOpen(open => !open)}

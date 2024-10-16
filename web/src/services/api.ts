@@ -1,6 +1,6 @@
 import { geo2decimal } from "@/lib/geo"
 import { wind2resolution } from "@/lib/wind"
-import { IApiBulkWind, IApiBuoyInput, IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapInput, IApiMapOutput, IApiPlanInput, IApiPlanOutput, IApiRouteInput, IApiRouteLegOutput, IApiRouteOutput, IApiSingleWind, IApiUser, IApiUserOutput, IApiWind, IApiWindInput, IApiWindOutput } from "@/types/api"
+import { IApiBulkWind, IApiBuoyInput, IApiBuoyOutput, IApiGeometryInput, IApiGeometryOutput, IApiLegInput, IApiLegOutput, IApiMapInput, IApiMapOutput, IApiPlanInput, IApiPlanOutput, IApiRouteInput, IApiRouteLegOutput, IApiRouteOutput, IApiSingleWind, IApiUser, IApiUserOutput, IApiWind, IApiWindInput, IApiWindOutput } from "@/types/api"
 
 const makeApiUrl = (uri: string) => `${process.env.NEXT_PUBLIC_API_URL || process.env.API_URL}${uri}`
 
@@ -422,5 +422,18 @@ export const apiCreateWind = async (
     
     const createdWind = await response.json()
     return createdWind
+}
+
+export const apiCreateGeometry = async (
+    accessToken: string,
+    wind: IApiGeometryInput,
+): Promise<IApiGeometryOutput> => {
+
+    const response = await post(accessToken, `/api/geometry`, wind)
+
+    if (!response.ok) return null
+    
+    const createdGeometry = await response.json()
+    return createdGeometry
 }
 
