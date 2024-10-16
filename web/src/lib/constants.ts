@@ -26,3 +26,5 @@ export const SELECTED_BUOY_COLOR = COLOR_RED
 
 export const WIND_ARROW_LENGTH = 10
 export const WIND_ARROW_WIDTH = 1
+
+export const COAST_LINE_COLOR = 'black'

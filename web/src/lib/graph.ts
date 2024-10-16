@@ -10,6 +10,9 @@ export const makeRect = (x: number, y: number, width: number, height: number):Re
     makePoint(x + width, y + height),
 ]
 export const makeLine = (p1: Point, p2: Point): Line => [ p1, p2 ]
+export const latLng2canvasA = ([lng, lat]: [number, number]): [number, number] => {
+    return [ lng * 100, lat * -100]
+}
 export const latLng2canvas = ({ lat, lng }: LatLng): Point => {
     return {
         x: lng * 100,

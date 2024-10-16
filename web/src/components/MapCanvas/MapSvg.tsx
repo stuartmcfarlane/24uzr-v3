@@ -21,6 +21,7 @@ import MapRouteLeg from "./MapRouteLeg"
 import MapCreatingLeg from "./MapCreatingLeg"
 import { COLOR_BLUE, COLOR_GREEN } from "@/lib/constants"
 import MapWind from "./MapWind"
+import MapCoastline from "./MapCoastline"
 
 const DEBUG = false
 
@@ -184,6 +185,9 @@ const MapSvg = (props: MapSvgProps) => {
                 <defs>
                     <ArrowMarker />
                 </defs>
+                <g>
+                    <MapCoastline />
+                </g>
                 {actualViewBoxRect && (
                     <rect
                         ref={clickCatcherRef}

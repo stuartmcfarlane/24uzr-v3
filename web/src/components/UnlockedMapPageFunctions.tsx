@@ -45,8 +45,6 @@ const UnlockedMapPageClientFunctions = (props: UnlockedMapPageClientFunctionsPro
     }
     const deleteKeyPressed = useKeyPress(["Delete", "Backspace"])
 
-    if (map.isLocked) return <></>
-
     useChange(
         () => {
             if (deleteKeyPressed && selectedBuoy) {
@@ -119,6 +117,8 @@ const UnlockedMapPageClientFunctions = (props: UnlockedMapPageClientFunctionsPro
         setSelectedBuoy(undefined)
         setSelectedLeg(undefined)
     }
+
+    if (map.isLocked) return <></>
 
     return (
         <div className="flex-grow my-8 flex gap-4">
