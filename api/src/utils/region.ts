@@ -1,4 +1,4 @@
-import { GeoJsonFeature, GeoJsonFeatureCollection, GeoJsonPosition } from './geojson.schema';
+import { GeoJsonFeature, GeoJsonFeatureCollection, GeoJsonLineString, GeoJsonMultiLineString, GeoJsonMultiPolygon, GeoJsonPolygon, GeoJsonPosition } from './geojson.schema';
 import { Region } from "./region.schema";
 
 export const makeRegion = (p1: GeoJsonPosition, p2: GeoJsonPosition): Region => ({
@@ -34,16 +34,44 @@ export const regionUnion = (r1: Region, r2: Region): Region => makeRegion(
     ],
 )
 
+const lineString2region = (coordinates: number[][]): Region => {
+    return {
+        lat1: Math.min(coordinates[0][1], coordinates[1][1]),
+        lng1: Math.min(coordinates[0][0], coordinates[1][0]),
+        lat2: Math.max(coordinates[0][1], coordinates[1][1]),
+        lng2: Math.max(coordinates[0][0], coordinates[1][0]),
+    }
+}
+const multiLineString2region = (coordinates: number[][][]): Region => {
+    return coordinates.reduce(
+        (region, lineString) => regionUnion(region, lineString2region(lineString)),
+        makeRegion([Infinity, Infinity], [-Infinity, -Infinity])
+    )
+}
+const polygon2region = multiLineString2region
+
+const multiPolygon2region = (coordinates: number[][][][]): Region => {
+    return coordinates.reduce(
+        (region, polygon) => regionUnion(region, polygon2region(polygon)),
+        makeRegion([Infinity, Infinity], [-Infinity, -Infinity])
+    )
+}
+
+const feature2region = (feature: GeoJsonFeature): Region => {
+    if (feature.geometry.type === "LineString") return lineString2region(feature.geometry.coordinates)
+    if (feature.geometry.type === "MultiLineString") return multiLineString2region(feature.geometry.coordinates)
+    if (feature.geometry.type === "Polygon") return polygon2region(feature.geometry.coordinates)
+    if (feature.geometry.type === "MultiPolygon") return multiPolygon2region(feature.geometry.coordinates)
+    return makeRegion([Infinity, Infinity], [-Infinity, -Infinity])
+}
+
 export const geojson2region = (geojson: GeoJsonFeatureCollection | GeoJsonFeature): Region => {
-    const features = 'features' in geojson ?  geojson.features : [geojson]
-    return features.reduce(
-        (region, feature) => regionUnion(
-            feature.geometry.coordinates.reduce(
-                (region, position) => extendRegion(region, position as number[]),
-                makeRegion([Infinity, Infinity], [-Infinity, -Infinity])
-            ),
-            region
-        ),
+    const features = 'features' in geojson ? geojson.features : [geojson]
+    const regions = features.map(feature2region)
+    console.log(`regions`, regions)
+
+    return regions.reduce(
+        regionUnion,
         makeRegion([Infinity, Infinity], [-Infinity, -Infinity])
     )
 }
