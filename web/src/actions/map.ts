@@ -9,6 +9,7 @@ import { IApiBuoyInput, IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapOutp
 import { parseNameLatLng } from '@/lib/parsers';
 import { project, truthy, unique } from '@/lib/fp';
 import { notEmpty } from '../lib/fp';
+import { geo2decimal } from '@/lib/geo';
 
 export const createMapWithForm = async (formData: FormData): Promise<ActionError> => {
     const session = await getSession()
@@ -22,6 +23,10 @@ export const createMapWithForm = async (formData: FormData): Promise<ActionError
     const createdMap = await apiCreateMap(session.apiToken!, {
         name: formName,
         isLocked: false,
+        lat1: 0,
+        lng1: 0,
+        lat2: 0,
+        lng2: 0,
     })
     if (!createdMap) return { error: "Failed to create map" }
 
@@ -243,4 +248,27 @@ export const createPlanWithForm = async (formData: FormData): Promise<ActionErro
     if (!createdPlan) return { error: "Failed to create plan" }
 
     redirect(`/map/${createdPlan.mapId}/plan/${createdPlan.id}`)
+}
+
+export const setMapRegion = async (formData: FormData): Promise<ActionError> => {
+    const session = await getSession()
+
+    const mapId = parseInt(formData.get("mapId") as string)
+    const bottomLeft = formData.get("bottomLeft") as string
+    const topRight = formData.get("topRight") as string
+
+    const latLng1 = geo2decimal(bottomLeft)
+    const latLng2 = geo2decimal(topRight)
+
+    if (!latLng1 || !latLng2) return { error: "Invalid latitude/longitude" }
+
+    const updatedMap = await apiUpdateMap(session.apiToken!, mapId, {
+        lat1: latLng1.lat,
+        lng1: latLng1.lng,
+        lat2: latLng2.lat,
+        lng2: latLng2.lng,
+    })
+    if (!updatedMap) return { error: "Failed to set map region"}
+
+    redirect(`/map/${mapId}`)
 }

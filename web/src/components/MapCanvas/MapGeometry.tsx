@@ -1,4 +1,4 @@
-import { COAST_LINE_COLOR } from "@/lib/constants"
+import { COAST_LINE_COLOR, LAND_COLOR } from "@/lib/constants"
 import { latLng2canvasA } from "@/lib/graph"
 import { IApiGeometryOutput } from "@/types/api"
 import { GeoJsonFeatureCollection } from '../../../../api/src/utils/geojson.schema';
@@ -21,7 +21,7 @@ const lineString2svg = (key: string, coordinates: number[][]) => {
       stroke={COAST_LINE_COLOR}
       strokeWidth={1}
       vectorEffect="non-scaling-stroke"
-      fill={'green'}
+      fill={LAND_COLOR}
    />
 }
 const multiLineString2svg = (key: string, coordinates: number[][][]) => {

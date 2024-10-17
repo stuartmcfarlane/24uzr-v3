@@ -1,6 +1,6 @@
 import { geo2decimal } from "@/lib/geo"
 import { wind2resolution } from "@/lib/wind"
-import { IApiBulkWind, IApiBuoyInput, IApiBuoyOutput, IApiGeometryInput, IApiGeometryOutput, IApiLegInput, IApiLegOutput, IApiMapInput, IApiMapOutput, IApiPlanInput, IApiPlanOutput, IApiRouteInput, IApiRouteLegOutput, IApiRouteOutput, IApiSingleWind, IApiUser, IApiUserOutput, IApiWind, IApiWindInput, IApiWindOutput } from "@/types/api"
+import { IApiBulkWind, IApiBuoyInput, IApiBuoyOutput, IApiGeometryInput, IApiGeometryOutput, IApiLegInput, IApiLegOutput, IApiMapInput, IApiMapOutput, IApiMapUpdateInput, IApiPlanInput, IApiPlanOutput, IApiRouteInput, IApiRouteLegOutput, IApiRouteOutput, IApiSingleWind, IApiUser, IApiUserOutput, IApiWind, IApiWindInput, IApiWindOutput } from "@/types/api"
 
 const makeApiUrl = (uri: string) => `${process.env.NEXT_PUBLIC_API_URL || process.env.API_URL}${uri}`
 
@@ -150,7 +150,7 @@ export const apiCreateMap = async (
 export const apiUpdateMap = async (
     accessToken: string,
     id: number,
-    map: IApiMapInput,
+    map: IApiMapUpdateInput,
 ): Promise<IApiMapOutput | null> => {
 
     const response = await put(accessToken, `/api/map/${id}`, map)

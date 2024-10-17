@@ -1,7 +1,7 @@
 "use client"
 
-import { clientPoint2svgPoint, domRect2rect, fitToClient, rectGrowMargin, latLng2canvas, makePoint, makeRect, makeScreen2svgFactor, points2boundingRect, rect2viewBox, screenUnits2canvasUnits, canvas2latLng, latLng2canvasA, rectWidth, fmtRect, makeRectSafe } from "@/lib/graph"
-import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegInput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput, IApiWindOutput } from "@/types/api"
+import { clientPoint2svgPoint, domRect2rect, fitToClient, rectGrowMargin, latLng2canvas, makePoint, makeRect, makeScreen2svgFactor, points2boundingRect, rect2viewBox, screenUnits2canvasUnits, canvas2latLng, latLng2canvasA, rectWidth, fmtRect, makeRectSafe, pointInRect } from "@/lib/graph"
+import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegInput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput, IApiWindOutput, Region } from "@/types/api"
 import MapBuoy from "./MapBuoy"
 import { MouseEvent, useEffect, useRef, useState } from "react"
 import { rect2SvgRect } from '../../lib/graph';
@@ -22,6 +22,8 @@ import MapCreatingLeg from "./MapCreatingLeg"
 import { COLOR_BLUE, COLOR_GREEN } from "@/lib/constants"
 import MapWind from "./MapWind"
 import MapGeometry from "./MapGeometry"
+import MouseRegion from "./MouseRegion"
+import MapRegion from "./MapRegion"
 
 const DEBUG = false
 
@@ -41,6 +43,9 @@ type MapSvgProps = {
     creatingLeg?: { startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput }
     showWind?: boolean
     timeDelta?: number
+    onMousePosition?: (latLng: LatLng) => void
+    onMouseDragPosition?: (point?: LatLng, mark?: LatLng) => void
+    selectedMapRegion?: Region
 }
 
 const MapSvg = (props: MapSvgProps) => {
@@ -60,6 +65,9 @@ const MapSvg = (props: MapSvgProps) => {
         creatingLeg,
         showWind,
         timeDelta,
+        onMousePosition,
+        onMouseDragPosition,
+        selectedMapRegion,
     } = props
 
     const containerRef = useRef<HTMLDivElement>(null)
@@ -82,10 +90,13 @@ const MapSvg = (props: MapSvgProps) => {
     const onHoverBuoy = (buoy?: IApiBuoyOutput) => {
         setHoveredBuoy(buoy)
     }
+    const isDragTarget = (type: string) => (element: HTMLElement | SVGElement) => {
+        const dragTargetType = element?.dataset['dragTargetType']
+        return (dragTargetType === type)
+    }
     const mouseDragBuoy = useMouseDrag(svgRef, [
         (element: HTMLElement | SVGElement, mousePosition: Point) => {
-            const dragTargetType = element?.dataset['dragTargetType']
-            if (dragTargetType === 'buoy') {
+            if (isDragTarget('buoy')(element)) {
                 const buoy = element.dataset.dragTarget && JSON.parse(element.dataset.dragTarget)
                 setDraggedBuoy(buoy)
                 return true
@@ -103,6 +114,52 @@ const MapSvg = (props: MapSvgProps) => {
         },
         [ mouseDragBuoy.dragging ]
     )
+    const mouseDragRegion = useMouseDrag(svgRef, [
+        (element: HTMLElement | SVGElement, mousePosition: Point) => {
+            if (isDragTarget('region')(element)) {
+                return true
+            }
+            return false
+        }
+    ])
+    useChange(
+        () => {
+            console.log(`mouseDragRegion`, mouseDragRegion)
+            if (!mouseDragRegion.dragging) {
+            }
+        },
+        [ mouseDragRegion.dragging ]
+    )
+    useChange(
+        () => {
+            if (!mouseDragRegion.mousePosition.start) return
+            const canvasPoint = clientPoint2svgPoint(svgRef.current, mouseDragRegion.mousePosition.start)
+            if (!canvasPoint) return
+            const latLng = canvas2latLng(canvasPoint)
+            onMousePosition && onMousePosition(latLng)
+        },
+        [mouseDragRegion.mousePosition.start?.x, mouseDragRegion.mousePosition.start?.y]
+    )
+
+    useChange(
+        () => {
+            if (!mouseDragRegion.dragging || !mouseDragRegion.mousePosition.start) {
+                onMouseDragPosition && onMouseDragPosition(undefined, undefined)
+                return
+            }
+            const start = clientPoint2svgPoint(svgRef.current, mouseDragRegion.mousePosition.start)
+            const end = clientPoint2svgPoint(svgRef.current, mouseDragRegion.mousePosition.end)
+            if (!start || !end) {
+                onMouseDragPosition && onMouseDragPosition(undefined, undefined)
+                return
+            }
+            const point = canvas2latLng(start)
+            const mark = canvas2latLng(end)
+            onMouseDragPosition && onMouseDragPosition(point, mark)
+        },
+        [mouseDragRegion.dragging && mouseDragRegion.mousePosition.end?.x, mouseDragRegion.mousePosition.end?.y]
+    )
+
 
     useEffect(
         () => {
@@ -182,6 +239,16 @@ const MapSvg = (props: MapSvgProps) => {
     }
     const mouseSvgPoint = useMouseSvgPosition(svgRef)
 
+    useChange(
+        () => {
+            if (!mouseSvgPoint) return
+            if (!pointInRect(actualViewBoxRect)(mouseSvgPoint)) return
+            const latLng = canvas2latLng(mouseSvgPoint)
+            onMousePosition && onMousePosition(latLng)
+        },
+        [mouseSvgPoint?.x, mouseSvgPoint?.y]
+    )
+
     return (
         <div ref={containerRef} className="w-full h-full relative" >
             <svg
@@ -203,6 +270,7 @@ const MapSvg = (props: MapSvgProps) => {
                         {...rect2SvgRect(actualViewBoxRect)}
                         fill={'transparent'}
                         onClick={onClick}
+                        data-drag-target-type={'region'}
                     />
                 )}
                 {showWind && wind && (
@@ -213,7 +281,7 @@ const MapSvg = (props: MapSvgProps) => {
                         boundingRect={boundingRect}
                     />
                 )}
-                {mouseSvgPoint && (
+                {mouseSvgPoint && pointInRect(actualViewBoxRect)(mouseSvgPoint) && (
                     <MouseCursor
                         point={mouseSvgPoint}
                         screen2svgFactor={screen2svgFactor}
@@ -264,6 +332,17 @@ const MapSvg = (props: MapSvgProps) => {
                         onHover={onHoverBuoy}
                         isSelected={buoy.id === selectedBuoy?.id}
                     />)
+                )}
+                {selectedMapRegion && !mouseDragRegion.dragging && (
+                    <MapRegion
+                        region={selectedMapRegion}
+                    />
+                )}
+                {mouseDragRegion.dragging && mouseDragRegion.mousePosition.start && (
+                    <MouseRegion
+                        point={clientPoint2svgPoint(svgRef.current, mouseDragRegion.mousePosition.start)}
+                        mark={clientPoint2svgPoint(svgRef.current, mouseDragRegion.mousePosition.end)}
+                    />
                 )}
                 {DEBUG && viewBoxRect && <>
                     <rect ref={unitRef}

@@ -1,6 +1,6 @@
 "use client"
 
-import { IApiBuoyOutput, IApiGeometryOutput, IApiLegInput, IApiLegOutput, IApiMapOutput, IApiRouteOutput } from "@/types/api"
+import { IApiBuoyOutput, IApiGeometryOutput, IApiLegInput, IApiLegOutput, IApiMapOutput, IApiRouteOutput, PartialRegion, Region } from "@/types/api"
 import MapCanvas from "./ MapCanvas"
 import { useEffect, useState } from "react"
 import { createLeg, deleteBuoy, updateMap } from "@/actions/map"
@@ -37,6 +37,7 @@ const UnlockedMapPageClientFunctions = (props: UnlockedMapPageClientFunctionsPro
     const [deletedBuoy, setDeletedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
     const [selectedLeg, setSelectedLeg] = useState<IApiLegOutput | undefined>(undefined)
     const [createdLeg, setCreatedLeg] = useState<IApiLegInput | undefined>(undefined)
+    const [selectedMapRegion, setSelectedMapRegion] = useState<Region | undefined>(undefined)
 
     const onSelectBuoy = (buoy?: IApiBuoyOutput) => {
         setSelectedBuoy(buoy)
@@ -122,6 +123,16 @@ const UnlockedMapPageClientFunctions = (props: UnlockedMapPageClientFunctionsPro
         setSelectedBuoy(undefined)
         setSelectedLeg(undefined)
     }
+    const onMouseDragPosition = (point?: LatLng, mark?: LatLng) => {
+        console.log(`mouse drag position`, {point, mark})
+        if (!point || !mark) return
+
+        const lat1 = Math.min(point.lat, mark.lat)
+        const lat2 = Math.max(point.lat, mark.lat)
+        const lng1 = Math.min(point.lng, mark.lng)
+        const lng2 = Math.max(point.lng, mark.lng)
+        setSelectedMapRegion({ lat1, lng1, lat2, lng2 })
+    }
 
     if (map.isLocked) return <></>
 
@@ -150,6 +161,7 @@ const UnlockedMapPageClientFunctions = (props: UnlockedMapPageClientFunctionsPro
                         {geometryOptionsOpen && (
                             <GeometryOptions
                                 map={map}
+                                selectedMapRegion={selectedMapRegion}
                             />
                         )}
                         <div
@@ -201,6 +213,8 @@ const UnlockedMapPageClientFunctions = (props: UnlockedMapPageClientFunctionsPro
                 selectedLeg={selectedLeg}
                 onSelectLeg={onSelectLeg}
                 onCreateLeg={onCreateLeg}
+                onMouseDragPosition={onMouseDragPosition}
+                selectedMapRegion={selectedMapRegion}
             />
         </div>
     )

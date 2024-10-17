@@ -1,6 +1,6 @@
 "use client"
 
-import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput, IApiWindOutput } from "@/types/api"
+import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput, IApiWindOutput, Region } from "@/types/api"
 import MapSvg from "./MapCanvas/MapSvg"
 import WindLegend from "./WindLegend"
 import { useState } from "react"
@@ -21,6 +21,9 @@ type MapCanvasProps = {
     creatingLeg?: { startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput }
     showWind?: boolean
     onShowWind?: (showWind: boolean) => void
+    onMousePosition?: (latLng: LatLng) => void
+    onMouseDragPosition?: (point?: LatLng, mark?: LatLng) => void
+    selectedMapRegion?: Region
 }
 
 const MapCanvas = (props: MapCanvasProps) => {
@@ -40,6 +43,9 @@ const MapCanvas = (props: MapCanvasProps) => {
         creatingLeg,
         showWind,
         onShowWind,
+        onMousePosition,
+        onMouseDragPosition,
+        selectedMapRegion,
     } = props
 
     const [timeDelta, setTimeDelta] = useState(0)
@@ -63,6 +69,9 @@ const MapCanvas = (props: MapCanvasProps) => {
                     creatingLeg={creatingLeg}
                     showWind={showWind}
                     timeDelta={timeDelta}
+                    onMousePosition={onMousePosition}
+                    onMouseDragPosition={onMouseDragPosition}
+                    selectedMapRegion={selectedMapRegion}
                 />
             </div>
             <WindLegend

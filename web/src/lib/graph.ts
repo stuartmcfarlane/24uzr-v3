@@ -369,3 +369,9 @@ export const vectorMagnitude = ({
     x, y
 }: Vector): number => Math.sqrt(x * x + y * y)
 export const unitVector = (v: Vector): Vector => vectorScale(1 / vectorMagnitude(v), v)
+
+export const pointInRect = (rect?: Rect) => (point: Point) => {
+    if (!rect) return false
+    return rect[0].x <= point.x && point.x <= rect[1].x
+        && rect[0].y <= point.y && point.y <= rect[1].y
+}

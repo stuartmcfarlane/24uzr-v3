@@ -17,9 +17,34 @@ export interface IApiUserInput {
 }
 export type IApiUser = IApiUserInput | IApiUserOutput
 
+export type Region = {
+  lat1: number
+  lng1: number
+  lat2: number
+  lng2: number
+}
+export type PartialRegion = {
+  lat1: number
+  lng1: number
+  lat2?: number
+  lng2?: number
+}
+
+
 export interface IApiMapInput {
   name: string
   isLocked: boolean
+  lat1: number
+  lng1: number
+  lat2: number
+  lng2: number
+}
+export type IApiMapUpdateInput = {
+  name?: string
+  isLocked?: boolean
+} | {
+  name?: string
+  isLocked?: boolean
   lat1: number
   lng1: number
   lat2: number
