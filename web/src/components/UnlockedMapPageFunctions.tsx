@@ -14,6 +14,7 @@ import BuoyOptions from "./BuoyOptions"
 import ChartOptions from "./ChartOptions"
 import GeometryIcon from "./Icons/GeometryIcon"
 import GeometryOptions from "./GeometryOptions"
+import { realEq } from "@/lib/math"
 
 type UnlockedMapPageClientFunctionsProps = {
     map: IApiMapOutput
@@ -124,13 +125,17 @@ const UnlockedMapPageClientFunctions = (props: UnlockedMapPageClientFunctionsPro
         setSelectedLeg(undefined)
     }
     const onMouseDragPosition = (point?: LatLng, mark?: LatLng) => {
-        console.log(`mouse drag position`, {point, mark})
         if (!point || !mark) return
 
         const lat1 = Math.min(point.lat, mark.lat)
         const lat2 = Math.max(point.lat, mark.lat)
         const lng1 = Math.min(point.lng, mark.lng)
         const lng2 = Math.max(point.lng, mark.lng)
+
+        if (realEq(.0001)(lat1, lat2) && realEq(.0001)(lng1, lng2)) {
+            setSelectedMapRegion(undefined)
+            return
+        }
         setSelectedMapRegion({ lat1, lng1, lat2, lng2 })
     }
 

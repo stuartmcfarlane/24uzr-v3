@@ -412,7 +412,6 @@ export const apiGetWind = async (
     )
 
     const timestamps = Object.keys(windByTimestamp) as string[]
-    console.log('timestamps', timestamps)
     const resolution = wind2resolution(windByTimestamp[timestamps[0]])
     const winds = timestamps.map(
         (timestamp: string) => ({

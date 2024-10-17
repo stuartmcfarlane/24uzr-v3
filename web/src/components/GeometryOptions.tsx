@@ -20,10 +20,14 @@ const GeometryOptions = (props: GeometryOptionsProps) => {
 
     useChange(
         () => {
-            if (!selectedMapRegion) return
+            if (!selectedMapRegion) {
+                setTopRight('')
+                setBottomLeft('')
+                return
+            }
             const newBottomLeft = decimal2geo({ lat: selectedMapRegion.lat1, lng: selectedMapRegion.lng1})
             setBottomLeft(newBottomLeft || '')
-            if ('lat2' in selectedMapRegion) {
+            if (selectedMapRegion.lat2 && selectedMapRegion.lng2) {
                 const newTopRight = decimal2geo({ lat: selectedMapRegion.lat2, lng: selectedMapRegion.lng2 })
                 setTopRight(newTopRight || '')
             }

@@ -124,14 +124,6 @@ const MapSvg = (props: MapSvgProps) => {
     ])
     useChange(
         () => {
-            console.log(`mouseDragRegion`, mouseDragRegion)
-            if (!mouseDragRegion.dragging) {
-            }
-        },
-        [ mouseDragRegion.dragging ]
-    )
-    useChange(
-        () => {
             if (!mouseDragRegion.mousePosition.start) return
             const canvasPoint = clientPoint2svgPoint(svgRef.current, mouseDragRegion.mousePosition.start)
             if (!canvasPoint) return

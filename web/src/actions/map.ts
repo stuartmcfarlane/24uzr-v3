@@ -270,5 +270,7 @@ export const setMapRegion = async (formData: FormData): Promise<ActionError> => 
     })
     if (!updatedMap) return { error: "Failed to set map region"}
 
-    redirect(`/map/${mapId}`)
+    revalidatePath(`/map/${mapId}`)
+
+    return {}
 }
