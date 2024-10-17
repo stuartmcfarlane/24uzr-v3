@@ -57,7 +57,8 @@ export const fmtLine = (line?: Line) => (
     : fmtUndefined()
 )
 export const fmtTimestamp = (timestamp: string) => {
-    return new Date(timestamp).toLocaleString()
+    const formatter = new Intl.DateTimeFormat('nl-NL', { dateStyle: 'short', timeStyle: 'medium' });
+    return formatter.format(new Date(timestamp))
 }
 export const rectPoint = (rect: Rect): Point => rect[0]
 export const rectWidth = ([ { x: x1 },{ x: x2 } ]: Rect): number => x2 - x1

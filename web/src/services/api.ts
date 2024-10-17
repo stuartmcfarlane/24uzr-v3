@@ -387,8 +387,10 @@ export const apiGetWind = async (
     const p1 = geo2decimal(`52° 21' 39.9" N, 4° 30' 31.4" E`)
     const p2 = geo2decimal(`53° 23' 22.6" N, 5° 46' 10.0" E`)
 
-    const { lat: lat1, lng: lng1 } = p1!
-    const { lat: lat2, lng: lng2 } = p2!
+    const lat1 = map.lat1 || p1?.lat
+    const lng1 = map.lng1 || p1?.lng
+    const lat2 = map.lat2 || p2?.lat
+    const lng2 = map.lng2 || p2?.lng
 
     const response = await get(
         accessToken,
