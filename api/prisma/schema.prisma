@@ -24,15 +24,6 @@ model User {
   Plan     Plan[]
 }
 
-model Ship {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  name      String   @db.VarChar(128)
-  owner     User     @relation(fields: [ownerId], references: [id])
-  ownerId   Int
-}
-
 model Map {
   id        Int        @id @default(autoincrement())
   createdAt DateTime   @default(now())
@@ -156,4 +147,25 @@ model Geometry {
   name      String   @db.VarChar(128)
   map       Map      @relation(fields: [mapId], references: [id])
   geojson   Json
+}
+
+model Ship {
+  id        Int         @id @default(autoincrement())
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  name      String      @db.VarChar(128)
+  owner     User        @relation(fields: [ownerId], references: [id])
+  ownerId   Int
+  shipPolar ShipPolar[]
+}
+
+model ShipPolar {
+  shipId      Int
+  windKnots   Int
+  windDegrees Int
+  boatMs      Float
+  ship        Ship  @relation(fields: [shipId], references: [id])
+
+  @@id([shipId, windKnots, windDegrees])
+  @@index([shipId])
 }
