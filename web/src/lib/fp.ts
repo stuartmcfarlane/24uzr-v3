@@ -60,4 +60,29 @@ export const notEmpty = <TValue>(value: TValue | null | undefined): value is TVa
     return value !== null && value !== undefined;
 }
 export const truthy = (a:any) => !!a
-export const withField = (o1: {}) => (o2: {}) => ({ ...o2, ...o1})
+export const withField = (o1: {}) => (o2: {}) => ({ ...o2, ...o1 })
+export type CmpFunction<T> = (a: T, b: T) => number
+export const cmpNumber: CmpFunction<number> = (a: number, b: number) => a - b
+export const cmpString: CmpFunction<string> = (a: string, b: string) => a > b ? +1 : a < b ? -1 : 0
+export const sort = <T>(cmp: CmpFunction<T>) => (array: T[]) => {
+    return [...array].sort(cmp)
+}
+export const indexBy = <T>(k: (keyof T)) => (array: T[]) => {
+    return array.reduce(
+        (indexBy: { [k in keyof T]: T }, o: T) => {
+            // @ts-expect-error
+            indexBy[o[k]] = o
+            return indexBy
+        },
+        {} as { [k in keyof T]: T }
+    )
+}
+export const indexByHash = <T>(fn: (t: T) => string) => (array: T[]) => {
+    return array.reduce(
+        (indexBy: { [k: string]: T }, o: T) => {
+            indexBy[fn(o)] = o
+            return indexBy
+        },
+        {} as { [k: string]: T }
+    )
+}

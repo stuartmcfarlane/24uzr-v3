@@ -11,6 +11,9 @@ export async function createShip(data: CreateShipInput) {
 
 export async function findShip(id: number) {
     return prisma.ship.findUnique({
+        include: {
+            shipPolar: true,
+        },
         where: {
             id,
         },

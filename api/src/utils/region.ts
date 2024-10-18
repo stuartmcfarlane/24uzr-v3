@@ -1,5 +1,6 @@
 import { GeoJsonFeature, GeoJsonFeatureCollection, GeoJsonLineString, GeoJsonMultiLineString, GeoJsonMultiPolygon, GeoJsonPolygon, GeoJsonPosition } from './geojson.schema';
 import { Region } from "./region.schema";
+export { Region } from "./region.schema";
 
 export const makeRegion = (p1: GeoJsonPosition, p2: GeoJsonPosition): Region => ({
     lng1: p1[0],

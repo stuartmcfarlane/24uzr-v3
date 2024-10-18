@@ -168,3 +168,20 @@ export type IApiWindOutput = (
 
 export type IApiGeometryInput = any
 export type IApiGeometryOutput = any
+
+export type IApiShipPolarOutput = {
+  shipId: number
+  windKnots: number
+  windDegrees: number
+  boatMs: number
+}
+export type IApiShipInput = {
+  ownerId: number
+  name: string
+}
+export type IApiShipOutput = IApiShipInput & {
+  id: number
+  createdAt: string
+  updatedAt: string
+  shipPolar: IApiShipPolarOutput[]
+}

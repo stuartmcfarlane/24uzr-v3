@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { CreateShipInput, UpdateShipInput } from "./ship.schema";
+import { CreateShipInput, ShipIdParamInput, ShipIdParamSchema, UpdateShipInput } from "./ship.schema";
 import { createShip, findShip, findShips, updateShip } from "./ship.service";
 
 export async function createShipHandler(
@@ -27,10 +27,10 @@ export async function getShipsHandler() {
 
 export async function getShipHandler(
     request: FastifyRequest<{
-        Params: { id: number },
+        Params: ShipIdParamInput,
     }>,
 ) {
-    const { id } = request.params
+    const { id } = ShipIdParamSchema.parse(request.params)
     const ship = await findShip(id)
     
     return ship;
@@ -38,11 +38,11 @@ export async function getShipHandler(
 
 export async function putShipHandler(
     request: FastifyRequest<{
-        Params: { id: number },
+        Params: ShipIdParamInput,
         Body: UpdateShipInput,
     }>,
 ) {
-    const { id } = request.params
+    const { id } = ShipIdParamSchema.parse(request.params)
     const ship = await updateShip(id, request.body)
     
     return ship;
