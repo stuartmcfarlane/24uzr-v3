@@ -4,6 +4,7 @@ import { ActionError } from "@/types/action"
 import { getSession } from "./session"
 import { apiCreateShip, apiUpdateShip } from "@/services/api"
 import { formData2polarCsv } from "@/lib/shipPolar"
+import { redirect } from "next/navigation"
 
 export const createShipWithForm = async (formData: FormData): Promise<ActionError> => {
     const session = await getSession()
@@ -26,7 +27,7 @@ export const createShipWithForm = async (formData: FormData): Promise<ActionErro
     })
     if (!createdShip) return { error: "Failed to create ship" }
 
-    return {}
+    redirect(`/ship/${createdShip.id}`)
 }
 export const updateShipPolar = async (formData: FormData): Promise<ActionError> => {
     const session = await getSession()

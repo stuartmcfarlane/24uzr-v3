@@ -150,11 +150,13 @@ model Geometry {
 }
 
 model Ship {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  name      String   @db.VarChar(128)
-  owner     User     @relation(fields: [ownerId], references: [id])
-  ownerId   Int
-  polar     String   @db.MediumText
+  id                   Int      @id @default(autoincrement())
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  name                 String   @db.VarChar(128)
+  sailNumber           String   @default("") @db.VarChar(128)
+  owner                User     @relation(fields: [ownerId], references: [id])
+  ownerId              Int
+  polar                String   @db.MediumText
+  lastFetchOfPolarData DateTime @default("2024-10-10T16:39:57+01:00")
 }

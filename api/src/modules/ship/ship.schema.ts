@@ -3,6 +3,7 @@ import { buildJsonSchemas } from 'fastify-zod'
 
 const shipInput = {
     name: z.string(),
+    sailNumber: z.string(),
     ownerId: z.number(),
     polar: z.string(),
 }
@@ -19,6 +20,7 @@ const createShipSchema = z.object({
 
 const updateShipSchema = z.object({
     name: z.string().optional(),
+    sailNumber: z.string().optional(),
     ownerId: z.number().optional(),
     polar: z.string().optional(),
 })

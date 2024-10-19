@@ -15,6 +15,12 @@ export const NewShipTool = (props: NewShipToolProps) => {
                     placeholder="Ship name"
                     className="ring-2 ring-gray-300 rounded-md p-4 w-full my-2"
                 />
+                <input
+                    type="text"
+                    name="sailNumber"
+                    placeholder="NED/NED1234"
+                    className="ring-2 ring-gray-300 rounded-md p-4 w-full my-2"
+                />
                 <label
                     htmlFor="owner"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -22,7 +28,6 @@ export const NewShipTool = (props: NewShipToolProps) => {
                     Select the owner
                 </label>
                 <select
-                    multiple
                     id="owner"
                     name="ownerId"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"

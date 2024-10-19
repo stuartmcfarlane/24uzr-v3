@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Ship` ADD COLUMN `sailNumber` VARCHAR(128) NOT NULL DEFAULT '';
