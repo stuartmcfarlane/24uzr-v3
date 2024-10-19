@@ -1,6 +1,6 @@
 import { geo2decimal } from "@/lib/geo"
 import { wind2resolution } from "@/lib/wind"
-import { IApiBulkWind, IApiBuoyInput, IApiBuoyOutput, IApiGeometryInput, IApiGeometryOutput, IApiLegInput, IApiLegOutput, IApiMapInput, IApiMapOutput, IApiMapUpdateInput, IApiPlanInput, IApiPlanOutput, IApiRouteInput, IApiRouteLegOutput, IApiRouteOutput, IApiShipOutput, IApiSingleWind, IApiUser, IApiUserOutput, IApiWind, IApiWindInput, IApiWindOutput } from "@/types/api"
+import { IApiBulkWind, IApiBuoyInput, IApiBuoyOutput, IApiGeometryInput, IApiGeometryOutput, IApiLegInput, IApiLegOutput, IApiMapInput, IApiMapOutput, IApiMapUpdateInput, IApiPlanInput, IApiPlanOutput, IApiRouteInput, IApiRouteLegOutput, IApiRouteOutput, IApiShipInput, IApiShipOutput, IApiShipUpdateInput, IApiSingleWind, IApiUser, IApiUserOutput, IApiWind, IApiWindInput, IApiWindOutput } from "@/types/api"
 
 const makeApiUrl = (uri: string) => `${process.env.NEXT_PUBLIC_API_URL || process.env.API_URL}${uri}`
 
@@ -463,6 +463,33 @@ export const apiGetShips = async (
     const ships = await response.json()
 
     return  ships
+}
+
+export const apiCreateShip = async (
+    accessToken: string,
+    ship: IApiShipInput,
+): Promise<IApiShipOutput|null> => {
+
+    const response = await post(accessToken, `/api/ships`, ship)
+
+    if (!response.ok) return null
+    
+    const createdShip = await response.json()
+    return createdShip
+}
+
+export const apiUpdateShip = async (
+    accessToken: string,
+    id: number,
+    ship: IApiShipUpdateInput,
+): Promise<IApiShipOutput|null> => {
+
+    const response = await put(accessToken, `/api/ship/${id}`, ship)
+
+    if (!response.ok) return null
+    
+    const createdShip = await response.json()
+    return createdShip
 }
 
 export const apiGetShip = async (

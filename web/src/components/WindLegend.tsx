@@ -64,16 +64,16 @@ const WindLegend = (props: WindLegendProps) => {
                 </div>
             )}
             <div className="flex">
-                <div className={`bg-beufort-1 w-4`}></div>
-                <div className={`bg-beufort-2 w-4`}></div>
-                <div className={`bg-beufort-3 w-4`}></div>
-                <div className={`bg-beufort-4 w-4`}></div>
-                <div className={`bg-beufort-5 w-4`}></div>
-                <div className={`bg-beufort-6 w-4`}></div>
-                <div className={`bg-beufort-7 w-4`}></div>
-                <div className={`bg-beufort-8 w-4`}></div>
-                <div className={`bg-beufort-9 w-4`}></div>
-                <div className={`bg-beufort-10 w-4`}></div>
+                <div className={`bg-beaufort-1 w-4`}></div>
+                <div className={`bg-beaufort-2 w-4`}></div>
+                <div className={`bg-beaufort-3 w-4`}></div>
+                <div className={`bg-beaufort-4 w-4`}></div>
+                <div className={`bg-beaufort-5 w-4`}></div>
+                <div className={`bg-beaufort-6 w-4`}></div>
+                <div className={`bg-beaufort-7 w-4`}></div>
+                <div className={`bg-beaufort-8 w-4`}></div>
+                <div className={`bg-beaufort-9 w-4`}></div>
+                <div className={`bg-beaufort-10 w-4`}></div>
             </div>
         </>)}
     </div>

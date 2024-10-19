@@ -17,7 +17,7 @@ const ShipPage = async ({
     console.log(`ship`, ship)
     return (
         <div className="my-8">
-            <h1 className="text-2xl">
+            <h1 className="text-4xl">
                 {ship ? ship.name : 'Ship not found'}
             </h1>
             {ship && (

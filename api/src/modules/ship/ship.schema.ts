@@ -1,10 +1,10 @@
 import { z } from "zod"
 import { buildJsonSchemas } from 'fastify-zod'
-import { ShipPolarSchema } from "../../../prisma/generated/zod"
 
 const shipInput = {
     name: z.string(),
     ownerId: z.number(),
+    polar: z.string(),
 }
 
 const shipGenerated = {
@@ -13,18 +13,19 @@ const shipGenerated = {
     updatedAt: z.string(),
 }
 
-const shipPolarOutput = ShipPolarSchema
-
 const createShipSchema = z.object({
     ...shipInput
 })
 
-const updateShipSchema = createShipSchema
+const updateShipSchema = z.object({
+    name: z.string().optional(),
+    ownerId: z.number().optional(),
+    polar: z.string().optional(),
+})
 
 const shipResponseSchema = z.object({
     ...shipInput,
     ...shipGenerated,
-    shipPolar: z.array(shipPolarOutput),
 })
 
 const shipsResponseSchema = z.array(

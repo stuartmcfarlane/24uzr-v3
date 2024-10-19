@@ -97,9 +97,7 @@ export const WindScalarFieldEnumSchema = z.enum(['timestamp','lat','lng','u','v'
 
 export const GeometryScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','mapId','name','geojson']);
 
-export const ShipScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','name','ownerId']);
-
-export const ShipPolarScalarFieldEnumSchema = z.enum(['shipId','windKnots','windDegrees','boatMs']);
+export const ShipScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','name','ownerId','polar']);
 
 export const SortOrderSchema = z.enum(['asc','desc']);
 
@@ -270,22 +268,10 @@ export const ShipSchema = z.object({
   updatedAt: z.coerce.date(),
   name: z.string(),
   ownerId: z.number().int(),
+  polar: z.string(),
 })
 
 export type Ship = z.infer<typeof ShipSchema>
-
-/////////////////////////////////////////
-// SHIP POLAR SCHEMA
-/////////////////////////////////////////
-
-export const ShipPolarSchema = z.object({
-  shipId: z.number().int(),
-  windKnots: z.number().int(),
-  windDegrees: z.number().int(),
-  boatMs: z.number(),
-})
-
-export type ShipPolar = z.infer<typeof ShipPolarSchema>
 
 /////////////////////////////////////////
 // SELECT & INCLUDE
@@ -609,21 +595,11 @@ export const GeometrySelectSchema: z.ZodType<Prisma.GeometrySelect> = z.object({
 
 export const ShipIncludeSchema: z.ZodType<Prisma.ShipInclude> = z.object({
   owner: z.union([z.boolean(),z.lazy(() => UserArgsSchema)]).optional(),
-  shipPolar: z.union([z.boolean(),z.lazy(() => ShipPolarFindManyArgsSchema)]).optional(),
-  _count: z.union([z.boolean(),z.lazy(() => ShipCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
 export const ShipArgsSchema: z.ZodType<Prisma.ShipDefaultArgs> = z.object({
   select: z.lazy(() => ShipSelectSchema).optional(),
   include: z.lazy(() => ShipIncludeSchema).optional(),
-}).strict();
-
-export const ShipCountOutputTypeArgsSchema: z.ZodType<Prisma.ShipCountOutputTypeDefaultArgs> = z.object({
-  select: z.lazy(() => ShipCountOutputTypeSelectSchema).nullish(),
-}).strict();
-
-export const ShipCountOutputTypeSelectSchema: z.ZodType<Prisma.ShipCountOutputTypeSelect> = z.object({
-  shipPolar: z.boolean().optional(),
 }).strict();
 
 export const ShipSelectSchema: z.ZodType<Prisma.ShipSelect> = z.object({
@@ -632,29 +608,8 @@ export const ShipSelectSchema: z.ZodType<Prisma.ShipSelect> = z.object({
   updatedAt: z.boolean().optional(),
   name: z.boolean().optional(),
   ownerId: z.boolean().optional(),
+  polar: z.boolean().optional(),
   owner: z.union([z.boolean(),z.lazy(() => UserArgsSchema)]).optional(),
-  shipPolar: z.union([z.boolean(),z.lazy(() => ShipPolarFindManyArgsSchema)]).optional(),
-  _count: z.union([z.boolean(),z.lazy(() => ShipCountOutputTypeArgsSchema)]).optional(),
-}).strict()
-
-// SHIP POLAR
-//------------------------------------------------------
-
-export const ShipPolarIncludeSchema: z.ZodType<Prisma.ShipPolarInclude> = z.object({
-  ship: z.union([z.boolean(),z.lazy(() => ShipArgsSchema)]).optional(),
-}).strict()
-
-export const ShipPolarArgsSchema: z.ZodType<Prisma.ShipPolarDefaultArgs> = z.object({
-  select: z.lazy(() => ShipPolarSelectSchema).optional(),
-  include: z.lazy(() => ShipPolarIncludeSchema).optional(),
-}).strict();
-
-export const ShipPolarSelectSchema: z.ZodType<Prisma.ShipPolarSelect> = z.object({
-  shipId: z.boolean().optional(),
-  windKnots: z.boolean().optional(),
-  windDegrees: z.boolean().optional(),
-  boatMs: z.boolean().optional(),
-  ship: z.union([z.boolean(),z.lazy(() => ShipArgsSchema)]).optional(),
 }).strict()
 
 
@@ -1359,8 +1314,8 @@ export const ShipWhereInputSchema: z.ZodType<Prisma.ShipWhereInput> = z.object({
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   ownerId: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  polar: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   owner: z.union([ z.lazy(() => UserRelationFilterSchema),z.lazy(() => UserWhereInputSchema) ]).optional(),
-  shipPolar: z.lazy(() => ShipPolarListRelationFilterSchema).optional()
 }).strict();
 
 export const ShipOrderByWithRelationInputSchema: z.ZodType<Prisma.ShipOrderByWithRelationInput> = z.object({
@@ -1369,8 +1324,8 @@ export const ShipOrderByWithRelationInputSchema: z.ZodType<Prisma.ShipOrderByWit
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   ownerId: z.lazy(() => SortOrderSchema).optional(),
-  owner: z.lazy(() => UserOrderByWithRelationInputSchema).optional(),
-  shipPolar: z.lazy(() => ShipPolarOrderByRelationAggregateInputSchema).optional()
+  polar: z.lazy(() => SortOrderSchema).optional(),
+  owner: z.lazy(() => UserOrderByWithRelationInputSchema).optional()
 }).strict();
 
 export const ShipWhereUniqueInputSchema: z.ZodType<Prisma.ShipWhereUniqueInput> = z.object({
@@ -1385,8 +1340,8 @@ export const ShipWhereUniqueInputSchema: z.ZodType<Prisma.ShipWhereUniqueInput> 
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   ownerId: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  polar: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   owner: z.union([ z.lazy(() => UserRelationFilterSchema),z.lazy(() => UserWhereInputSchema) ]).optional(),
-  shipPolar: z.lazy(() => ShipPolarListRelationFilterSchema).optional()
 }).strict());
 
 export const ShipOrderByWithAggregationInputSchema: z.ZodType<Prisma.ShipOrderByWithAggregationInput> = z.object({
@@ -1395,6 +1350,7 @@ export const ShipOrderByWithAggregationInputSchema: z.ZodType<Prisma.ShipOrderBy
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   ownerId: z.lazy(() => SortOrderSchema).optional(),
+  polar: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => ShipCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => ShipAvgOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => ShipMaxOrderByAggregateInputSchema).optional(),
@@ -1411,62 +1367,7 @@ export const ShipScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.ShipScal
   updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   ownerId: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
-}).strict();
-
-export const ShipPolarWhereInputSchema: z.ZodType<Prisma.ShipPolarWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => ShipPolarWhereInputSchema),z.lazy(() => ShipPolarWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => ShipPolarWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => ShipPolarWhereInputSchema),z.lazy(() => ShipPolarWhereInputSchema).array() ]).optional(),
-  shipId: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  windKnots: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  windDegrees: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  boatMs: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
-  ship: z.union([ z.lazy(() => ShipRelationFilterSchema),z.lazy(() => ShipWhereInputSchema) ]).optional(),
-}).strict();
-
-export const ShipPolarOrderByWithRelationInputSchema: z.ZodType<Prisma.ShipPolarOrderByWithRelationInput> = z.object({
-  shipId: z.lazy(() => SortOrderSchema).optional(),
-  windKnots: z.lazy(() => SortOrderSchema).optional(),
-  windDegrees: z.lazy(() => SortOrderSchema).optional(),
-  boatMs: z.lazy(() => SortOrderSchema).optional(),
-  ship: z.lazy(() => ShipOrderByWithRelationInputSchema).optional()
-}).strict();
-
-export const ShipPolarWhereUniqueInputSchema: z.ZodType<Prisma.ShipPolarWhereUniqueInput> = z.object({
-  shipId_windKnots_windDegrees: z.lazy(() => ShipPolarShipIdWindKnotsWindDegreesCompoundUniqueInputSchema)
-})
-.and(z.object({
-  shipId_windKnots_windDegrees: z.lazy(() => ShipPolarShipIdWindKnotsWindDegreesCompoundUniqueInputSchema).optional(),
-  AND: z.union([ z.lazy(() => ShipPolarWhereInputSchema),z.lazy(() => ShipPolarWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => ShipPolarWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => ShipPolarWhereInputSchema),z.lazy(() => ShipPolarWhereInputSchema).array() ]).optional(),
-  shipId: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
-  windKnots: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
-  windDegrees: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
-  boatMs: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
-  ship: z.union([ z.lazy(() => ShipRelationFilterSchema),z.lazy(() => ShipWhereInputSchema) ]).optional(),
-}).strict());
-
-export const ShipPolarOrderByWithAggregationInputSchema: z.ZodType<Prisma.ShipPolarOrderByWithAggregationInput> = z.object({
-  shipId: z.lazy(() => SortOrderSchema).optional(),
-  windKnots: z.lazy(() => SortOrderSchema).optional(),
-  windDegrees: z.lazy(() => SortOrderSchema).optional(),
-  boatMs: z.lazy(() => SortOrderSchema).optional(),
-  _count: z.lazy(() => ShipPolarCountOrderByAggregateInputSchema).optional(),
-  _avg: z.lazy(() => ShipPolarAvgOrderByAggregateInputSchema).optional(),
-  _max: z.lazy(() => ShipPolarMaxOrderByAggregateInputSchema).optional(),
-  _min: z.lazy(() => ShipPolarMinOrderByAggregateInputSchema).optional(),
-  _sum: z.lazy(() => ShipPolarSumOrderByAggregateInputSchema).optional()
-}).strict();
-
-export const ShipPolarScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.ShipPolarScalarWhereWithAggregatesInput> = z.object({
-  AND: z.union([ z.lazy(() => ShipPolarScalarWhereWithAggregatesInputSchema),z.lazy(() => ShipPolarScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  OR: z.lazy(() => ShipPolarScalarWhereWithAggregatesInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => ShipPolarScalarWhereWithAggregatesInputSchema),z.lazy(() => ShipPolarScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  shipId: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
-  windKnots: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
-  windDegrees: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
-  boatMs: z.union([ z.lazy(() => FloatWithAggregatesFilterSchema),z.number() ]).optional(),
+  polar: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
 }).strict();
 
 export const UserCreateInputSchema: z.ZodType<Prisma.UserCreateInput> = z.object({
@@ -2099,8 +2000,8 @@ export const ShipCreateInputSchema: z.ZodType<Prisma.ShipCreateInput> = z.object
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   name: z.string(),
-  owner: z.lazy(() => UserCreateNestedOneWithoutShipsInputSchema),
-  shipPolar: z.lazy(() => ShipPolarCreateNestedManyWithoutShipInputSchema).optional()
+  polar: z.string(),
+  owner: z.lazy(() => UserCreateNestedOneWithoutShipsInputSchema)
 }).strict();
 
 export const ShipUncheckedCreateInputSchema: z.ZodType<Prisma.ShipUncheckedCreateInput> = z.object({
@@ -2109,15 +2010,15 @@ export const ShipUncheckedCreateInputSchema: z.ZodType<Prisma.ShipUncheckedCreat
   updatedAt: z.coerce.date().optional(),
   name: z.string(),
   ownerId: z.number().int(),
-  shipPolar: z.lazy(() => ShipPolarUncheckedCreateNestedManyWithoutShipInputSchema).optional()
+  polar: z.string()
 }).strict();
 
 export const ShipUpdateInputSchema: z.ZodType<Prisma.ShipUpdateInput> = z.object({
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  owner: z.lazy(() => UserUpdateOneRequiredWithoutShipsNestedInputSchema).optional(),
-  shipPolar: z.lazy(() => ShipPolarUpdateManyWithoutShipNestedInputSchema).optional()
+  polar: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  owner: z.lazy(() => UserUpdateOneRequiredWithoutShipsNestedInputSchema).optional()
 }).strict();
 
 export const ShipUncheckedUpdateInputSchema: z.ZodType<Prisma.ShipUncheckedUpdateInput> = z.object({
@@ -2126,7 +2027,7 @@ export const ShipUncheckedUpdateInputSchema: z.ZodType<Prisma.ShipUncheckedUpdat
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ownerId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  shipPolar: z.lazy(() => ShipPolarUncheckedUpdateManyWithoutShipNestedInputSchema).optional()
+  polar: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const ShipCreateManyInputSchema: z.ZodType<Prisma.ShipCreateManyInput> = z.object({
@@ -2134,13 +2035,15 @@ export const ShipCreateManyInputSchema: z.ZodType<Prisma.ShipCreateManyInput> = 
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   name: z.string(),
-  ownerId: z.number().int()
+  ownerId: z.number().int(),
+  polar: z.string()
 }).strict();
 
 export const ShipUpdateManyMutationInputSchema: z.ZodType<Prisma.ShipUpdateManyMutationInput> = z.object({
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  polar: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const ShipUncheckedUpdateManyInputSchema: z.ZodType<Prisma.ShipUncheckedUpdateManyInput> = z.object({
@@ -2149,54 +2052,7 @@ export const ShipUncheckedUpdateManyInputSchema: z.ZodType<Prisma.ShipUncheckedU
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ownerId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const ShipPolarCreateInputSchema: z.ZodType<Prisma.ShipPolarCreateInput> = z.object({
-  windKnots: z.number().int(),
-  windDegrees: z.number().int(),
-  boatMs: z.number(),
-  ship: z.lazy(() => ShipCreateNestedOneWithoutShipPolarInputSchema)
-}).strict();
-
-export const ShipPolarUncheckedCreateInputSchema: z.ZodType<Prisma.ShipPolarUncheckedCreateInput> = z.object({
-  shipId: z.number().int(),
-  windKnots: z.number().int(),
-  windDegrees: z.number().int(),
-  boatMs: z.number()
-}).strict();
-
-export const ShipPolarUpdateInputSchema: z.ZodType<Prisma.ShipPolarUpdateInput> = z.object({
-  windKnots: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  windDegrees: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  boatMs: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
-  ship: z.lazy(() => ShipUpdateOneRequiredWithoutShipPolarNestedInputSchema).optional()
-}).strict();
-
-export const ShipPolarUncheckedUpdateInputSchema: z.ZodType<Prisma.ShipPolarUncheckedUpdateInput> = z.object({
-  shipId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  windKnots: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  windDegrees: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  boatMs: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const ShipPolarCreateManyInputSchema: z.ZodType<Prisma.ShipPolarCreateManyInput> = z.object({
-  shipId: z.number().int(),
-  windKnots: z.number().int(),
-  windDegrees: z.number().int(),
-  boatMs: z.number()
-}).strict();
-
-export const ShipPolarUpdateManyMutationInputSchema: z.ZodType<Prisma.ShipPolarUpdateManyMutationInput> = z.object({
-  windKnots: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  windDegrees: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  boatMs: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const ShipPolarUncheckedUpdateManyInputSchema: z.ZodType<Prisma.ShipPolarUncheckedUpdateManyInput> = z.object({
-  shipId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  windKnots: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  windDegrees: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  boatMs: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  polar: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const IntFilterSchema: z.ZodType<Prisma.IntFilter> = z.object({
@@ -2942,22 +2798,13 @@ export const JsonWithAggregatesFilterSchema: z.ZodType<Prisma.JsonWithAggregates
   _max: z.lazy(() => NestedJsonFilterSchema).optional()
 }).strict();
 
-export const ShipPolarListRelationFilterSchema: z.ZodType<Prisma.ShipPolarListRelationFilter> = z.object({
-  every: z.lazy(() => ShipPolarWhereInputSchema).optional(),
-  some: z.lazy(() => ShipPolarWhereInputSchema).optional(),
-  none: z.lazy(() => ShipPolarWhereInputSchema).optional()
-}).strict();
-
-export const ShipPolarOrderByRelationAggregateInputSchema: z.ZodType<Prisma.ShipPolarOrderByRelationAggregateInput> = z.object({
-  _count: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
 export const ShipCountOrderByAggregateInputSchema: z.ZodType<Prisma.ShipCountOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
-  ownerId: z.lazy(() => SortOrderSchema).optional()
+  ownerId: z.lazy(() => SortOrderSchema).optional(),
+  polar: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const ShipAvgOrderByAggregateInputSchema: z.ZodType<Prisma.ShipAvgOrderByAggregateInput> = z.object({
@@ -2970,7 +2817,8 @@ export const ShipMaxOrderByAggregateInputSchema: z.ZodType<Prisma.ShipMaxOrderBy
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
-  ownerId: z.lazy(() => SortOrderSchema).optional()
+  ownerId: z.lazy(() => SortOrderSchema).optional(),
+  polar: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const ShipMinOrderByAggregateInputSchema: z.ZodType<Prisma.ShipMinOrderByAggregateInput> = z.object({
@@ -2978,58 +2826,13 @@ export const ShipMinOrderByAggregateInputSchema: z.ZodType<Prisma.ShipMinOrderBy
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
-  ownerId: z.lazy(() => SortOrderSchema).optional()
+  ownerId: z.lazy(() => SortOrderSchema).optional(),
+  polar: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const ShipSumOrderByAggregateInputSchema: z.ZodType<Prisma.ShipSumOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   ownerId: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const ShipRelationFilterSchema: z.ZodType<Prisma.ShipRelationFilter> = z.object({
-  is: z.lazy(() => ShipWhereInputSchema).optional(),
-  isNot: z.lazy(() => ShipWhereInputSchema).optional()
-}).strict();
-
-export const ShipPolarShipIdWindKnotsWindDegreesCompoundUniqueInputSchema: z.ZodType<Prisma.ShipPolarShipIdWindKnotsWindDegreesCompoundUniqueInput> = z.object({
-  shipId: z.number(),
-  windKnots: z.number(),
-  windDegrees: z.number()
-}).strict();
-
-export const ShipPolarCountOrderByAggregateInputSchema: z.ZodType<Prisma.ShipPolarCountOrderByAggregateInput> = z.object({
-  shipId: z.lazy(() => SortOrderSchema).optional(),
-  windKnots: z.lazy(() => SortOrderSchema).optional(),
-  windDegrees: z.lazy(() => SortOrderSchema).optional(),
-  boatMs: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const ShipPolarAvgOrderByAggregateInputSchema: z.ZodType<Prisma.ShipPolarAvgOrderByAggregateInput> = z.object({
-  shipId: z.lazy(() => SortOrderSchema).optional(),
-  windKnots: z.lazy(() => SortOrderSchema).optional(),
-  windDegrees: z.lazy(() => SortOrderSchema).optional(),
-  boatMs: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const ShipPolarMaxOrderByAggregateInputSchema: z.ZodType<Prisma.ShipPolarMaxOrderByAggregateInput> = z.object({
-  shipId: z.lazy(() => SortOrderSchema).optional(),
-  windKnots: z.lazy(() => SortOrderSchema).optional(),
-  windDegrees: z.lazy(() => SortOrderSchema).optional(),
-  boatMs: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const ShipPolarMinOrderByAggregateInputSchema: z.ZodType<Prisma.ShipPolarMinOrderByAggregateInput> = z.object({
-  shipId: z.lazy(() => SortOrderSchema).optional(),
-  windKnots: z.lazy(() => SortOrderSchema).optional(),
-  windDegrees: z.lazy(() => SortOrderSchema).optional(),
-  boatMs: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const ShipPolarSumOrderByAggregateInputSchema: z.ZodType<Prisma.ShipPolarSumOrderByAggregateInput> = z.object({
-  shipId: z.lazy(() => SortOrderSchema).optional(),
-  windKnots: z.lazy(() => SortOrderSchema).optional(),
-  windDegrees: z.lazy(() => SortOrderSchema).optional(),
-  boatMs: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const ShipCreateNestedManyWithoutOwnerInputSchema: z.ZodType<Prisma.ShipCreateNestedManyWithoutOwnerInput> = z.object({
@@ -4024,68 +3827,12 @@ export const UserCreateNestedOneWithoutShipsInputSchema: z.ZodType<Prisma.UserCr
   connect: z.lazy(() => UserWhereUniqueInputSchema).optional()
 }).strict();
 
-export const ShipPolarCreateNestedManyWithoutShipInputSchema: z.ZodType<Prisma.ShipPolarCreateNestedManyWithoutShipInput> = z.object({
-  create: z.union([ z.lazy(() => ShipPolarCreateWithoutShipInputSchema),z.lazy(() => ShipPolarCreateWithoutShipInputSchema).array(),z.lazy(() => ShipPolarUncheckedCreateWithoutShipInputSchema),z.lazy(() => ShipPolarUncheckedCreateWithoutShipInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => ShipPolarCreateOrConnectWithoutShipInputSchema),z.lazy(() => ShipPolarCreateOrConnectWithoutShipInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => ShipPolarCreateManyShipInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => ShipPolarWhereUniqueInputSchema),z.lazy(() => ShipPolarWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
-
-export const ShipPolarUncheckedCreateNestedManyWithoutShipInputSchema: z.ZodType<Prisma.ShipPolarUncheckedCreateNestedManyWithoutShipInput> = z.object({
-  create: z.union([ z.lazy(() => ShipPolarCreateWithoutShipInputSchema),z.lazy(() => ShipPolarCreateWithoutShipInputSchema).array(),z.lazy(() => ShipPolarUncheckedCreateWithoutShipInputSchema),z.lazy(() => ShipPolarUncheckedCreateWithoutShipInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => ShipPolarCreateOrConnectWithoutShipInputSchema),z.lazy(() => ShipPolarCreateOrConnectWithoutShipInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => ShipPolarCreateManyShipInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => ShipPolarWhereUniqueInputSchema),z.lazy(() => ShipPolarWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
-
 export const UserUpdateOneRequiredWithoutShipsNestedInputSchema: z.ZodType<Prisma.UserUpdateOneRequiredWithoutShipsNestedInput> = z.object({
   create: z.union([ z.lazy(() => UserCreateWithoutShipsInputSchema),z.lazy(() => UserUncheckedCreateWithoutShipsInputSchema) ]).optional(),
   connectOrCreate: z.lazy(() => UserCreateOrConnectWithoutShipsInputSchema).optional(),
   upsert: z.lazy(() => UserUpsertWithoutShipsInputSchema).optional(),
   connect: z.lazy(() => UserWhereUniqueInputSchema).optional(),
   update: z.union([ z.lazy(() => UserUpdateToOneWithWhereWithoutShipsInputSchema),z.lazy(() => UserUpdateWithoutShipsInputSchema),z.lazy(() => UserUncheckedUpdateWithoutShipsInputSchema) ]).optional(),
-}).strict();
-
-export const ShipPolarUpdateManyWithoutShipNestedInputSchema: z.ZodType<Prisma.ShipPolarUpdateManyWithoutShipNestedInput> = z.object({
-  create: z.union([ z.lazy(() => ShipPolarCreateWithoutShipInputSchema),z.lazy(() => ShipPolarCreateWithoutShipInputSchema).array(),z.lazy(() => ShipPolarUncheckedCreateWithoutShipInputSchema),z.lazy(() => ShipPolarUncheckedCreateWithoutShipInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => ShipPolarCreateOrConnectWithoutShipInputSchema),z.lazy(() => ShipPolarCreateOrConnectWithoutShipInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => ShipPolarUpsertWithWhereUniqueWithoutShipInputSchema),z.lazy(() => ShipPolarUpsertWithWhereUniqueWithoutShipInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => ShipPolarCreateManyShipInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => ShipPolarWhereUniqueInputSchema),z.lazy(() => ShipPolarWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => ShipPolarWhereUniqueInputSchema),z.lazy(() => ShipPolarWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => ShipPolarWhereUniqueInputSchema),z.lazy(() => ShipPolarWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => ShipPolarWhereUniqueInputSchema),z.lazy(() => ShipPolarWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => ShipPolarUpdateWithWhereUniqueWithoutShipInputSchema),z.lazy(() => ShipPolarUpdateWithWhereUniqueWithoutShipInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => ShipPolarUpdateManyWithWhereWithoutShipInputSchema),z.lazy(() => ShipPolarUpdateManyWithWhereWithoutShipInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => ShipPolarScalarWhereInputSchema),z.lazy(() => ShipPolarScalarWhereInputSchema).array() ]).optional(),
-}).strict();
-
-export const ShipPolarUncheckedUpdateManyWithoutShipNestedInputSchema: z.ZodType<Prisma.ShipPolarUncheckedUpdateManyWithoutShipNestedInput> = z.object({
-  create: z.union([ z.lazy(() => ShipPolarCreateWithoutShipInputSchema),z.lazy(() => ShipPolarCreateWithoutShipInputSchema).array(),z.lazy(() => ShipPolarUncheckedCreateWithoutShipInputSchema),z.lazy(() => ShipPolarUncheckedCreateWithoutShipInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => ShipPolarCreateOrConnectWithoutShipInputSchema),z.lazy(() => ShipPolarCreateOrConnectWithoutShipInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => ShipPolarUpsertWithWhereUniqueWithoutShipInputSchema),z.lazy(() => ShipPolarUpsertWithWhereUniqueWithoutShipInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => ShipPolarCreateManyShipInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => ShipPolarWhereUniqueInputSchema),z.lazy(() => ShipPolarWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => ShipPolarWhereUniqueInputSchema),z.lazy(() => ShipPolarWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => ShipPolarWhereUniqueInputSchema),z.lazy(() => ShipPolarWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => ShipPolarWhereUniqueInputSchema),z.lazy(() => ShipPolarWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => ShipPolarUpdateWithWhereUniqueWithoutShipInputSchema),z.lazy(() => ShipPolarUpdateWithWhereUniqueWithoutShipInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => ShipPolarUpdateManyWithWhereWithoutShipInputSchema),z.lazy(() => ShipPolarUpdateManyWithWhereWithoutShipInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => ShipPolarScalarWhereInputSchema),z.lazy(() => ShipPolarScalarWhereInputSchema).array() ]).optional(),
-}).strict();
-
-export const ShipCreateNestedOneWithoutShipPolarInputSchema: z.ZodType<Prisma.ShipCreateNestedOneWithoutShipPolarInput> = z.object({
-  create: z.union([ z.lazy(() => ShipCreateWithoutShipPolarInputSchema),z.lazy(() => ShipUncheckedCreateWithoutShipPolarInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => ShipCreateOrConnectWithoutShipPolarInputSchema).optional(),
-  connect: z.lazy(() => ShipWhereUniqueInputSchema).optional()
-}).strict();
-
-export const ShipUpdateOneRequiredWithoutShipPolarNestedInputSchema: z.ZodType<Prisma.ShipUpdateOneRequiredWithoutShipPolarNestedInput> = z.object({
-  create: z.union([ z.lazy(() => ShipCreateWithoutShipPolarInputSchema),z.lazy(() => ShipUncheckedCreateWithoutShipPolarInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => ShipCreateOrConnectWithoutShipPolarInputSchema).optional(),
-  upsert: z.lazy(() => ShipUpsertWithoutShipPolarInputSchema).optional(),
-  connect: z.lazy(() => ShipWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => ShipUpdateToOneWithWhereWithoutShipPolarInputSchema),z.lazy(() => ShipUpdateWithoutShipPolarInputSchema),z.lazy(() => ShipUncheckedUpdateWithoutShipPolarInputSchema) ]).optional(),
 }).strict();
 
 export const NestedIntFilterSchema: z.ZodType<Prisma.NestedIntFilter> = z.object({
@@ -4334,7 +4081,7 @@ export const ShipCreateWithoutOwnerInputSchema: z.ZodType<Prisma.ShipCreateWitho
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   name: z.string(),
-  shipPolar: z.lazy(() => ShipPolarCreateNestedManyWithoutShipInputSchema).optional()
+  polar: z.string()
 }).strict();
 
 export const ShipUncheckedCreateWithoutOwnerInputSchema: z.ZodType<Prisma.ShipUncheckedCreateWithoutOwnerInput> = z.object({
@@ -4342,7 +4089,7 @@ export const ShipUncheckedCreateWithoutOwnerInputSchema: z.ZodType<Prisma.ShipUn
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   name: z.string(),
-  shipPolar: z.lazy(() => ShipPolarUncheckedCreateNestedManyWithoutShipInputSchema).optional()
+  polar: z.string()
 }).strict();
 
 export const ShipCreateOrConnectWithoutOwnerInputSchema: z.ZodType<Prisma.ShipCreateOrConnectWithoutOwnerInput> = z.object({
@@ -4450,6 +4197,7 @@ export const ShipScalarWhereInputSchema: z.ZodType<Prisma.ShipScalarWhereInput> 
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   ownerId: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  polar: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
 }).strict();
 
 export const RouteUpsertWithWhereUniqueWithoutOwnerInputSchema: z.ZodType<Prisma.RouteUpsertWithWhereUniqueWithoutOwnerInput> = z.object({
@@ -6300,28 +6048,6 @@ export const UserCreateOrConnectWithoutShipsInputSchema: z.ZodType<Prisma.UserCr
   create: z.union([ z.lazy(() => UserCreateWithoutShipsInputSchema),z.lazy(() => UserUncheckedCreateWithoutShipsInputSchema) ]),
 }).strict();
 
-export const ShipPolarCreateWithoutShipInputSchema: z.ZodType<Prisma.ShipPolarCreateWithoutShipInput> = z.object({
-  windKnots: z.number().int(),
-  windDegrees: z.number().int(),
-  boatMs: z.number()
-}).strict();
-
-export const ShipPolarUncheckedCreateWithoutShipInputSchema: z.ZodType<Prisma.ShipPolarUncheckedCreateWithoutShipInput> = z.object({
-  windKnots: z.number().int(),
-  windDegrees: z.number().int(),
-  boatMs: z.number()
-}).strict();
-
-export const ShipPolarCreateOrConnectWithoutShipInputSchema: z.ZodType<Prisma.ShipPolarCreateOrConnectWithoutShipInput> = z.object({
-  where: z.lazy(() => ShipPolarWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => ShipPolarCreateWithoutShipInputSchema),z.lazy(() => ShipPolarUncheckedCreateWithoutShipInputSchema) ]),
-}).strict();
-
-export const ShipPolarCreateManyShipInputEnvelopeSchema: z.ZodType<Prisma.ShipPolarCreateManyShipInputEnvelope> = z.object({
-  data: z.union([ z.lazy(() => ShipPolarCreateManyShipInputSchema),z.lazy(() => ShipPolarCreateManyShipInputSchema).array() ]),
-  skipDuplicates: z.boolean().optional()
-}).strict();
-
 export const UserUpsertWithoutShipsInputSchema: z.ZodType<Prisma.UserUpsertWithoutShipsInput> = z.object({
   update: z.union([ z.lazy(() => UserUpdateWithoutShipsInputSchema),z.lazy(() => UserUncheckedUpdateWithoutShipsInputSchema) ]),
   create: z.union([ z.lazy(() => UserCreateWithoutShipsInputSchema),z.lazy(() => UserUncheckedCreateWithoutShipsInputSchema) ]),
@@ -6354,83 +6080,12 @@ export const UserUncheckedUpdateWithoutShipsInputSchema: z.ZodType<Prisma.UserUn
   Plan: z.lazy(() => PlanUncheckedUpdateManyWithoutOwnerNestedInputSchema).optional()
 }).strict();
 
-export const ShipPolarUpsertWithWhereUniqueWithoutShipInputSchema: z.ZodType<Prisma.ShipPolarUpsertWithWhereUniqueWithoutShipInput> = z.object({
-  where: z.lazy(() => ShipPolarWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => ShipPolarUpdateWithoutShipInputSchema),z.lazy(() => ShipPolarUncheckedUpdateWithoutShipInputSchema) ]),
-  create: z.union([ z.lazy(() => ShipPolarCreateWithoutShipInputSchema),z.lazy(() => ShipPolarUncheckedCreateWithoutShipInputSchema) ]),
-}).strict();
-
-export const ShipPolarUpdateWithWhereUniqueWithoutShipInputSchema: z.ZodType<Prisma.ShipPolarUpdateWithWhereUniqueWithoutShipInput> = z.object({
-  where: z.lazy(() => ShipPolarWhereUniqueInputSchema),
-  data: z.union([ z.lazy(() => ShipPolarUpdateWithoutShipInputSchema),z.lazy(() => ShipPolarUncheckedUpdateWithoutShipInputSchema) ]),
-}).strict();
-
-export const ShipPolarUpdateManyWithWhereWithoutShipInputSchema: z.ZodType<Prisma.ShipPolarUpdateManyWithWhereWithoutShipInput> = z.object({
-  where: z.lazy(() => ShipPolarScalarWhereInputSchema),
-  data: z.union([ z.lazy(() => ShipPolarUpdateManyMutationInputSchema),z.lazy(() => ShipPolarUncheckedUpdateManyWithoutShipInputSchema) ]),
-}).strict();
-
-export const ShipPolarScalarWhereInputSchema: z.ZodType<Prisma.ShipPolarScalarWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => ShipPolarScalarWhereInputSchema),z.lazy(() => ShipPolarScalarWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => ShipPolarScalarWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => ShipPolarScalarWhereInputSchema),z.lazy(() => ShipPolarScalarWhereInputSchema).array() ]).optional(),
-  shipId: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  windKnots: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  windDegrees: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  boatMs: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
-}).strict();
-
-export const ShipCreateWithoutShipPolarInputSchema: z.ZodType<Prisma.ShipCreateWithoutShipPolarInput> = z.object({
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional(),
-  name: z.string(),
-  owner: z.lazy(() => UserCreateNestedOneWithoutShipsInputSchema)
-}).strict();
-
-export const ShipUncheckedCreateWithoutShipPolarInputSchema: z.ZodType<Prisma.ShipUncheckedCreateWithoutShipPolarInput> = z.object({
-  id: z.number().int().optional(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional(),
-  name: z.string(),
-  ownerId: z.number().int()
-}).strict();
-
-export const ShipCreateOrConnectWithoutShipPolarInputSchema: z.ZodType<Prisma.ShipCreateOrConnectWithoutShipPolarInput> = z.object({
-  where: z.lazy(() => ShipWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => ShipCreateWithoutShipPolarInputSchema),z.lazy(() => ShipUncheckedCreateWithoutShipPolarInputSchema) ]),
-}).strict();
-
-export const ShipUpsertWithoutShipPolarInputSchema: z.ZodType<Prisma.ShipUpsertWithoutShipPolarInput> = z.object({
-  update: z.union([ z.lazy(() => ShipUpdateWithoutShipPolarInputSchema),z.lazy(() => ShipUncheckedUpdateWithoutShipPolarInputSchema) ]),
-  create: z.union([ z.lazy(() => ShipCreateWithoutShipPolarInputSchema),z.lazy(() => ShipUncheckedCreateWithoutShipPolarInputSchema) ]),
-  where: z.lazy(() => ShipWhereInputSchema).optional()
-}).strict();
-
-export const ShipUpdateToOneWithWhereWithoutShipPolarInputSchema: z.ZodType<Prisma.ShipUpdateToOneWithWhereWithoutShipPolarInput> = z.object({
-  where: z.lazy(() => ShipWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => ShipUpdateWithoutShipPolarInputSchema),z.lazy(() => ShipUncheckedUpdateWithoutShipPolarInputSchema) ]),
-}).strict();
-
-export const ShipUpdateWithoutShipPolarInputSchema: z.ZodType<Prisma.ShipUpdateWithoutShipPolarInput> = z.object({
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  owner: z.lazy(() => UserUpdateOneRequiredWithoutShipsNestedInputSchema).optional()
-}).strict();
-
-export const ShipUncheckedUpdateWithoutShipPolarInputSchema: z.ZodType<Prisma.ShipUncheckedUpdateWithoutShipPolarInput> = z.object({
-  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  ownerId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
 export const ShipCreateManyOwnerInputSchema: z.ZodType<Prisma.ShipCreateManyOwnerInput> = z.object({
   id: z.number().int().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  name: z.string()
+  name: z.string(),
+  polar: z.string()
 }).strict();
 
 export const RouteCreateManyOwnerInputSchema: z.ZodType<Prisma.RouteCreateManyOwnerInput> = z.object({
@@ -6461,7 +6116,7 @@ export const ShipUpdateWithoutOwnerInputSchema: z.ZodType<Prisma.ShipUpdateWitho
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  shipPolar: z.lazy(() => ShipPolarUpdateManyWithoutShipNestedInputSchema).optional()
+  polar: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const ShipUncheckedUpdateWithoutOwnerInputSchema: z.ZodType<Prisma.ShipUncheckedUpdateWithoutOwnerInput> = z.object({
@@ -6469,7 +6124,7 @@ export const ShipUncheckedUpdateWithoutOwnerInputSchema: z.ZodType<Prisma.ShipUn
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  shipPolar: z.lazy(() => ShipPolarUncheckedUpdateManyWithoutShipNestedInputSchema).optional()
+  polar: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const ShipUncheckedUpdateManyWithoutOwnerInputSchema: z.ZodType<Prisma.ShipUncheckedUpdateManyWithoutOwnerInput> = z.object({
@@ -6477,6 +6132,7 @@ export const ShipUncheckedUpdateManyWithoutOwnerInputSchema: z.ZodType<Prisma.Sh
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  polar: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const RouteUpdateWithoutOwnerInputSchema: z.ZodType<Prisma.RouteUpdateWithoutOwnerInput> = z.object({
@@ -7083,30 +6739,6 @@ export const RouteUncheckedUpdateManyWithoutPlanInputSchema: z.ZodType<Prisma.Ro
   startBuoyId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   endBuoyId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   ownerId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const ShipPolarCreateManyShipInputSchema: z.ZodType<Prisma.ShipPolarCreateManyShipInput> = z.object({
-  windKnots: z.number().int(),
-  windDegrees: z.number().int(),
-  boatMs: z.number()
-}).strict();
-
-export const ShipPolarUpdateWithoutShipInputSchema: z.ZodType<Prisma.ShipPolarUpdateWithoutShipInput> = z.object({
-  windKnots: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  windDegrees: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  boatMs: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const ShipPolarUncheckedUpdateWithoutShipInputSchema: z.ZodType<Prisma.ShipPolarUncheckedUpdateWithoutShipInput> = z.object({
-  windKnots: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  windDegrees: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  boatMs: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const ShipPolarUncheckedUpdateManyWithoutShipInputSchema: z.ZodType<Prisma.ShipPolarUncheckedUpdateManyWithoutShipInput> = z.object({
-  windKnots: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  windDegrees: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  boatMs: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 /////////////////////////////////////////
@@ -7778,73 +7410,6 @@ export const ShipFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.ShipFindUniqueOrT
   relationLoadStrategy: RelationLoadStrategySchema.optional(),
 }).strict() ;
 
-export const ShipPolarFindFirstArgsSchema: z.ZodType<Prisma.ShipPolarFindFirstArgs> = z.object({
-  select: ShipPolarSelectSchema.optional(),
-  include: ShipPolarIncludeSchema.optional(),
-  where: ShipPolarWhereInputSchema.optional(),
-  orderBy: z.union([ ShipPolarOrderByWithRelationInputSchema.array(),ShipPolarOrderByWithRelationInputSchema ]).optional(),
-  cursor: ShipPolarWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ ShipPolarScalarFieldEnumSchema,ShipPolarScalarFieldEnumSchema.array() ]).optional(),
-  relationLoadStrategy: RelationLoadStrategySchema.optional(),
-}).strict() ;
-
-export const ShipPolarFindFirstOrThrowArgsSchema: z.ZodType<Prisma.ShipPolarFindFirstOrThrowArgs> = z.object({
-  select: ShipPolarSelectSchema.optional(),
-  include: ShipPolarIncludeSchema.optional(),
-  where: ShipPolarWhereInputSchema.optional(),
-  orderBy: z.union([ ShipPolarOrderByWithRelationInputSchema.array(),ShipPolarOrderByWithRelationInputSchema ]).optional(),
-  cursor: ShipPolarWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ ShipPolarScalarFieldEnumSchema,ShipPolarScalarFieldEnumSchema.array() ]).optional(),
-  relationLoadStrategy: RelationLoadStrategySchema.optional(),
-}).strict() ;
-
-export const ShipPolarFindManyArgsSchema: z.ZodType<Prisma.ShipPolarFindManyArgs> = z.object({
-  select: ShipPolarSelectSchema.optional(),
-  include: ShipPolarIncludeSchema.optional(),
-  where: ShipPolarWhereInputSchema.optional(),
-  orderBy: z.union([ ShipPolarOrderByWithRelationInputSchema.array(),ShipPolarOrderByWithRelationInputSchema ]).optional(),
-  cursor: ShipPolarWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ ShipPolarScalarFieldEnumSchema,ShipPolarScalarFieldEnumSchema.array() ]).optional(),
-  relationLoadStrategy: RelationLoadStrategySchema.optional(),
-}).strict() ;
-
-export const ShipPolarAggregateArgsSchema: z.ZodType<Prisma.ShipPolarAggregateArgs> = z.object({
-  where: ShipPolarWhereInputSchema.optional(),
-  orderBy: z.union([ ShipPolarOrderByWithRelationInputSchema.array(),ShipPolarOrderByWithRelationInputSchema ]).optional(),
-  cursor: ShipPolarWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict() ;
-
-export const ShipPolarGroupByArgsSchema: z.ZodType<Prisma.ShipPolarGroupByArgs> = z.object({
-  where: ShipPolarWhereInputSchema.optional(),
-  orderBy: z.union([ ShipPolarOrderByWithAggregationInputSchema.array(),ShipPolarOrderByWithAggregationInputSchema ]).optional(),
-  by: ShipPolarScalarFieldEnumSchema.array(),
-  having: ShipPolarScalarWhereWithAggregatesInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict() ;
-
-export const ShipPolarFindUniqueArgsSchema: z.ZodType<Prisma.ShipPolarFindUniqueArgs> = z.object({
-  select: ShipPolarSelectSchema.optional(),
-  include: ShipPolarIncludeSchema.optional(),
-  where: ShipPolarWhereUniqueInputSchema,
-  relationLoadStrategy: RelationLoadStrategySchema.optional(),
-}).strict() ;
-
-export const ShipPolarFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.ShipPolarFindUniqueOrThrowArgs> = z.object({
-  select: ShipPolarSelectSchema.optional(),
-  include: ShipPolarIncludeSchema.optional(),
-  where: ShipPolarWhereUniqueInputSchema,
-  relationLoadStrategy: RelationLoadStrategySchema.optional(),
-}).strict() ;
-
 export const UserCreateArgsSchema: z.ZodType<Prisma.UserCreateArgs> = z.object({
   select: UserSelectSchema.optional(),
   include: UserIncludeSchema.optional(),
@@ -8289,49 +7854,4 @@ export const ShipUpdateManyArgsSchema: z.ZodType<Prisma.ShipUpdateManyArgs> = z.
 
 export const ShipDeleteManyArgsSchema: z.ZodType<Prisma.ShipDeleteManyArgs> = z.object({
   where: ShipWhereInputSchema.optional(),
-}).strict() ;
-
-export const ShipPolarCreateArgsSchema: z.ZodType<Prisma.ShipPolarCreateArgs> = z.object({
-  select: ShipPolarSelectSchema.optional(),
-  include: ShipPolarIncludeSchema.optional(),
-  data: z.union([ ShipPolarCreateInputSchema,ShipPolarUncheckedCreateInputSchema ]),
-  relationLoadStrategy: RelationLoadStrategySchema.optional(),
-}).strict() ;
-
-export const ShipPolarUpsertArgsSchema: z.ZodType<Prisma.ShipPolarUpsertArgs> = z.object({
-  select: ShipPolarSelectSchema.optional(),
-  include: ShipPolarIncludeSchema.optional(),
-  where: ShipPolarWhereUniqueInputSchema,
-  create: z.union([ ShipPolarCreateInputSchema,ShipPolarUncheckedCreateInputSchema ]),
-  update: z.union([ ShipPolarUpdateInputSchema,ShipPolarUncheckedUpdateInputSchema ]),
-  relationLoadStrategy: RelationLoadStrategySchema.optional(),
-}).strict() ;
-
-export const ShipPolarCreateManyArgsSchema: z.ZodType<Prisma.ShipPolarCreateManyArgs> = z.object({
-  data: z.union([ ShipPolarCreateManyInputSchema,ShipPolarCreateManyInputSchema.array() ]),
-  skipDuplicates: z.boolean().optional(),
-}).strict() ;
-
-export const ShipPolarDeleteArgsSchema: z.ZodType<Prisma.ShipPolarDeleteArgs> = z.object({
-  select: ShipPolarSelectSchema.optional(),
-  include: ShipPolarIncludeSchema.optional(),
-  where: ShipPolarWhereUniqueInputSchema,
-  relationLoadStrategy: RelationLoadStrategySchema.optional(),
-}).strict() ;
-
-export const ShipPolarUpdateArgsSchema: z.ZodType<Prisma.ShipPolarUpdateArgs> = z.object({
-  select: ShipPolarSelectSchema.optional(),
-  include: ShipPolarIncludeSchema.optional(),
-  data: z.union([ ShipPolarUpdateInputSchema,ShipPolarUncheckedUpdateInputSchema ]),
-  where: ShipPolarWhereUniqueInputSchema,
-  relationLoadStrategy: RelationLoadStrategySchema.optional(),
-}).strict() ;
-
-export const ShipPolarUpdateManyArgsSchema: z.ZodType<Prisma.ShipPolarUpdateManyArgs> = z.object({
-  data: z.union([ ShipPolarUpdateManyMutationInputSchema,ShipPolarUncheckedUpdateManyInputSchema ]),
-  where: ShipPolarWhereInputSchema.optional(),
-}).strict() ;
-
-export const ShipPolarDeleteManyArgsSchema: z.ZodType<Prisma.ShipPolarDeleteManyArgs> = z.object({
-  where: ShipPolarWhereInputSchema.optional(),
 }).strict() ;
