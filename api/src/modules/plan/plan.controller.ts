@@ -19,6 +19,7 @@ export async function createPlanHandler(
     const body = request.body;
     
     try {
+        console.log(`>POST========================================================`)
         const plan = await createPlan(body);
 
         reply.code(201).send(plan);
@@ -37,23 +38,28 @@ export async function createPlanHandler(
         const startBuoy = buoys.find(idIs(plan.startBuoyId))
         const endBuoy = buoys.find(idIs(plan.endBuoyId))
 
+        const startTime = plan.startTime.toISOString()
+        const endTime = addSeconds(plan.raceSecondsRemaining)(plan.startTime).toISOString()
+
         const wind = await findWindByRegion(
             {
-                lat1: map?.lat1.toNumber() || 0,
-                lng1: map?.lng1.toNumber() || 0,
-                lat2: map?.lat2.toNumber() || 0,
-                lng2: map?.lng2.toNumber() || 0,
+                lat1: map?.lat1 || 0,
+                lng1: map?.lng1 || 0,
+                lat2: map?.lat2 || 0,
+                lng2: map?.lng2 || 0,
             },
-            plan.startTime.toISOString(),
-            addSeconds(plan.raceSecondsRemaining)(plan.startTime).toISOString()
+            startTime,
+            endTime
         )
 
-        const allRoutes = await getAllRoutes(plan, startBuoy!, endBuoy!, ship!, legs, buoys, wind)
+        const allRoutes = await getAllRoutes(plan, startBuoy!, endBuoy!, ship!, legs, buoys, wind, startTime, endTime)
 
         await updatePlanRoutes(plan, allRoutes)
         
+        console.log(`<POST========================================================`)
         return reply
     } catch (e) {
+        console.log(`!POST========================================================`, e)
         return reply.code(500).send(e);
     }
 }

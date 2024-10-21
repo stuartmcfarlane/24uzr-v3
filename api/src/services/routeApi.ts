@@ -1,5 +1,6 @@
 import { Buoy, Leg, LegsOnRoute, Plan, Route, Ship } from "@prisma/client"
 import { CreateRouteInput } from "../modules/route/route.schema"
+import { greaterThan, lessThan } from '../../../tslib/src/fp';
 import {
     parseShipPolar,
     ShipPolar,
@@ -11,6 +12,17 @@ import {
     windAtLocation,
     indexBy,
     indexByHash,
+    indexWindByTimestamp,
+    SingleWind,
+    BulkWind,
+    cmpString,
+    sort,
+    and,
+    fieldIs,
+    timestampIs,
+    makeTimestampSlicedWind,
+    project,
+    timestamp2string,
 } from 'tslib';
 
 export const getAllRoutes = async (
@@ -20,11 +32,23 @@ export const getAllRoutes = async (
     ship: Ship,
     legs: Leg[],
     buoys: Buoy[],
-    wind: Wind[],
+    wind: SingleWind[],
+    startTime: string,
+    endTime: string,
 ): Promise<CreateRouteInput[]> => {
+    console.log(`>getAllRoutes`, plan)
     const buoysById = indexBy('id')(buoys)
 
-    const graph = makeGraph(ship, legs, buoysById, wind)
+    const windSlices = makeTimestampSlicedWind(wind)
+    const timeKeys = sort(cmpString)(
+        windSlices
+            .map(project('timestamp'))
+            .map(timestamp2string)
+            .filter(and(greaterThan(startTime), lessThan(endTime)))
+    )
+    const graph = makeGraph(ship, legs, buoysById, Object.values(windSlices), timeKeys)
+    console.log(` getAllRoutes graph`, graph)
+    return []
     const count = 10
     const allRoutes = (
         await routeApiPost(`route/all?start=${startBuoy.id}&end=${endBuoy.id}&time=${plan.raceSecondsRemaining}&count=${count}`, graph)
@@ -52,13 +76,24 @@ export const getShortestRoute = async (
     ship: Ship,
     legs: Leg[],
     buoys: Buoy[],
-    wind: Wind[],
-): Promise<LegsOnRoute[]> => {
+    wind: SingleWind[],
+
+    startTime: string,
+    endTime: string,): Promise<LegsOnRoute[]> => {
 
     try {
 
         const buoysById = indexBy('id')(buoys)
-        const graph = makeGraph(ship, legs, buoysById, wind)
+
+        const windSlices = makeTimestampSlicedWind(wind)
+        const timeKeys = sort(cmpString)(
+            windSlices
+                .map(project('timestamp'))
+                .map(timestamp2string)
+                .filter(and(greaterThan(startTime), lessThan(endTime)))
+        )
+
+        const graph = makeGraph(ship, legs, buoysById, windSlices, timeKeys)
         
         const shortestRoute = (await routeApiPost(`route/shortest?start=${startBuoy.id}&end=${endBuoy.id}`, graph)) as ShortestRouteOutput
         if (!shortestRoute) return []
@@ -99,8 +134,8 @@ type RouteApiEdge = {
     Start: string
     End: string
     Metres: number
-    MetresPerSecondSE: number
-    MetresPerSecondES: number
+    MetresPerSecondSE: number[]
+    MetresPerSecondES: number[]
 }
 type RouteApiGraph = {
     Edges: RouteApiEdge[]
@@ -119,25 +154,43 @@ type RouteApiOutput = (
     | AllRoutesOutput
     | ShortestRouteOutput
 )
-const buoy2latLng = (buoy: Buoy): LatLng => {
-    return {
-        lat: buoy.lat.toNumber(),
-        lng: buoy.lng.toNumber(),
-    }
-}
-const makeGraph = (ship: Ship, legs: Leg[], buoysById: { [id: number]: Buoy }, wind: Wind[]) => {
+const makeGraph = (
+    ship: Ship,
+    legs: Leg[],
+    buoysById: { [id: number]: Buoy },
+    wind: BulkWind[],
+    timeKeys: string[]
+) => {
     const shipPolar = parseShipPolar(ship.polar)
     return {
         Edges: legs.map((leg) => {
 
             const startBuoy = buoysById[leg.startBuoyId]
             const endBuoy = buoysById[leg.endBuoyId]
-            const metres = getMetres(buoy2latLng(startBuoy), buoy2latLng(endBuoy))
-            const metresPerSecondSE = getMetresPerSecondVMG(
-                shipPolar, wind, buoy2latLng(startBuoy), buoy2latLng(endBuoy)
+            const metres = getMetres(startBuoy, endBuoy)
+            const metresPerSecondSE = timeKeys.map(
+                timeKey => {
+                    const windSlice = wind.find(timestampIs(timeKey))
+                    if (!windSlice) return 0
+                    return getMetresPerSecondVMG(
+                        shipPolar,
+                        windSlice.data,
+                        startBuoy,
+                        endBuoy
+                    )
+                }
             )
-            const metresPerSecondES = getMetresPerSecondVMG(
-                shipPolar, wind, buoy2latLng(endBuoy), buoy2latLng(startBuoy)
+            const metresPerSecondES = timeKeys.map(
+                timeKey => {
+                    const windSlice = wind.find(timestampIs(timeKey))
+                    if (!windSlice) return 0
+                    return getMetresPerSecondVMG(
+                        shipPolar,
+                        windSlice.data,
+                        endBuoy,
+                        startBuoy
+                    )
+                }
             )
             const made = {
                 Start: `${leg.startBuoyId}`,

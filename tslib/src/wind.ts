@@ -8,11 +8,11 @@ export type Wind = {
   v: number
 }
 export type SingleWind = Wind & {
-  timestamp: string
+  timestamp: string | Date
 }
 
 export type BulkWind = {
-  timestamp: string
+  timestamp: string | Date
   data: Wind[]
 }
 
@@ -28,21 +28,34 @@ export const wind2resolution = (wind: SingleWind[]) => {
         },
         0
     )
-    console.log(`wind2resolution`, resolution)
     return resolution
 }
+export const timestamp2string = (timestamp: string | Date) => typeof timestamp === "string" ? timestamp : timestamp.toISOString()
+export const timestampIs = (timestamp: string | Date) => (wind: BulkWind) => wind.timestamp === timestamp2string(timestamp)
 
 export const indexWindByTimestamp = (wind: SingleWind[]) => {
   return wind.reduce(
     (windByTimestamp, wind) => {
-      if (!windByTimestamp[wind.timestamp]) {
-        windByTimestamp[wind.timestamp] = []
+      const timestamp = typeof wind.timestamp === "string" ? wind.timestamp : wind.timestamp.toISOString()
+      if (!windByTimestamp[timestamp]) {
+        windByTimestamp[timestamp] = []
       }
-      windByTimestamp[wind.timestamp].push(wind)
+      windByTimestamp[timestamp].push(wind)
       return windByTimestamp
     },
     {} as { [k: string]: SingleWind[] }
   )
 }
 
+export const makeTimestampSlicedWind = (wind: SingleWind[]): BulkWind[] => {
+  const windByTimestamp = indexWindByTimestamp(wind)
+    const timestamps = Object.keys(windByTimestamp) as string[]
+    const bulkWind = timestamps.map(
+        (timestamp: string) => ({
+            timestamp,
+            data: windByTimestamp[timestamp]
+        })
+    )
+    return bulkWind
+}
 export const windAtLocation = (wind: Wind[], { lat, lng }: LatLng): Vector => makeVector(1, 1)

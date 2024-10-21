@@ -84,6 +84,7 @@ export const NewPlanTool = (props: NewPlanToolProps) => {
                 <input type="hidden" name="startBuoyId" value={startBuoy?.id}/>
                 <input type="hidden" name="endBuoyId" value={endBuoy?.id}/>
                 <input type="hidden" name="defaultName" value={defaultPlanName}/>
+                <input type="hidden" name="startTime" value={new Date().toISOString()}/>
             </form>
         )}
     </>)

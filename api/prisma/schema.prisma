@@ -30,10 +30,10 @@ model Map {
   updatedAt DateTime   @updatedAt
   isLocked  Boolean    @default(false)
   name      String     @db.VarChar(128)
-  lat1      Decimal    @default(0) @db.Decimal(10, 8)
-  lng1      Decimal    @default(0) @db.Decimal(11, 8)
-  lat2      Decimal    @default(0) @db.Decimal(10, 8)
-  lng2      Decimal    @default(0) @db.Decimal(11, 8)
+  lat1      Float
+  lng1      Float
+  lat2      Float
+  lng2      Float
   Buoys     Buoy[]
   Legs      Leg[]
   Routes    Route[]
@@ -44,8 +44,8 @@ model Map {
 model Buoy {
   id          Int     @id @default(autoincrement())
   name        String  @db.VarChar(128)
-  lat         Decimal @db.Decimal(10, 8)
-  lng         Decimal @db.Decimal(11, 8)
+  lat         Float
+  lng         Float
   map         Map     @relation(fields: [mapId], references: [id])
   mapId       Int
   legsOut     Leg[]   @relation("startBuoy")
@@ -131,8 +131,8 @@ model Plan {
 
 model Wind {
   timestamp DateTime
-  lat       Decimal  @db.Decimal(10, 8)
-  lng       Decimal  @db.Decimal(11, 8)
+  lat       Float
+  lng       Float
   u         Float
   v         Float
 

@@ -40,9 +40,7 @@ export const parseShipPolar = (polarCsv: string): ShipPolar => {
     const beatAngles = resolveBeatAngles(boatSpeeds)(rows)
     const beatVMG = resolveBeatVMG(boatSpeeds)(rows)
     const runAngles = resolveRunAngles(boatSpeeds)(rows)
-    console.log(`runAngles`, runAngles)
     const runVMG = resolveRunVMG(boatSpeeds)(rows)
-    console.log(`runVMG`, runVMG)
     return {
         twa,
         tws,
@@ -152,7 +150,6 @@ const resolveRunAngles = (boatSpeeds: {[tws: string]: number[]}) => (rows: strin
     const maxBoatSpeedAngle = Math.max(...Object.keys(boatSpeeds).map(string2float))
     const twsCount = boatSpeeds[maxBoatSpeedAngle].length
     const runRows = rows.filter(isSparseRow).filter(isRunRow)
-    console.log(`runRows`, runRows)
     return runRows.reduce(
         (runAngles, row) => {
             const [angle, ...values] = row
@@ -188,17 +185,13 @@ export const formData2polarCsv = (formData: FormData): string => {
     let anglesSet = new Set<string>()
     formData.forEach(
         (value, key) => {
-            console.log(key, value)
             const [type, angle, tws] = key.split(':')
             if (type !== 'polar') return
-            console.log(`add to tws`, key, tws)
             twsSet.add(string2float(tws))
             anglesSet.add(angle)
         }
     )
     const tws = sort(cmpNumber)([...twsSet])
-    console.log(`TWS set`, twsSet)
-    console.log(`TWS`, tws)
     const twsCount = tws.length
     const colsByTws = tws.reduce(
         (colsByTws, tws, col) => {
@@ -210,7 +203,6 @@ export const formData2polarCsv = (formData: FormData): string => {
     let shipPolar_ = {} as {[angle:string]: number[]}
     formData.forEach(
         (value, key) => {
-            console.log(key, value)
             const [type, angle, tws] = key.split(':')
             if (type !== 'polar') return
             if (undefined === shipPolar_[angle]) {
@@ -220,7 +212,6 @@ export const formData2polarCsv = (formData: FormData): string => {
         }
     )
     const shipPolar = shipPolar_ as ShipPolar
-    console.log(`shipPolar`, shipPolar_)
 
     const csvA = [
         ['twa/tws', ...tws],

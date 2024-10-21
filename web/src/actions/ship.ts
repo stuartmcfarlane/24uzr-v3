@@ -11,7 +11,6 @@ export const createShipWithForm = async (formData: FormData): Promise<ActionErro
 
     const name = formData.get("name") as string
     const ownerId = parseInt(formData.get("ownerId") as string)
-    console.log(`create ship`, {name, ownerId})
 
     if (!name) {
         return { error: "Name is missing" }
