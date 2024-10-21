@@ -1,5 +1,5 @@
 import { ROUTE_LEG_COLOR } from "@/lib/constants"
-import { fmtLine, latLng2canvas, line2SvgLine } from "@/lib/graph"
+import { latLng2canvas, line2SvgLine } from "@/lib/graph"
 import { IApiBuoyOutput, IApiLegOutput, IApiRouteLegOutput } from "@/types/api"
 
 type MapRouteLegProps = {

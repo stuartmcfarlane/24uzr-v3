@@ -116,8 +116,13 @@ export interface IApiRouteLegInput {
   startBuoyId: number
   endBuoyId: number
 }
+export type IApiRouteLegLegOutput = IApiLegOutput & {
+  startBuoy: IApiBuoyOutput
+  endBuoy: IApiBuoyOutput
+}
+
 export interface IApiRouteLegOutput extends IApiRouteLegInput{
-  leg: IApiLegOutput
+  leg: IApiRouteLegLegOutput
 }
 
 export type IApiRouteLeg = IApiRouteLegInput | IApiRouteLegOutput

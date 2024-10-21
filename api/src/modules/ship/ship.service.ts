@@ -1,5 +1,5 @@
+import { shipPolarOrc2csv } from "tslib";
 import prisma from "../../utils/prisma";
-import { shipPolarOrc2csv } from "../../utils/shipPolar";
 import { CreateShipInput, UpdateShipInput } from "./ship.schema";
 
 export async function createShip(data: CreateShipInput) {

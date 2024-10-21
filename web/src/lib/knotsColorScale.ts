@@ -1,4 +1,4 @@
-import { knots2metersPerSecond } from '@/lib/conversions'
+import { knots2metersPerSecond } from 'tslib'
 type RGBA = [number, number, number, number?]
 export const rgba2string = ([r, g, b, a]: RGBA) => a === undefined ? `rgb(${r},${g},${b})` : `rgb(${r},${g},${b},${a})`
 type Choice = [number, RGBA]

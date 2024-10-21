@@ -1,7 +1,7 @@
 import { CURSOR_FONT_SIZE, CURSOR_SIZE, CURSOR_TEXT_OFFSET } from "@/lib/constants"
-import { canvas2latLng, fmtReal, line2SvgLine, makeLine, makePoint, screenUnits2canvasUnits } from "@/lib/graph"
-import { vectorAdd } from "@/lib/vector"
-import { fmtLatLng } from '../../lib/graph';
+import { fmtLatLng } from "@/lib/geo"
+import { canvas2latLng, line2SvgLine, screenUnits2canvasUnits } from "@/lib/graph"
+import { vectorAdd, makeLine, makePoint, Point, Line } from "tslib"
 
 export type MouseCursorProps = {
     point: Point

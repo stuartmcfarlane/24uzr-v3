@@ -33,5 +33,3 @@ export const bearingLatLan = ({ lat: lat1, lng: lng1 }: LatLng, {lat: lat2, lng:
     var bearing = radians2degrees(Math.atan2(y, x))
     return bearing
 }
-
-

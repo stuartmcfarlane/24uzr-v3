@@ -1,4 +1,4 @@
-import { fmtTimestamp } from "@/lib/graph"
+import { fmtTimestamp } from "tslib"
 import { IApiBulkWind } from "@/types/api"
 import { ChangeEvent, MouseEvent, useState } from "react"
 

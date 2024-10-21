@@ -1,7 +1,7 @@
 import { WIND_ARROW_LENGTH, WIND_ARROW_WIDTH } from "@/lib/constants"
-import { latLng2canvas, line2SvgLine, makeLine, screenUnits2canvasUnits } from "@/lib/graph"
+import { latLng2canvas, line2SvgLine, screenUnits2canvasUnits } from "@/lib/graph"
 import { metersPerSecond2RGBA, rgba2string } from "@/lib/knotsColorScale"
-import { makeVector, vectorAdd, vectorScale, unitVector, vectorMagnitude } from "@/lib/vector"
+import { makeVector, vectorAdd, vectorScale, unitVector, vectorMagnitude, makeLine } from "tslib"
 import { IApiWind } from "@/types/api"
 
 type MapWindArrowProps = {

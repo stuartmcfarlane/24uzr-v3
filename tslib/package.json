@@ -1,24 +1,24 @@
 {
   "name": "tslib",
   "version": "1.0.0",
-"main": "./dist/index.js",
-"module": "./dist/index.mjs",
-"types": "./dist/index.d.ts",
-"files": [
-  "dist"
-],
-"scripts": {
-  "build": "tsup",
-  "test": "echo \"Error: no test specified\" && exit 1"
-},
-"author": "",
-"license": "ISC",
-"description": "",
-"dependencies": {
-  "tsup": "^8.3.0"
-},
-"devDependencies": {
-  "ts-node": "^10.9.2",
-  "typescript": "^5.6.3"
-}
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "tsup": "^8.3.0"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  }
 }

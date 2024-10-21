@@ -14,7 +14,7 @@ import BuoyOptions from "./BuoyOptions"
 import ChartOptions from "./ChartOptions"
 import GeometryIcon from "./Icons/GeometryIcon"
 import GeometryOptions from "./GeometryOptions"
-import { realEq } from "@/lib/math"
+import { realEq } from "tslib"
 
 type UnlockedMapPageClientFunctionsProps = {
     map: IApiMapOutput

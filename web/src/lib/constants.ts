@@ -1,4 +1,4 @@
-import { makePoint } from "./graph"
+import { makePoint } from "tslib"
 
 export const ZOOM_SPEED_FACTOR = 5
 

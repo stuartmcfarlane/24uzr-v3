@@ -3,7 +3,7 @@
 import { ActionError } from "@/types/action"
 import { getSession } from "./session"
 import { apiCreateShip, apiUpdateShip } from "@/services/api"
-import { formData2polarCsv } from "@/lib/shipPolar"
+import { formData2polarCsv } from "tslib"
 import { redirect } from "next/navigation"
 
 export const createShipWithForm = async (formData: FormData): Promise<ActionError> => {

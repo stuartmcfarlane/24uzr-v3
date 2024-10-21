@@ -4,11 +4,11 @@ import { createPlan, findPlan, findPlans, updatePlan, updatePlanRoutes } from ".
 import { getAllRoutes } from "../../services/routeApi";
 import { findBuoysByMapId } from "../buoy/buoy.service";
 import { findLegsByMapId } from "../leg/leg.service";
-import { idIs } from "../../utils/idIs";
 import { findShip } from "../ship/ship.service";
 import { findWindByRegion } from "../wind/wind.service";
 import { findMap } from "../map/map.service";
-import { addSeconds } from "../../utils/time";
+import { addSeconds } from "tslib";
+import { idIs } from "tslib";
 
 export async function createPlanHandler(
     request: FastifyRequest<{

@@ -1,11 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { RouteIdParamInput, RouteIdParamSchema, CreateRouteInput, UpdateRouteInput } from './route.schema';
-import { createRoute, findRoute, findRoutes, updateRoute, updateRouteLegs, updateRouteStatus } from "./route.service";
-import { getShortestRoute } from "../../services/routeApi";
-import { findBuoysByMapId } from "../buoy/buoy.service";
-import { findLegsByMapId, findLegsByRouteId } from "../leg/leg.service";
-import { Ship } from "@prisma/client";
-import { idIs } from "../../utils/idIs";
+import { createRoute, findRoute, findRoutes, updateRoute, updateRouteStatus } from "./route.service";
+import { findLegsByRouteId } from "../leg/leg.service";
 
 export async function createRouteHandler(
     request: FastifyRequest<{
