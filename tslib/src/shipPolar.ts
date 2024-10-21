@@ -92,7 +92,15 @@ const resolveTws = (rows: string[][]) => {
     const [, ...tws] = rows[0]
     return tws.map(string2float)
 }
-const resolveTwa = (rows: string[][]) => sort(cmpNumber)(rows.map(head).map(string2float).filter(truthy))
+const resolveTwa = (rows: string[][]) => {
+    return sort(cmpNumber)(
+        rows
+            .filter(not(isSparseRow))
+            .map(head)
+            .map(string2float)
+            .filter(truthy)
+    )
+}
 
 const resolveBoatSpeeds = (rows: string[][]): {[angle: string]: number[]} => {
     return rows
@@ -245,5 +253,7 @@ export const getTwsCol = (shipPolar: ShipPolar) => (knots: number) => {
 export const getTwaRow = (shipPolar: ShipPolar) => (angle: number) => {
     const diffs = shipPolar.twa.map(absDiff(angle))
     const minDiff = Math.min(...diffs)
-    return diffs.findIndex(equal(minDiff))
+    const twaCol = diffs.findIndex(equal(minDiff))
+    const twa = shipPolar.twa[twaCol]
+    return shipPolar[twa]
 }

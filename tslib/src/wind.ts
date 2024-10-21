@@ -1,5 +1,6 @@
-import { distanceLatLng, LatLng } from './geo';
-import { makeVector, Vector } from './vector';
+import { indexByHash, project, toFixed, unique, cmpNumber, sort } from './fp'
+import { distanceLatLng, LatLng } from './geo'
+import { makeVector, Vector } from './vector'
 
 export type Wind = {
   lat: number
@@ -16,6 +17,13 @@ export type BulkWind = {
   data: Wind[]
 }
 
+export type IndexedWind = {
+  timestamp: string
+  lats: number[]
+  lngs: number[]
+  indexedByLatLng: { [hash: string]: Wind}
+}
+const wind2vector = ({ u, v }: Wind): Vector => makeVector(u, v)
 
 export const wind2resolution = (wind: SingleWind[]) => {
     const [head, ...tail] = wind
@@ -31,7 +39,7 @@ export const wind2resolution = (wind: SingleWind[]) => {
     return resolution
 }
 export const timestamp2string = (timestamp: string | Date) => typeof timestamp === "string" ? timestamp : timestamp.toISOString()
-export const timestampIs = (timestamp: string | Date) => (wind: BulkWind) => wind.timestamp === timestamp2string(timestamp)
+export const timestampIs = (timestamp: string | Date) => (wind: IndexedWind | BulkWind) => wind.timestamp === timestamp2string(timestamp)
 
 export const indexWindByTimestamp = (wind: SingleWind[]) => {
   return wind.reduce(
@@ -58,4 +66,48 @@ export const makeTimestampSlicedWind = (wind: SingleWind[]): BulkWind[] => {
     )
     return bulkWind
 }
-export const windAtLocation = (wind: Wind[], { lat, lng }: LatLng): Vector => makeVector(1, 1)
+const latLngHash = ({ lat, lng }: LatLng): string => `${toFixed(3)(lng)}:${toFixed(3)(lat)}`
+export const makeIndexedWind = (wind: SingleWind[]): IndexedWind[] => {
+  const timeSliced = makeTimestampSlicedWind(wind)
+  const indexed = timeSliced.map(
+    ({ timestamp, data }) => {
+      return {
+        timestamp: timestamp2string(timestamp),
+        lats: sort(cmpNumber)(unique(data.map(project('lat')))),
+        lngs: sort(cmpNumber)(unique(data.map(project('lng')))),
+        indexedByLatLng: indexByHash<Wind>(latLngHash)(data)
+      }
+    }
+  )
+  return indexed
+}
+function binarySearch(arr: number[], target: number): number {
+  let low = 0
+  let high = arr.length - 1
+
+  while (low <= high) {
+    const mid = Math.floor((low + high) / 2)
+
+    if (arr[mid] === target) {
+      return arr[mid]
+    } else if (arr[mid] < target) {
+      low = mid + 1
+    } else {
+      high = mid - 1
+    }
+  }
+  return arr[low]
+}
+let sdm = 0
+export const windAtLocation = (wind: IndexedWind, { lat, lng }: LatLng): Vector => {
+  const latLng = {
+    lat: binarySearch(wind.lats, lat),
+    lng: binarySearch(wind.lngs, lng),
+  }
+
+  if (!wind.indexedByLatLng[latLngHash(latLng)]) {
+    return makeVector(0, 0)
+  }
+  return wind2vector(wind.indexedByLatLng[latLngHash(latLng)])
+  
+}

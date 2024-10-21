@@ -98,4 +98,4 @@ export const indexByHash = <T>(fn: (t: T) => string) => (array: T[]) => {
 export const string2int = (s: string) => parseInt(s)
 export const string2float = (s: string) => parseFloat(s)
 export const int2string = (i: number) => `${i}`
-
+export const toFixed = (decimals: number) => (x: number) => x.toFixed(decimals)
