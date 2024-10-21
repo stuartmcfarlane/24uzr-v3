@@ -36,7 +36,9 @@ export const parseShipPolar = (polarCsv: string): ShipPolar => {
     const beatAngles = resolveBeatAngles(boatSpeeds)(rows)
     const beatVMG = resolveBeatVMG(boatSpeeds)(rows)
     const runAngles = resolveRunAngles(boatSpeeds)(rows)
+    console.log(`runAngles`, runAngles)
     const runVMG = resolveRunVMG(boatSpeeds)(rows)
+    console.log(`runVMG`, runVMG)
     return {
         tws,
         beatAngles,
@@ -71,8 +73,8 @@ const isSparseRow = (row: string[]) => {
     const isIt = truthy(angle) && values.map(string2float).filter(truthy).length == 1
     return isIt
 }
-const isBeatRow = (minBoatSpeedAngle: number) => (row: string[]) =>  string2float(row[0]) < minBoatSpeedAngle
-const isRunRow = (maxBoatSpeedAngle: number) => (row: string[]) =>  maxBoatSpeedAngle < string2float(row[0])
+const isBeatRow = (minBoatSpeedAngle: number) => (row: string[]) =>  string2float(row[0]) < 60
+const isRunRow = (maxBoatSpeedAngle: number) => (row: string[]) =>  100 < string2float(row[0])
 
 const resolveBeatAngles = (boatSpeeds: { [tws: string]: number[] }) => (rows: string[][]) => {
     const minBoatSpeedAngle = Math.min(...Object.keys(boatSpeeds).map(string2float))
@@ -105,8 +107,9 @@ const resolveBeatVMG = (boatSpeeds: {[tws: string]: number[]}) => (rows: string[
 const resolveRunAngles = (boatSpeeds: {[tws: string]: number[]}) => (rows: string[][]) => {
     const maxBoatSpeedAngle = Math.max(...Object.keys(boatSpeeds).map(string2float))
     const twsCount = boatSpeeds[maxBoatSpeedAngle].length
-    const beatRows = rows.filter(isSparseRow).filter(isRunRow(maxBoatSpeedAngle))
-    return beatRows.reduce(
+    const runRows = rows.filter(isSparseRow).filter(isRunRow(maxBoatSpeedAngle))
+    console.log(`runRows`, runRows)
+    return runRows.reduce(
         (runAngles, row) => {
             const [angle, ...values] = row
             const index = values.map(string2float).findIndex(truthy)
@@ -119,8 +122,8 @@ const resolveRunAngles = (boatSpeeds: {[tws: string]: number[]}) => (rows: strin
 const resolveRunVMG = (boatSpeeds: {[tws: string]: number[]}) => (rows: string[][]) => {
     const maxBoatSpeedAngle = Math.max(...Object.keys(boatSpeeds).map(string2float))
     const twsCount = boatSpeeds[maxBoatSpeedAngle].length
-    const beatRows = rows.filter(isSparseRow).filter(isRunRow(maxBoatSpeedAngle))
-    return beatRows.reduce(
+    const runRows = rows.filter(isSparseRow).filter(isRunRow(maxBoatSpeedAngle))
+    return runRows.reduce(
         (runVMG, row) => {
             const [, ...values] = row
             const index = values.map(string2float).findIndex(truthy)
