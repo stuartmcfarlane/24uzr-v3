@@ -1,10 +1,9 @@
 import { decimal2geo } from "./geo"
 import { realEq } from "./math"
-import { vectorAdd, Vector } from './vector';
+import { vectorAdd, Vector, vectorScale } from './vector';
 import { RefObject } from "react"
 
 export const makePoint = (x: number, y: number) => ({ x, y })
-export const makeVector = makePoint
 export const makeRectSafe = (p1: Point, p2: Point): Rect => makeRect(
     Math.min(p1.x, p2.x),
     Math.min(p1.y, p2.y),
@@ -315,7 +314,6 @@ export const rectTranslate = (v: Vector, r: Rect): Rect => {
         }
     ]
 }
-export const vectorScale = (s: number, v: Vector): Vector => ({ x: s * v.x, y: s * v.y})
 export const rectGrowAroundPoint = (
     margin: number,
     point: Point,
@@ -366,11 +364,6 @@ export const rectLimitTo = (limitRect: Rect, rect: Rect): Rect => {
     ]
     return result
 }
-export const vectorMagnitude = ({
-    x, y
-}: Vector): number => Math.sqrt(x * x + y * y)
-export const unitVector = (v: Vector): Vector => vectorScale(1 / vectorMagnitude(v), v)
-
 export const pointInRect = (rect?: Rect) => (point: Point) => {
     if (!rect) return false
     return rect[0].x <= point.x && point.x <= rect[1].x

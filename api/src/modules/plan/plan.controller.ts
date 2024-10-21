@@ -1,11 +1,14 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { PlanIdParamInput, PlanIdParamSchema, CreatePlanInput, UpdatePlanInput } from './plan.schema';
 import { createPlan, findPlan, findPlans, updatePlan, updatePlanRoutes } from "./plan.service";
-import { getAllRoutes, Wind } from "../../services/routeApi";
+import { getAllRoutes } from "../../services/routeApi";
 import { findBuoysByMapId } from "../buoy/buoy.service";
 import { findLegsByMapId } from "../leg/leg.service";
-import { Ship } from "@prisma/client";
 import { idIs } from "../../utils/idIs";
+import { findShip } from "../ship/ship.service";
+import { findWindByRegion } from "../wind/wind.service";
+import { findMap } from "../map/map.service";
+import { addSeconds } from "../../utils/time";
 
 export async function createPlanHandler(
     request: FastifyRequest<{
@@ -23,17 +26,29 @@ export async function createPlanHandler(
         const [
             buoys,
             legs,
+            ship,
+            map,
         ] = await Promise.all([
             findBuoysByMapId(plan.mapId),
             findLegsByMapId(plan.mapId),
+            findShip(plan.shipId),
+            findMap(plan.mapId),
         ])
         const startBuoy = buoys.find(idIs(plan.startBuoyId))
         const endBuoy = buoys.find(idIs(plan.endBuoyId))
-        
-        const ship = {} as Ship
-        const wind = {} as Wind
 
-        const allRoutes = await getAllRoutes(plan, startBuoy!, endBuoy!, ship, legs, buoys, wind)
+        const wind = await findWindByRegion(
+            {
+                lat1: map?.lat1.toNumber() || 0,
+                lng1: map?.lng1.toNumber() || 0,
+                lat2: map?.lat2.toNumber() || 0,
+                lng2: map?.lng2.toNumber() || 0,
+            },
+            plan.startTime.toISOString(),
+            addSeconds(plan.raceSecondsRemaining)(plan.startTime).toISOString()
+        )
+
+        const allRoutes = await getAllRoutes(plan, startBuoy!, endBuoy!, ship!, legs, buoys, wind)
 
         await updatePlanRoutes(plan, allRoutes)
         

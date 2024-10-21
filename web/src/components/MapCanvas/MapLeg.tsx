@@ -1,5 +1,5 @@
 import { MAP_LEG_COLOR } from "@/lib/constants"
-import { fmtLine, latLng2canvas, line2SvgLine } from "@/lib/graph"
+import { latLng2canvas, line2SvgLine } from "@/lib/graph"
 import { IApiBuoyOutput, IApiLegOutput } from "@/types/api"
 
 type MapLegProps = {

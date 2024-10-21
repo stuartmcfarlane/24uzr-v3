@@ -6,8 +6,10 @@ const planInput = {
     name: z.string(),
     ownerId: z.number(),
     mapId: z.number(),
+    shipId: z.number(),
     startBuoyId: z.number(),
     endBuoyId: z.number(),
+    startTime: z.string(),
     raceSecondsRemaining: z.number(),
 };
 

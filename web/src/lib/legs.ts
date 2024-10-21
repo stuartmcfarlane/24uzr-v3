@@ -1,5 +1,5 @@
 import { IApiLegOutput } from "@/types/api"
-import { and, idIsNot } from "./fp"
+import { and, idIsNot } from "tslib"
 
 const isReturnLeg = (needle: IApiLegOutput) => (haystack: IApiLegOutput) => (
     needle.startBuoyId === haystack.endBuoyId

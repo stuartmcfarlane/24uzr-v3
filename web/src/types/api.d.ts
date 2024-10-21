@@ -125,10 +125,12 @@ export type IApiRouteLeg = IApiRouteLegInput | IApiRouteLegOutput
 export interface IApiPlanInput {
   ownerId?: number
   mapId: number
+  shipId: number
   name: string
   startBuoyId: number
   endBuoyId: number
   raceSecondsRemaining: number
+  startTime: string
 }
 export interface IApiPlanOutput extends IApiPlanInput{
   id: number

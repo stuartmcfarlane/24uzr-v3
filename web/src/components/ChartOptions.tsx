@@ -1,12 +1,9 @@
-import { IApiBuoyInput, IApiBuoyOutput, IApiLeg, IApiLegInput, IApiLegOutput, IApiMapOutput } from "@/types/api"
-import EditBuoyForm from "./EditBuoyForm"
-import AddBuoyForm from "./AddBuoyForm"
+import { IApiBuoyInput, IApiBuoyOutput, IApiLeg, IApiLegInput, IApiMapOutput } from "@/types/api"
 import { ChangeEvent, useState } from "react"
 import { parseBuoys, parseLegs } from "@/lib/parsers"
 import { useChange } from '../hooks/useChange';
-import { createBuoys, createLegs, getBuoys, getLegs, updateBuoy, updateBuoyWithForm, updateLeg } from "@/actions/map"
-import { fieldIs, nameIs, withField } from "@/lib/fp"
-import { uniqueHash } from '../lib/fp';
+import { createBuoys, createLegs, getBuoys, getLegs, updateBuoy } from "@/actions/map"
+import { nameIs, uniqueHash } from 'tslib';
 
 type ChartOptionsProps = {
     map: IApiMapOutput

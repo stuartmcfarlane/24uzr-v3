@@ -1,6 +1,6 @@
 "use client"
 
-import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput, IApiWindOutput, Region } from "@/types/api"
+import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput, IApiShipOutput, IApiWindOutput, Region } from "@/types/api"
 import MapSvg from "./MapCanvas/MapSvg"
 import WindLegend from "./WindLegend"
 import { useState } from "react"
@@ -12,6 +12,7 @@ type MapCanvasProps = {
     routeLegs?: IApiRouteLegOutput[]
     legs?: IApiLegOutput[]
     geometry: IApiGeometryOutput[]
+    ship?: IApiShipOutput
     onClearSelections?: () => void
     selectedBuoy?: IApiBuoyOutput
     onSelectBuoy?: (buoy?: IApiBuoyOutput) => void
@@ -33,6 +34,7 @@ const MapCanvas = (props: MapCanvasProps) => {
         buoys,
         legs,
         geometry,
+        ship,
         routeLegs,
         onClearSelections,
         selectedBuoy,
@@ -60,6 +62,7 @@ const MapCanvas = (props: MapCanvasProps) => {
                     legs={legs}
                     geometry={geometry}
                     routeLegs={routeLegs}
+                    ship={ship}
                     onClearSelections={onClearSelections}
                     onSelectBuoy={onSelectBuoy}
                     selectedBuoy={selectedBuoy}

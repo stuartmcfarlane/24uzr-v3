@@ -7,8 +7,12 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { IApiBuoyInput, IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapOutput, IApiRouteType } from '../types/api';
 import { parseNameLatLng } from '@/lib/parsers';
-import { project, truthy, unique } from '@/lib/fp';
-import { notEmpty } from '../lib/fp';
+import {
+    project,
+    unique,
+    notEmpty,
+    
+} from 'tslib';
 import { geo2decimal } from '@/lib/geo';
 
 export const createMapWithForm = async (formData: FormData): Promise<ActionError> => {

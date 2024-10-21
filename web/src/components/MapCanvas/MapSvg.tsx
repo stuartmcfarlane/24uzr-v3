@@ -1,7 +1,7 @@
 "use client"
 
 import { clientPoint2svgPoint, domRect2rect, fitToClient, rectGrowMargin, latLng2canvas, makePoint, makeRect, makeScreen2svgFactor, points2boundingRect, rect2viewBox, screenUnits2canvasUnits, canvas2latLng, latLng2canvasA, rectWidth, fmtRect, makeRectSafe, pointInRect } from "@/lib/graph"
-import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegInput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput, IApiWindOutput, Region } from "@/types/api"
+import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegInput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput, IApiShipOutput, IApiWindOutput, Region } from "@/types/api"
 import MapBuoy from "./MapBuoy"
 import { MouseEvent, useEffect, useRef, useState } from "react"
 import { rect2SvgRect } from '../../lib/graph';
@@ -12,7 +12,7 @@ import { useMouseSvgPosition } from "@/hooks/useMousePosition"
 import { useChange } from "@/hooks/useChange"
 import MapLegDrag from "./MapLegDrag"
 import MapLeg from "./MapLeg"
-import { idIs } from "@/lib/fp"
+import { idIs } from "tslib"
 import { actualLegs } from "@/lib/legs"
 import { useScrollWheelZoom } from "@/hooks/useScrollWheelZoom"
 import MouseCursor from "./MouseCursor"
@@ -34,6 +34,7 @@ type MapSvgProps = {
     legs?: IApiLegOutput[]
     routeLegs?: IApiRouteLegOutput[]
     geometry: IApiGeometryOutput[]
+    ship?: IApiShipOutput
     selectedBuoy?: IApiBuoyOutput
     onClearSelections?: () => void
     onSelectBuoy?: (buoy?: IApiBuoyOutput) => void
@@ -56,6 +57,7 @@ const MapSvg = (props: MapSvgProps) => {
         legs,
         routeLegs,
         geometry,
+        ship,
         onClearSelections,
         onSelectBuoy,
         selectedBuoy,

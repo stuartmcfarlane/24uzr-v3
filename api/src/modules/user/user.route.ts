@@ -127,16 +127,33 @@ async function userRoutes(server: FastifyInstance) {
     {
       schema: {
         tags: ['user'],
-        security: [
-          {
-            bearerAuth: [],
-          }
-        ],
+        security: [ { bearerAuth: [] } ],
+        response: {
+          200: $ref("getUserShipsResponseSchema"),
+        },
       },
       preHandler: [server.authenticate],
     },
     getUserShipsHandler
   );
+
+  server.get(
+    "/user/:id/ships",
+    {
+      schema: {
+        tags: ['user'],
+        security: [ { bearerAuth: [] } ],
+        response: {
+          200: $ref("getUserShipsResponseSchema"),
+        },
+      },
+      preHandler: [
+        server.authenticate,
+      ],
+    },
+    getUserShipsHandler
+  );
+
 }
 
 export default userRoutes;

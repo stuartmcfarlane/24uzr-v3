@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { RouteIdParamInput, RouteIdParamSchema, CreateRouteInput, UpdateRouteInput } from './route.schema';
 import { createRoute, findRoute, findRoutes, updateRoute, updateRouteLegs, updateRouteStatus } from "./route.service";
-import { getShortestRoute, Wind } from "../../services/routeApi";
+import { getShortestRoute } from "../../services/routeApi";
 import { findBuoysByMapId } from "../buoy/buoy.service";
 import { findLegsByMapId, findLegsByRouteId } from "../leg/leg.service";
 import { Ship } from "@prisma/client";
@@ -23,22 +23,22 @@ export async function createRouteHandler(
             return
         }
 
-        const [
-            buoys,
-            legs,
-        ] = await Promise.all([
-            findBuoysByMapId(route.mapId),
-            findLegsByMapId(route.mapId),
-        ])
-        const startBuoy = buoys.find(idIs(route.startBuoyId))
-        const endBuoy = buoys.find(idIs(route.endBuoyId))
+        // const [
+        //     buoys,
+        //     legs,
+        // ] = await Promise.all([
+        //     findBuoysByMapId(route.mapId),
+        //     findLegsByMapId(route.mapId),
+        // ])
+        // const startBuoy = buoys.find(idIs(route.startBuoyId))
+        // const endBuoy = buoys.find(idIs(route.endBuoyId))
         
-        const ship = {} as Ship
-        const wind = {} as Wind
+        // const ship = {} as Ship
+        // const wind = {} as Wind
 
-        const legsOnRoute = await getShortestRoute(route, startBuoy!, endBuoy!, ship, legs, buoys, wind)
+        // const legsOnRoute = await getShortestRoute(route, startBuoy!, endBuoy!, ship, legs, buoys, wind)
 
-        await updateRouteLegs(route.id, legsOnRoute)
+        // await updateRouteLegs(route.id, legsOnRoute)
         
         await updateRouteStatus(route.id, 'DONE')
 
