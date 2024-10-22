@@ -35,6 +35,8 @@ export async function createRoute(route: CreateRouteInput) {
 export async function findRoute(id: number) {
     return prisma.route.findUnique({
         include: {
+            startBuoy: true,
+            endBuoy: true,
             legs: {
                 include: {
                     leg: {

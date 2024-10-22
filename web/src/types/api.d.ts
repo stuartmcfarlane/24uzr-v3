@@ -107,6 +107,8 @@ export interface IApiRouteOutput extends IApiRouteInput{
   createdAt: string
   updatedAt: string
   legs: IApiRouteLegOutput[]
+  startBuoy: IApiBuoyOutput
+  endBuoy: IApiBuoyOutput
 }
 
 export type IApiRoute = IApiRouteInput | IApiRouteOutput
@@ -123,6 +125,7 @@ export type IApiRouteLegLegOutput = IApiLegOutput & {
 }
 
 export interface IApiRouteLegOutput extends IApiRouteLegInput{
+  index: number
   leg: IApiRouteLegLegOutput
 }
 

@@ -38,6 +38,8 @@ const planResponseSchema = z.object({
     routes: z.array(
         z.object({
             ...RouteSchema.shape,
+            startBuoy: BuoySchema,
+            endBuoy: BuoySchema,
             legs: z.array(
                 z.object({
                     ...LegsOnRouteSchema.shape,

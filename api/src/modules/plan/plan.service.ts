@@ -22,6 +22,8 @@ export async function findPlan(id: number) {
             endBuoy: true,
             routes: {
                 include: {
+                    startBuoy: true,
+                    endBuoy: true,
                     legs: {
                         include: {
                             leg: {

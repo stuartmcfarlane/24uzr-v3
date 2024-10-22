@@ -51,6 +51,8 @@ const updateRouteSchema = z.object({
 const routeResponseSchema = z.object({
     ...routeInput,
     ...routeGenerated,
+    startBuoy: BuoySchema,
+    endBuoy: BuoySchema,
     legs: z.array(
         z.object({
             ...LegsOnRouteSchema.shape,

@@ -2,11 +2,13 @@ import { IApiBuoyOutput, IApiPlanOutput, IApiRouteOutput } from "@/types/api"
 import Link from "next/link"
 import { NewRouteTool } from "./NewRouteTool"
 import RouteIcon from "./Icons/RouteIcon"
-import { fmtNM, route2LengthNm } from "@/lib/route"
+import { cmpRouteLegOrder, cmpRouteLength, fmtNM, route2LengthNm } from "@/lib/route"
 import { useCallback, useState } from "react"
 import usePolling from "@/hooks/usePolling"
 import { useChange } from "@/hooks/useChange"
 import { getPlan } from "@/actions/plan"
+import { desc, sort } from "tslib"
+import RouteOption from "./RouteOption"
 
 
 type RouteOptionsProps = {
@@ -16,6 +18,7 @@ type RouteOptionsProps = {
     endBuoy?: IApiBuoyOutput
     onHoverRoute?: (route?: IApiRouteOutput) => void
     selectedRoute?: IApiRouteOutput
+    showBuoys?: boolean
 }
 const RouteOptions = (props: RouteOptionsProps) => {
     const {
@@ -24,7 +27,8 @@ const RouteOptions = (props: RouteOptionsProps) => {
         startBuoy,
         endBuoy,
         onHoverRoute,
-        selectedRoute
+        selectedRoute,
+        showBuoys,
     } = props
 
     const [actualPlan, setActualPlan] = useState(plan)
@@ -32,10 +36,12 @@ const RouteOptions = (props: RouteOptionsProps) => {
     const onMouseEnter = (route: IApiRouteOutput) => () => onHoverRoute && onHoverRoute(route)
     const onMouseLeave = (route: IApiRouteOutput) => () => onHoverRoute && onHoverRoute()
 
-    const poll = useCallback(async () => {
+    const poll = useCallback(
+        async () => {
             const plan = await getPlan(actualPlan.id)
             return plan
-        }, [])
+        }, []
+    )
     const {data: polledPlan, cancel: cancelPolling} = usePolling(
         poll, {
             interval: 1000,
@@ -53,6 +59,7 @@ const RouteOptions = (props: RouteOptionsProps) => {
         [polledPlan?.status]
     )
     if (polledPlan?.status === 'DONE') cancelPolling()
+
     return (<>
         {!startBuoy && (<>
             <div className="flex gap-4">
@@ -70,29 +77,25 @@ const RouteOptions = (props: RouteOptionsProps) => {
                 )}
             </div>
             <div className="flex flex-col gap-4 overflow-y-auto pr-4">
-                {(actualRoutes || []).map(route => (
-                    <div
-                        key={route.id}
-                        className={`flex justify-between border p-2 hover:bg-24uzr hover:text-white ${(
-                            selectedRoute?.id === route.id
-                                ? ' bg-24uzr text-white'
-                                : ''
-
-                        )}`}
-                        onMouseEnter={onMouseEnter(route)}
-                        onMouseLeave={onMouseLeave(route)}
-                    >
-                        <Link className="flex-grow flex flex-col"
-                            href={`/map/${actualPlan.mapId}/plan/${actualPlan.id}/route/${route.id}`}
-                        >
-                            <div className="">
-                                {route.name}
-                            </div>
-                            <div className="text-xs">
-                                {fmtNM(route2LengthNm(route))}
-                            </div>
-                        </Link>
-                    </div>
+                {selectedRoute && (
+                    <RouteOption
+                        plan={actualPlan}
+                        route={selectedRoute}
+                        onHoverRoute={onHoverRoute}
+                        selectedRoute={selectedRoute}
+                        showBuoys={true}
+                    />
+                )}
+                {sort(desc(cmpRouteLength))(actualRoutes || []).map(route => (
+                    (!selectedRoute || route.id !== selectedRoute.id) && (
+                        <RouteOption key={route.id}
+                            plan={actualPlan}
+                            route={route}
+                            onHoverRoute={onHoverRoute}
+                            selectedRoute={selectedRoute}
+                            showBuoys={showBuoys}
+                        />
+                    )
                 ))}
             </div>
         </>)}

@@ -71,6 +71,8 @@ export const notEmpty = <TValue>(value: TValue | null | undefined): value is TVa
 export const truthy = (a:any) => !!a
 export const withField = (o1: {}) => (o2: {}) => ({ ...o2, ...o1 })
 export type CmpFunction<T> = (a: T, b: T) => number
+export const asc = <T>(cmp: CmpFunction<T>) => (a: T, b: T) => cmp(a, b)
+export const desc = <T>(cmp: CmpFunction<T>) => (a: T, b: T) => cmp(b, a)
 export const cmpNumber: CmpFunction<number> = (a: number, b: number) => a - b
 export const cmpString: CmpFunction<string> = (a: string, b: string) => a > b ? +1 : a < b ? -1 : 0
 export const sort = <T>(cmp: CmpFunction<T>) => (array: T[]) => {
