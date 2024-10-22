@@ -4,7 +4,7 @@
 
 @layer base {
     svg.map-canvas {
-        cursor:none;
+        cursor:crosshair;
     }
     svg.map-canvas text {
         -webkit-user-select: none;

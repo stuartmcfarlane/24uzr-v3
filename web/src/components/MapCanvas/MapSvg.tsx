@@ -309,7 +309,7 @@ const MapSvg = (props: MapSvgProps) => {
                         boundingRect={boundingRect}
                     />
                 )}
-                {mouseSvgPoint && pointInRect(actualViewBoxRect)(mouseSvgPoint) && (
+                {false && mouseSvgPoint && pointInRect(actualViewBoxRect)(mouseSvgPoint) && (
                     <MouseCursor
                         point={mouseSvgPoint}
                         screen2svgFactor={screen2svgFactor}
