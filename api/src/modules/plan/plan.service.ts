@@ -18,6 +18,8 @@ export async function createPlan(plan: CreatePlanInput) {
 export async function findPlan(id: number) {
     return prisma.plan.findUnique({
         include: {
+            startBuoy: true,
+            endBuoy: true,
             routes: {
                 include: {
                     legs: {

@@ -4,8 +4,11 @@ import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMa
 import MapSvg from "./MapCanvas/MapSvg"
 import WindLegend from "./WindLegend"
 import { useState } from "react"
+import { LatLng } from "tslib"
+import { region2rect } from "@/lib/graph"
 
 type MapCanvasProps = {
+    initialBoundingRegion?: Region
     wind?: IApiBulkWind[]
     map?: IApiMapOutput
     buoys?: IApiBuoyOutput[]
@@ -29,6 +32,7 @@ type MapCanvasProps = {
 
 const MapCanvas = (props: MapCanvasProps) => {
     const {
+        initialBoundingRegion,
         wind,
         map,
         buoys,
@@ -56,6 +60,7 @@ const MapCanvas = (props: MapCanvasProps) => {
         <div className="border flex-grow flex flex-col">
             <div className="flex-1">
                 <MapSvg
+                    initialBoundingRect={initialBoundingRegion && region2rect(initialBoundingRegion)}
                     map={map}
                     wind={wind}
                     buoys={buoys}

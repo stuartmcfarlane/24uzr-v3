@@ -9,7 +9,7 @@ import {
     canvas2latLng,    
 } from "@/lib/graph"
 import {
-        fitToClient,
+    fitToClient,
     rectGrowMargin,
     makePoint,
     makeRect,
@@ -48,6 +48,7 @@ import MapRegion from "./MapRegion"
 const DEBUG = false
 
 type MapSvgProps = {
+    initialBoundingRect?: Rect
     map?: IApiMapOutput
     wind?: IApiBulkWind[]
     buoys?: IApiBuoyOutput[]
@@ -71,6 +72,7 @@ type MapSvgProps = {
 
 const MapSvg = (props: MapSvgProps) => {
     const {
+        initialBoundingRect,
         map,
         wind,
         buoys,
@@ -177,6 +179,15 @@ const MapSvg = (props: MapSvgProps) => {
 
     useEffect(
         () => {
+            if (initialBoundingRect) {
+                const boundingRect = rectGrowMargin(
+                    `10%`,
+                    initialBoundingRect
+               )
+                setBoundingRect(boundingRect)
+                setInitialBoundingViewBoxRect(boundingRect)
+                return
+            }
             if (map && (map.lat1 || map.lat2 || map.lng1 || map.lng2)) {
                 const p1 = latLng2canvas({ lng: map.lng1, lat: map.lat1})
                 const p2 = latLng2canvas({ lng: map.lng2, lat: map.lat2 })
@@ -200,7 +211,7 @@ const MapSvg = (props: MapSvgProps) => {
             setBoundingRect(boundingRect)
             setInitialBoundingViewBoxRect(boundingRect)
         },
-        [ buoys, map ]
+        [ buoys, map, initialBoundingRect ]
     )
     useEffect(
         () => {

@@ -1,5 +1,6 @@
+import { IApiPlanOutput, Region } from "@/types/api"
 import { RefObject } from "react"
-import { LatLng, Line, makePoint, Point, Rect, rectHeight, rectPoint, rectWidth } from "tslib"
+import { LatLng, Line, makePoint, makeRectSafe, Point, Rect, rectHeight, rectPoint, rectWidth } from "tslib"
 
 const LNG_FACTOR = 100
 const LAT_FACTOR = -100
@@ -79,4 +80,20 @@ export const line2SvgLine = (line: Line) => {
         x2: p2.x,
         y2: p2.y,
     }
+}
+
+export const region2rect = (region: Region) => {
+    const { lat1, lng1, lat2, lng2} = region
+    const p1 = latLng2canvas({lat: lat1, lng: lng1})
+    const p2 = latLng2canvas({ lat: lat2, lng: lng2 })
+    return makeRectSafe(p1, p2)
+}
+export const plan2region = (plan: IApiPlanOutput): Region => {
+    const region = {
+        lat1: plan.startBuoy.lat,
+        lng1: plan.startBuoy.lng,
+        lat2: plan.endBuoy.lat,
+        lng2: plan.endBuoy.lng,
+    }
+    return region
 }

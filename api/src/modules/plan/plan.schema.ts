@@ -33,6 +33,8 @@ const updatePlanSchema = z.object({
 const planResponseSchema = z.object({
     ...planInput,
     ...planGenerated,
+    startBuoy: BuoySchema,
+    endBuoy: BuoySchema,
     routes: z.array(
         z.object({
             ...RouteSchema.shape,

@@ -142,6 +142,8 @@ export interface IApiPlanOutput extends IApiPlanInput{
   id: number
   createdAt: string
   updatedAt: string
+  startBuoy: IApiBuoyOutput
+  endBuoy: IApiBuoyOutput
   status: ApiPlanStatus
   routes: IApiRouteOutput[]
 }
