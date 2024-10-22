@@ -35,18 +35,23 @@ export function curry<P extends any[], R>(fn: (...args: P) => R) {
         return ((...more: any[]) => (curry(fn) as Function)(...args, ...more));
     }) as unknown as Curry<P, R>;
 }
-
 export type Predicate<T> = (t: T) => boolean
+export const equal = <T>(a: T): Predicate<T> => (b: T) => a === b
+export const lessThan = <T>(a: T): Predicate<T> => (b: T) => b < a
+export const greaterThan = <T>(a: T): Predicate<T> => (b: T) => a < b
 const allOf = <T>(...predicates: Predicate<T>[]) => (t: T) => predicates.reduce((pp, predicate) => pp && predicate(t), true)
 const anyOf = <T>(...predicates: Predicate<T>[]) => (t: T) => predicates.reduce((pp, predicate) => pp || predicate(t), true)
 export const and = allOf
 export const or = anyOf
 export const not = <T>(predicate: Predicate<T>): Predicate<T> => (t: T) => !predicate(t)
 
+export const fieldIs = <O, K extends keyof O>(k: K) => (v: any) => (o: O) => v === o[k]
 export const idIs = (needle: number) => (o: { id: number }): boolean => needle === o.id
 export const nameIs = (needle: string) => (o: { name: string }): boolean => needle === o.name
 export const maybeFinishBuoy =  (o: { name: string }): boolean => /finish/i.test(o.name)
 
+export const pick = <T>(i: number) => (array: T[]) => array[i]
+export const head = <T>(array: T[]) => pick<T>(0)(array)
 export const idIsNot = (needle: number) => (o: { id: number }): boolean => needle !== o.id
 export const project = <O, K extends keyof O>(k: K) => (o: O) => o[k]
 export const unique = <T>(array: T[]) => {
@@ -93,4 +98,4 @@ export const indexByHash = <T>(fn: (t: T) => string) => (array: T[]) => {
 export const string2int = (s: string) => parseInt(s)
 export const string2float = (s: string) => parseFloat(s)
 export const int2string = (i: number) => `${i}`
-
+export const toFixed = (decimals: number) => (x: number) => x.toFixed(decimals)

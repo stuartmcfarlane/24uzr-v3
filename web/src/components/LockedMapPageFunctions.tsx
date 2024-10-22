@@ -1,16 +1,17 @@
 "use client"
 
-import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiPlanOutput, IApiWindOutput } from "@/types/api"
+import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiPlanOutput, IApiShipOutput, IApiWindOutput } from "@/types/api"
 import MapCanvas from "./ MapCanvas"
 import { useState } from "react"
 import { updateMap } from "@/actions/map"
-import { maybeFinishBuoy } from "@/lib/fp"
+import { maybeFinishBuoy } from "tslib"
 import PadlockIcon from "./Icons/PadlockIcon"
 import { useChange } from "@/hooks/useChange"
 import PlanOptions from "./PlanOptions"
 
 type LockedMapPageClientFunctionsProps = {
     map: IApiMapOutput
+    ships: IApiShipOutput[]
     wind: IApiBulkWind[]
     buoys: IApiBuoyOutput[]
     legs: IApiLegOutput[]
@@ -21,6 +22,7 @@ type LockedMapPageClientFunctionsProps = {
 const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) => {
     const {
         map,
+        ships,
         wind,
         buoys,
         legs,
@@ -35,7 +37,7 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
     const [creatingLeg, setCreatingLeg] = useState<{startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput} | undefined>(undefined)
     const [hoveredPlan, setHoveredPlan] = useState<IApiPlanOutput | undefined>(undefined)
     const [showWind, setShowWind] = useState(true)
-
+    const [activeShip, setActiveShip] = useState(ships?.length === 1 ? ships[0] : undefined)
     const onShowWind = (showWind: boolean) => setShowWind(showWind)
 
     const onClearSelection = () => {
@@ -48,7 +50,6 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
         if (!endBuoy) {
             setStartBuoy(buoy)
         }
-        
     }
     useChange(
         () => {
@@ -73,7 +74,9 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
     const onHoverPlan = (plan?: IApiPlanOutput) => {
         setHoveredPlan(plan)
     }
-
+    const onSelectShip = (ship?: IApiShipOutput) => {
+        setActiveShip(ship)
+    }
     if (!map.isLocked) return <></>
 
     return (
@@ -89,10 +92,13 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
                     <div className="flex-1 flex flex-col gap-4 mt-4 border-t-2 pt-4">
                         <PlanOptions
                             map={map}
+                            ships={ships}
                             plans={plans}
                             startBuoy={creatingLeg?.startBuoy || startBuoy}
                             endBuoy={creatingLeg?.endBuoy || endBuoy || finishBuoy}
                             onHoverPlan={onHoverPlan}
+                            activeShip={activeShip}
+                            onSelectShip={onSelectShip}
                         />
                     </div>
                 </div>
@@ -103,6 +109,7 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
                 wind={wind}
                 buoys={buoys}
                 legs={legs}
+                ship={activeShip}
                 onClearSelections={onClearSelection}
                 selectedBuoy={selectedBuoy}
                 onSelectBuoy={onSelectBuoy}

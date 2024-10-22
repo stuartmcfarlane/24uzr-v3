@@ -1,5 +1,6 @@
-import { fmtLine, line2SvgLine } from "@/lib/graph"
+import { line2SvgLine } from "@/lib/graph"
 import { IApiBuoyOutput } from "@/types/api"
+import { Point } from "tslib"
 
 type MapLegDragProps = {
     start?: Point

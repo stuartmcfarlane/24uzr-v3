@@ -1,4 +1,4 @@
-import { GeoJsonFeature, GeoJsonFeatureCollection, GeoJsonLineString, GeoJsonMultiLineString, GeoJsonMultiPolygon, GeoJsonPolygon, GeoJsonPosition } from './geojson.schema';
+import { GeoJsonFeature, GeoJsonFeatureCollection, GeoJsonPosition } from './geojson.schema';
 import { Region } from "./region.schema";
 export { Region } from "./region.schema";
 

@@ -1,4 +1,5 @@
-import { clientPoint2svgPoint, makePoint, rectGrowAroundPoint, rectHeight, rectLimitTo, rectWidth } from "@/lib/graph";
+import { clientPoint2svgPoint } from "@/lib/graph";
+import { makePoint, Rect, rectGrowAroundPoint, rectHeight, rectLimitTo, rectWidth } from "tslib";
 import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { useChange } from "./useChange";
 import { ZOOM_SPEED_FACTOR } from '../lib/constants';

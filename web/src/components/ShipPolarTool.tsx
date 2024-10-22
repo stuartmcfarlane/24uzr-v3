@@ -1,11 +1,10 @@
 "use client"
 
 import { updateShipPolar } from "@/actions/ship"
-import { cmpNumber, sort, string2float, truthy } from "@/lib/fp"
+import { cmpNumber, fieldName, parseShipPolar, sort, string2float, truthy } from "tslib"
 import { IApiShipOutput } from "@/types/api"
 import PadlockIcon from "./Icons/PadlockIcon";
 import { ChangeEvent, useState } from "react";
-import { fieldName, parseShipPolar } from "@/lib/shipPolar";
 
 export type ShipPolarToolParams = {
     ship: IApiShipOutput

@@ -14,7 +14,6 @@ const ShipPage = async ({
     }
     const id = parseInt(params.shipId)
     const ship = await apiGetShip(session.apiToken!, id)
-    console.log(`ship`, ship)
     return (
         <div className="my-8">
             <h1 className="text-4xl">

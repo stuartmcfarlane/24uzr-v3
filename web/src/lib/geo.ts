@@ -1,4 +1,7 @@
 import { convert } from "geo-coordinates-parser"
+import { fmtUndefined, LatLng } from "tslib"
+
+export const fmtLatLng = (latLng?: LatLng): string => !latLng ? fmtUndefined() : decimal2geo(latLng)
 
 export const geo2decimal = (geo: string): LatLng | undefined => {
     try {

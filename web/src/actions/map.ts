@@ -7,8 +7,12 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { IApiBuoyInput, IApiBuoyOutput, IApiLegInput, IApiLegOutput, IApiMapOutput, IApiRouteType } from '../types/api';
 import { parseNameLatLng } from '@/lib/parsers';
-import { project, truthy, unique } from '@/lib/fp';
-import { notEmpty } from '../lib/fp';
+import {
+    project,
+    unique,
+    notEmpty,
+    
+} from 'tslib';
 import { geo2decimal } from '@/lib/geo';
 
 export const createMapWithForm = async (formData: FormData): Promise<ActionError> => {
@@ -221,13 +225,16 @@ export const createPlanWithForm = async (formData: FormData): Promise<ActionErro
     const name = formData.get("name") as string
     const defaultName = formData.get("defaultName") as string
     const mapId = parseInt(formData.get("mapId") as string)
+    const shipId = parseInt(formData.get("shipId") as string)
     const startBuoyId = parseInt(formData.get("startBuoyId") as string)
     const endBuoyId = parseInt(formData.get("endBuoyId") as string)
     const raceSecondsRemaining = parseInt(formData.get("raceSecondsRemaining") as string)
     const raceHoursRemaining = parseInt(formData.get("raceHoursRemaining") as string)
+    const startTime = formData.get("startTime") as string
 
     if (!session.userId ||
         !mapId ||
+        !shipId ||
         !startBuoyId ||
         !endBuoyId
     ) {
@@ -241,8 +248,10 @@ export const createPlanWithForm = async (formData: FormData): Promise<ActionErro
         name: name || defaultName,
         ownerId: session.userId,
         mapId,
+        shipId,
         startBuoyId,
         endBuoyId,
+        startTime,
         raceSecondsRemaining: raceSecondsRemaining | raceHoursRemaining * 60 * 60,
     })
     if (!createdPlan) return { error: "Failed to create plan" }

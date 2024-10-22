@@ -1,5 +1,5 @@
 import { geo2decimal } from "@/lib/geo"
-import { wind2resolution } from "@/lib/wind"
+import { indexWindByTimestamp, wind2resolution } from "tslib"
 import { IApiBulkWind, IApiBuoyInput, IApiBuoyOutput, IApiGeometryInput, IApiGeometryOutput, IApiLegInput, IApiLegOutput, IApiMapInput, IApiMapOutput, IApiMapUpdateInput, IApiPlanInput, IApiPlanOutput, IApiRouteInput, IApiRouteLegOutput, IApiRouteOutput, IApiShipInput, IApiShipOutput, IApiShipUpdateInput, IApiSingleWind, IApiUser, IApiUserOutput, IApiWind, IApiWindInput, IApiWindOutput } from "@/types/api"
 
 const makeApiUrl = (uri: string) => `${process.env.NEXT_PUBLIC_API_URL || process.env.API_URL}${uri}`
@@ -402,16 +402,7 @@ export const apiGetWind = async (
     const wind = await response.json() as IApiSingleWind[]
     if (!wind.length) return []
 
-    const windByTimestamp = wind.reduce(
-        (windByTimestamp, wind) => {
-            if (!windByTimestamp[wind.timestamp]) {
-                windByTimestamp[wind.timestamp] = []
-            }
-            windByTimestamp[wind.timestamp].push(wind)
-            return windByTimestamp
-        },
-        {} as {[k: string]: IApiSingleWind[]}
-    )
+    const windByTimestamp = indexWindByTimestamp(wind)
 
     const timestamps = Object.keys(windByTimestamp) as string[]
     const resolution = wind2resolution(windByTimestamp[timestamps[0]])
@@ -504,5 +495,19 @@ export const apiGetShip = async (
     const ship = await response.json()
 
     return  ship
+}
+
+export const apiGetShipsByOwner = async (
+    accessToken: string,
+    ownerId: number,
+): Promise<IApiShipOutput[] | null> => {
+
+    const response = await get(accessToken, `/api/user/${ownerId}/ships`)
+
+    if (!response.ok) return null
+    
+    const ships = await response.json()
+
+    return  ships
 }
 

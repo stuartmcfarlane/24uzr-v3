@@ -3,7 +3,7 @@
 import { ActionError } from "@/types/action"
 import { getSession } from "./session"
 import { apiCreateShip, apiUpdateShip } from "@/services/api"
-import { formData2polarCsv } from "@/lib/shipPolar"
+import { formData2polarCsv } from "tslib"
 import { redirect } from "next/navigation"
 
 export const createShipWithForm = async (formData: FormData): Promise<ActionError> => {
@@ -11,7 +11,6 @@ export const createShipWithForm = async (formData: FormData): Promise<ActionErro
 
     const name = formData.get("name") as string
     const ownerId = parseInt(formData.get("ownerId") as string)
-    console.log(`create ship`, {name, ownerId})
 
     if (!name) {
         return { error: "Name is missing" }

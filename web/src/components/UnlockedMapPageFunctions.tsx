@@ -4,7 +4,7 @@ import { IApiBuoyOutput, IApiGeometryOutput, IApiLegInput, IApiLegOutput, IApiMa
 import MapCanvas from "./ MapCanvas"
 import { useEffect, useState } from "react"
 import { createLeg, deleteBuoy, updateMap } from "@/actions/map"
-import { idIs, maybeFinishBuoy } from "@/lib/fp"
+import { idIs } from "tslib"
 import PadlockIcon from "./Icons/PadlockIcon"
 import BuoyIcon from "./Icons/BuoyIcon"
 import useKeyPress from "@/hooks/useKeyPress"
@@ -14,7 +14,7 @@ import BuoyOptions from "./BuoyOptions"
 import ChartOptions from "./ChartOptions"
 import GeometryIcon from "./Icons/GeometryIcon"
 import GeometryOptions from "./GeometryOptions"
-import { realEq } from "@/lib/math"
+import { realEq } from "tslib"
 
 type UnlockedMapPageClientFunctionsProps = {
     map: IApiMapOutput

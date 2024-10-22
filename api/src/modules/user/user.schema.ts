@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { buildJsonSchemas } from "fastify-zod";
+import { ShipSchema } from "../../../prisma/generated/zod";
 
 const userCore = {
   email: z
@@ -36,6 +37,8 @@ const getUserResponseSchema = z.object({
   ...userCore,
 });
 
+const getUserShipsResponseSchema = z.array(ShipSchema);
+
 export const UserIdParamSchema = z.object({
     id: z.coerce.number(),
 }).strict()
@@ -68,6 +71,7 @@ export const { schemas: userSchemas, $ref } = buildJsonSchemas({
   createUserSchema,
   createUserResponseSchema,
   getUserResponseSchema,
+  getUserShipsResponseSchema,
   loginSchema,
   loginResponseSchema,
   updateUserSchema,

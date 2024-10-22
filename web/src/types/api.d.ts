@@ -116,8 +116,13 @@ export interface IApiRouteLegInput {
   startBuoyId: number
   endBuoyId: number
 }
+export type IApiRouteLegLegOutput = IApiLegOutput & {
+  startBuoy: IApiBuoyOutput
+  endBuoy: IApiBuoyOutput
+}
+
 export interface IApiRouteLegOutput extends IApiRouteLegInput{
-  leg: IApiLegOutput
+  leg: IApiRouteLegLegOutput
 }
 
 export type IApiRouteLeg = IApiRouteLegInput | IApiRouteLegOutput
@@ -125,10 +130,12 @@ export type IApiRouteLeg = IApiRouteLegInput | IApiRouteLegOutput
 export interface IApiPlanInput {
   ownerId?: number
   mapId: number
+  shipId: number
   name: string
   startBuoyId: number
   endBuoyId: number
   raceSecondsRemaining: number
+  startTime: string
 }
 export interface IApiPlanOutput extends IApiPlanInput{
   id: number

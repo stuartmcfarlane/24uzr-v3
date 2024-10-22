@@ -1,25 +1,45 @@
 "use client"
 
-import { clientPoint2svgPoint, domRect2rect, fitToClient, rectGrowMargin, latLng2canvas, makePoint, makeRect, makeScreen2svgFactor, points2boundingRect, rect2viewBox, screenUnits2canvasUnits, canvas2latLng, latLng2canvasA, rectWidth, fmtRect, makeRectSafe, pointInRect } from "@/lib/graph"
-import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegInput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput, IApiWindOutput, Region } from "@/types/api"
+import {
+    clientPoint2svgPoint,
+    domRect2rect,
+    latLng2canvas,
+    makeScreen2svgFactor,
+    screenUnits2canvasUnits,
+    canvas2latLng,    
+} from "@/lib/graph"
+import {
+        fitToClient,
+    rectGrowMargin,
+    makePoint,
+    makeRect,
+    points2boundingRect,
+    rect2viewBox,
+    makeRectSafe,
+    pointInRect,
+    LatLng,
+    Rect,
+    Point
+} from 'tslib'
+import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput, IApiShipOutput, Region } from "@/types/api"
 import MapBuoy from "./MapBuoy"
 import { MouseEvent, useEffect, useRef, useState } from "react"
 import { rect2SvgRect } from '../../lib/graph';
 import useClientDimensions from "@/hooks/useClientDimensions"
-import { vectorAdd } from '../../lib/vector';
+import { vectorAdd } from 'tslib';
 import { useMouseDrag } from "@/hooks/useMouseDrag"
 import { useMouseSvgPosition } from "@/hooks/useMousePosition"
 import { useChange } from "@/hooks/useChange"
 import MapLegDrag from "./MapLegDrag"
 import MapLeg from "./MapLeg"
-import { idIs } from "@/lib/fp"
+import { idIs } from "tslib"
 import { actualLegs } from "@/lib/legs"
 import { useScrollWheelZoom } from "@/hooks/useScrollWheelZoom"
 import MouseCursor from "./MouseCursor"
 import ArrowMarker from "./ArrowMarker"
 import MapRouteLeg from "./MapRouteLeg"
 import MapCreatingLeg from "./MapCreatingLeg"
-import { COLOR_BLUE, COLOR_GREEN } from "@/lib/constants"
+import { COLOR_BLUE } from "@/lib/constants"
 import MapWind from "./MapWind"
 import MapGeometry from "./MapGeometry"
 import MouseRegion from "./MouseRegion"
@@ -34,6 +54,7 @@ type MapSvgProps = {
     legs?: IApiLegOutput[]
     routeLegs?: IApiRouteLegOutput[]
     geometry: IApiGeometryOutput[]
+    ship?: IApiShipOutput
     selectedBuoy?: IApiBuoyOutput
     onClearSelections?: () => void
     onSelectBuoy?: (buoy?: IApiBuoyOutput) => void
@@ -56,6 +77,7 @@ const MapSvg = (props: MapSvgProps) => {
         legs,
         routeLegs,
         geometry,
+        ship,
         onClearSelections,
         onSelectBuoy,
         selectedBuoy,

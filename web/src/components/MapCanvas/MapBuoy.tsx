@@ -1,8 +1,8 @@
 "use client"
 
 import { BUOY_CLICK_RADIUS, BUOY_COLOR, BUOY_FONT_SIZE, BUOY_RADIUS, BUOY_TEXT_OFFSET, SELECTED_BUOY_COLOR } from "@/lib/constants"
-import { latLng2canvas, makePoint, screenUnits2canvasUnits } from "@/lib/graph"
-import { vectorAdd } from "@/lib/vector"
+import { latLng2canvas, ScaleToViewBoxProps, screenUnits2canvasUnits } from "@/lib/graph"
+import { vectorAdd, makePoint } from "tslib"
 import { IApiBuoyOutput } from "@/types/api"
 import { useRef, useState } from "react"
 

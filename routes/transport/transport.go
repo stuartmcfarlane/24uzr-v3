@@ -20,11 +20,11 @@ type Routes struct {
 }
 
 type Edge struct {
-	Start             string  `json:start`
-	End               string  `json:end`
-	Metres            float32 `json:metres`
-	MetresPerSecondSE float32 `json:metresPerSecondSE`
-	MetresPerSecondES float32 `json:metresPerSecondES`
+	Start             string    `json:start`
+	End               string    `json:end`
+	Metres            float32   `json:metres`
+	MetresPerSecondSE []float32 `json:metresPerSecondSE`
+	MetresPerSecondES []float32 `json:metresPerSecondES`
 }
 type Graph struct {
 	Edges []Edge `json:edges`

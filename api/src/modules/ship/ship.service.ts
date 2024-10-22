@@ -1,5 +1,5 @@
+import { shipPolarOrc2csv } from "tslib";
 import prisma from "../../utils/prisma";
-import { shipPolarOrc2csv } from "../../utils/shipPolar";
 import { CreateShipInput, UpdateShipInput } from "./ship.schema";
 
 export async function createShip(data: CreateShipInput) {
@@ -16,7 +16,6 @@ export async function findShip(id: number) {
             id,
         },
     });
-    console.log(`findShip`, ship)
     if (!ship) return null
     if (ship?.polar) return ship
     
@@ -41,16 +40,13 @@ const fetchPolar = async (
 ): Promise<string> => {
     const oneDayAgo = Date.now() - 24 * 60 * 60
     if (oneDayAgo < lastFetchOfPolarData.getTime()) return ''
-    console.log(`fetchPolar`, lastFetchOfPolarData.getTime(), oneDayAgo)
     try {
         const response = await fetch(`https://jieter.github.io/orc-data/site/data/${sailNumber}.json`, {
             method: 'get',
         })
         if (!response.ok) return ''
         const json = await response.json()
-        console.log(`got JSON`, json)
         const polar = shipPolarOrc2csv(json.vpp)
-        console.log(`got CSV`, polar)
         return polar
     }
     catch (err) {

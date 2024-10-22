@@ -132,9 +132,12 @@ export async function putUserHandler(
 }
 
 export async function getUserShipsHandler(
-  request: FastifyRequest,
+  request: FastifyRequest<{
+    Params: UserIdParamInput
+  }>,
 ) {
-  const { id } = request.user
+  const { id } = UserIdParamSchema.parse(request.params) || request.user 
+
   const ships = await findShipsByOwnerId(id)
   
   return ships;

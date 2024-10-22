@@ -1,4 +1,4 @@
-import { fmtReal } from "@/lib/graph"
+import { Point } from "tslib"
 
 export type MouseRegionProps = {
     point?: Point
