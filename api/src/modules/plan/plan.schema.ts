@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { buildJsonSchemas } from 'fastify-zod';
-import { BuoySchema, LegSchema, LegsOnRouteSchema, RouteSchema } from "../../../prisma/generated/zod";
+import { BuoySchema, LegSchema, LegsOnRouteSchema, RouteSchema, StatusSchema } from "../../../prisma/generated/zod";
+
+const planStatus = StatusSchema
 
 const planInput = {
     name: z.string(),
@@ -17,6 +19,7 @@ const planGenerated = {
     id: z.number(),
     createdAt: z.string(),
     updatedAt: z.string(),
+    status: planStatus,
 };
 
 const createPlanSchema = z.object({
@@ -55,6 +58,7 @@ export const PlanIdParamSchema = z.object({
 
 export type CreatePlanInput = z.infer<typeof createPlanSchema>;
 export type UpdatePlanInput = z.infer<typeof updatePlanSchema>;
+export type PlanStatusInput = z.infer<typeof planStatus>;
 export type PlanIdParamInput = z.infer<typeof PlanIdParamSchema>;
 
 export const { schemas: planSchemas, $ref } = buildJsonSchemas({

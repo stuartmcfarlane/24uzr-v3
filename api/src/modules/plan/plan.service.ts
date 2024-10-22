@@ -1,7 +1,7 @@
 import { Plan } from "@prisma/client";
 import prisma from "../../utils/prisma";
 import { CreateRouteInput } from "../route/route.schema";
-import { CreatePlanInput, UpdatePlanInput } from './plan.schema';
+import { CreatePlanInput, PlanStatusInput, UpdatePlanInput } from './plan.schema';
 import { createRoute } from "../route/route.service";
 
 export async function createPlan(plan: CreatePlanInput) {
@@ -46,6 +46,16 @@ export async function updatePlan(id: number, plan: UpdatePlanInput) {
         },
         data: {
             ...plan,
+        }
+    });
+}
+export async function updatePlanStatus(id: number, status: PlanStatusInput) {
+    return prisma.plan.update({
+        where: {
+            id,
+        },
+        data: {
+            status,
         }
     });
 }

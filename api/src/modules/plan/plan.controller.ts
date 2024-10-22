@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { PlanIdParamInput, PlanIdParamSchema, CreatePlanInput, UpdatePlanInput } from './plan.schema';
-import { createPlan, findPlan, findPlans, updatePlan, updatePlanRoutes } from "./plan.service";
+import { createPlan, findPlan, findPlans, updatePlan, updatePlanRoutes, updatePlanStatus } from "./plan.service";
 import { getAllRoutes } from "../../services/routeApi";
 import { findBuoysByMapId } from "../buoy/buoy.service";
 import { findLegsByMapId } from "../leg/leg.service";
@@ -19,7 +19,6 @@ export async function createPlanHandler(
     const body = request.body;
     
     try {
-        console.log(`>POST========================================================`)
         const plan = await createPlan(body);
 
         reply.code(201).send(plan);
@@ -55,12 +54,13 @@ export async function createPlanHandler(
 
         const allRoutes = await getAllRoutes(plan, startBuoy!, endBuoy!, ship!, legs, buoys, wind, startTime, endTime)
 
-        await updatePlanRoutes(plan, allRoutes)
+        await Promise.all([
+            updatePlanRoutes(plan, allRoutes),
+            updatePlanStatus(plan.id, "DONE"),
+        ])
         
-        console.log(`<POST========================================================`)
         return reply
     } catch (e) {
-        console.log(`!POST========================================================`, e)
         return reply.code(500).send(e);
     }
 }

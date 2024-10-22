@@ -81,6 +81,7 @@ export interface IApiLegOutput extends IApiLegInput{
 export type IApiLeg = IApiLegInput | IApiLegOutput
 
 export type ApiRouteStatus = ("PENDING" | "FAILED" | "DONE")
+export type ApiPlanStatus = ApiRouteStatus
 export type IApiRouteType = ("USER" | "SHORTEST")
 
 export interface IApiRouteInputWithoutName {
@@ -141,6 +142,7 @@ export interface IApiPlanOutput extends IApiPlanInput{
   id: number
   createdAt: string
   updatedAt: string
+  status: ApiPlanStatus
   routes: IApiRouteOutput[]
 }
 

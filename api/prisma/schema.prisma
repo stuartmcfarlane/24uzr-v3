@@ -113,6 +113,7 @@ model Plan {
   id                   Int      @id @default(autoincrement())
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
+  status               Status   @default(PENDING)
   name                 String   @db.VarChar(128)
   ownerId              Int
   owner                User     @relation(fields: [ownerId], references: [id])
