@@ -20,6 +20,7 @@ export const COLOR_RED = 'red'
 
 export const MAP_LEG_COLOR = COLOR_GREEN
 export const ROUTE_LEG_COLOR = COLOR_BLUE
+export const ROUTE_LEG_HOVER_COLOR = COLOR_GREEN
 export const DRAW_LEG_COLOR = COLOR_BLUE
 export const BUOY_COLOR = COLOR_YELLOW
 export const SELECTED_BUOY_COLOR = COLOR_RED

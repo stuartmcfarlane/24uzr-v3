@@ -74,6 +74,7 @@ const MapPlanRoutePageClientFunctions = (props: MapPlanRoutePageClientFunctionsP
                 selectedLeg={selectedLeg}
                 onSelectLeg={onSelectLeg}
                 routeLegs={route.legs}
+                hoverRouteLegs={hoveredRoute?.legs}
                 showWind={showWind}
                 onShowWind={onShowWind}
             />

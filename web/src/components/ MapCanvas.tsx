@@ -13,6 +13,7 @@ type MapCanvasProps = {
     map?: IApiMapOutput
     buoys?: IApiBuoyOutput[]
     routeLegs?: IApiRouteLegOutput[]
+    hoverRouteLegs?: IApiRouteLegOutput[]
     legs?: IApiLegOutput[]
     geometry: IApiGeometryOutput[]
     ship?: IApiShipOutput
@@ -40,6 +41,7 @@ const MapCanvas = (props: MapCanvasProps) => {
         geometry,
         ship,
         routeLegs,
+        hoverRouteLegs,
         onClearSelections,
         selectedBuoy,
         onSelectBuoy,
@@ -67,6 +69,7 @@ const MapCanvas = (props: MapCanvasProps) => {
                     legs={legs}
                     geometry={geometry}
                     routeLegs={routeLegs}
+                    hoverRouteLegs={hoverRouteLegs}
                     ship={ship}
                     onClearSelections={onClearSelections}
                     onSelectBuoy={onSelectBuoy}

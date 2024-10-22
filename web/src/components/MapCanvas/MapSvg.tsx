@@ -39,11 +39,12 @@ import MouseCursor from "./MouseCursor"
 import ArrowMarker from "./ArrowMarker"
 import MapRouteLeg from "./MapRouteLeg"
 import MapCreatingLeg from "./MapCreatingLeg"
-import { COLOR_BLUE } from "@/lib/constants"
+import { COLOR_BLUE, ROUTE_LEG_COLOR, ROUTE_LEG_HOVER_COLOR } from "@/lib/constants"
 import MapWind from "./MapWind"
 import MapGeometry from "./MapGeometry"
 import MouseRegion from "./MouseRegion"
 import MapRegion from "./MapRegion"
+import MapRoute from "./MapRoute"
 
 const DEBUG = false
 
@@ -54,6 +55,7 @@ type MapSvgProps = {
     buoys?: IApiBuoyOutput[]
     legs?: IApiLegOutput[]
     routeLegs?: IApiRouteLegOutput[]
+    hoverRouteLegs?: IApiRouteLegOutput[]
     geometry: IApiGeometryOutput[]
     ship?: IApiShipOutput
     selectedBuoy?: IApiBuoyOutput
@@ -78,6 +80,7 @@ const MapSvg = (props: MapSvgProps) => {
         buoys,
         legs,
         routeLegs,
+        hoverRouteLegs,
         geometry,
         ship,
         onClearSelections,
@@ -322,15 +325,24 @@ const MapSvg = (props: MapSvgProps) => {
                         isSelected={leg.id === selectedLeg?.id}
                     />)
                 )}
-                {(routeLegs || []).map((routeLeg) => (
-                    <MapRouteLeg key={routeLeg.leg.id}
-                        routeLeg={routeLeg}
-                        startBuoy={buoys?.find(idIs(routeLeg.leg.startBuoyId))}
-                        endBuoy={buoys?.find(idIs(routeLeg.leg.endBuoyId))}
-                        onSelect={onSelectLeg}
-                        isSelected={routeLeg.leg.id === selectedLeg?.id}
+                {routeLegs && (
+                    <MapRoute
+                        routeLegs={routeLegs}
+                        color={ROUTE_LEG_COLOR}
+                        buoys={buoys || []}
+                        onSelectLeg={onSelectLeg}
+                        selectedLeg={selectedLeg}
                     />)
-                )}
+                }
+                {hoverRouteLegs && (
+                    <MapRoute
+                        routeLegs={hoverRouteLegs}
+                        color={ROUTE_LEG_HOVER_COLOR}
+                        buoys={buoys || []}
+                        onSelectLeg={onSelectLeg}
+                        selectedLeg={selectedLeg}
+                    />)
+                }
                 {creatingLeg && (
                     <MapCreatingLeg
                         startBuoy={creatingLeg.startBuoy}
