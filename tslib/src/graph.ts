@@ -230,7 +230,8 @@ export const rect2viewBox = (rect?: Rect) => {
 }
 
 export const points2vector = (p1: Point, p2: Point): Vector => ({ x: p2.x - p1.x, y: p2.y - p1.y })
-export const rectTranslate = (v: Vector, r: Rect): Rect => {
+export const pointTranslate = (v: Vector) => (p: Point): Point => ({ x: p.x + v.x, y: p.y + v.y})
+export const rectTranslate = (v: Vector) => (r: Rect): Rect => {
     const [
         {
             x: x1,
@@ -256,7 +257,7 @@ export const rectGrowAroundPoint = (
     rect: Rect
 ): Rect => {
     const vCenter = points2vector(point, rectCenter(rect))
-    const centeredRect = rectTranslate(vCenter, rect)
+    const centeredRect = rectTranslate(vCenter)(rect)
     const α1 = rectAspectRatio(centeredRect) 
     const grownRect = rectGrow(margin, centeredRect)
     const α2 = rectAspectRatio(grownRect)
@@ -265,8 +266,8 @@ export const rectGrowAroundPoint = (
     if (rectWidth(grownRect) <= 0 || rectHeight(grownRect) <= 0) {
         return rect
     }
-    const vRecenter = vectorScale(-rectWidth(rect) / rectWidth(grownRect), vCenter)
-    const resultRect = rectTranslate(vRecenter, grownRect)
+    const vRecenter = vectorScale(-rectWidth(rect) / rectWidth(grownRect))(vCenter)
+    const resultRect = rectTranslate(vRecenter)(grownRect)
     return resultRect
 }
 export const rectLimitTo = (limitRect: Rect, rect: Rect): Rect => {

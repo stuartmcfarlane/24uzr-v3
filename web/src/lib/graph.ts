@@ -1,6 +1,7 @@
 import { IApiPlanOutput, Region } from "@/types/api"
 import { RefObject } from "react"
-import { LatLng, Line, makePoint, makeRectSafe, Point, Rect, rectHeight, rectPoint, rectWidth } from "tslib"
+import { LatLng, Line, makePoint, makeRectSafe, makeVector, Point, points2vector, pointTranslate, Rect, rectHeight, rectPoint, rectWidth, unitVector, vectorRotate } from "tslib"
+import { vectorScale } from '../../../tslib/src/vector';
 
 const LNG_FACTOR = 100
 const LAT_FACTOR = -100
@@ -70,6 +71,24 @@ export const rect2SvgRect = (rect: Rect) => {
         y: point.y,
         width: rectWidth(rect),
         height: rectHeight(rect),
+    }
+}
+export const line2SvgPath = ([p1, p2]: Line, width: number) => {
+    const v = vectorScale(width/2)(unitVector(points2vector(p1, p2)))
+    const down = vectorRotate(Math.PI / 2)(v)
+    const up = vectorRotate(-Math.PI / 2)(v)
+    const a = pointTranslate(down)(p1)
+    const b = pointTranslate(down)(p2)
+    const c = pointTranslate(up)(p2)
+    const d = pointTranslate(up)(p1)
+    return {
+        d: [
+            `M ${a.x} ${a.y}`,
+            `L ${b.x} ${b.y}`,
+            `L ${c.x} ${c.y}`,
+            `L ${d.x} ${d.y}`,
+            `Z`
+        ].join(' ')
     }
 }
 export const line2SvgLine = (line: Line) => {

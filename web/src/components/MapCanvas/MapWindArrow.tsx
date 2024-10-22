@@ -17,7 +17,7 @@ const MapWindArrow = (props: MapWindArrowProps) => {
     const V = makeVector(wind.u, wind.v)
     const magnitude = vectorMagnitude(V)
     const color = metersPerSecond2RGBA(magnitude)
-    const v = vectorScale(screenUnits2canvasUnits(screen2svgFactor, WIND_ARROW_LENGTH), unitVector(V))
+    const v = vectorScale(screenUnits2canvasUnits(screen2svgFactor, WIND_ARROW_LENGTH))(unitVector(V))
     const line = makeLine(p, vectorAdd(p, v))
 
     if (!color) return <></>

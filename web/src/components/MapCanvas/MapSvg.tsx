@@ -332,6 +332,7 @@ const MapSvg = (props: MapSvgProps) => {
                         buoys={buoys || []}
                         onSelectLeg={onSelectLeg}
                         selectedLeg={selectedLeg}
+                        screen2svgFactor={screen2svgFactor}
                     />)
                 }
                 {hoverRouteLegs && (
@@ -341,6 +342,7 @@ const MapSvg = (props: MapSvgProps) => {
                         buoys={buoys || []}
                         onSelectLeg={onSelectLeg}
                         selectedLeg={selectedLeg}
+                        screen2svgFactor={screen2svgFactor}
                     />)
                 }
                 {creatingLeg && (

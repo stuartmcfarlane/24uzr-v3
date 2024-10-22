@@ -7,9 +7,17 @@ export const vectorAdd = (v1: Vector, v2: Vector): Vector => ({
     x: v1.x + v2.x,
     y: v1.y + v2.y,
 })
-export const vectorScale = (s: number, v: Vector): Vector => ({ x: s * v.x, y: s * v.y})
+export const vectorScale = (s: number) => (v: Vector): Vector => ({ x: s * v.x, y: s * v.y})
 export const vectorMagnitude = ({
     x, y
 }: Vector): number => Math.sqrt(x * x + y * y)
-export const unitVector = (v: Vector): Vector => vectorScale(1 / vectorMagnitude(v), v)
+export const unitVector = (v: Vector): Vector => vectorScale(1 / vectorMagnitude(v))(v)
 export const vectorAngle = ({x, y}: Vector): number => Math.atan2(y, x)
+export const vectorRotate = (θ: number) => ({ x, y }: Vector) => {
+    const sin = Math.sin(θ)
+    const cos = Math.cos(θ)
+    return {
+        x: x * cos - y * sin,
+        y: x * sin + y * cos,
+    }
+}

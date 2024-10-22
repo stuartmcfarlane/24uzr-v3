@@ -1,6 +1,7 @@
 import { IApiBuoyOutput, IApiLegOutput, IApiRouteLegOutput } from "@/types/api"
 import MapRouteLeg from "./MapRouteLeg"
 import { idIs } from "tslib"
+import { useState } from "react"
 
 type MapRouteProps = {
     buoys: IApiBuoyOutput[]
@@ -8,6 +9,8 @@ type MapRouteProps = {
     color?: string
     selectedLeg?: IApiLegOutput
     onSelectLeg?: (buoy?: IApiLegOutput) => void
+    onHoverLeg?: (leg?: IApiRouteLegOutput) => void
+    screen2svgFactor?: number
 }
 
 const MapRoute = (props: MapRouteProps) => {
