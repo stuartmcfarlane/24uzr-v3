@@ -187,16 +187,14 @@ const MapSvg = (props: MapSvgProps) => {
                     `10%`,
                     initialBoundingRect
                )
-                setBoundingRect(boundingRect)
                 setInitialBoundingViewBoxRect(boundingRect)
-                return
             }
             if (map && (map.lat1 || map.lat2 || map.lng1 || map.lng2)) {
                 const p1 = latLng2canvas({ lng: map.lng1, lat: map.lat1})
                 const p2 = latLng2canvas({ lng: map.lng2, lat: map.lat2 })
                 const boundingRect = makeRectSafe(p1, p2)
                 setBoundingRect(boundingRect)
-                setInitialBoundingViewBoxRect(boundingRect)
+                if (!initialBoundingRect) setInitialBoundingViewBoxRect(boundingRect)
                 return
             }
 
