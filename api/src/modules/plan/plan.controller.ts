@@ -40,6 +40,7 @@ export async function createPlanHandler(
 
         const startTime = plan.startTime.toISOString()
         const endTime = addSeconds(plan.raceSecondsRemaining)(plan.startTime).toISOString()
+        const endTimePlusOneHour = addSeconds(plan.raceSecondsRemaining + 60*60)(plan.startTime).toISOString()
 
         const wind = await findWindByRegion(
             {
@@ -49,7 +50,7 @@ export async function createPlanHandler(
                 lng2: map?.lng2 || 0,
             },
             startTime,
-            endTime
+            endTimePlusOneHour
         )
 
         const allRoutes = await getAllRoutes(plan, startBuoy!, endBuoy!, ship!, legs, buoys, wind, startTime, endTime)

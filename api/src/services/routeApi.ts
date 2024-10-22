@@ -24,6 +24,7 @@ import {
     lessThan,
     fmtVector,
     fmtReal,
+    hoursBetween,
 } from 'tslib';
 
 export const getAllRoutes = async (
@@ -45,12 +46,12 @@ export const getAllRoutes = async (
         indexedWind
             .map(project('timestamp'))
             .map(timestamp2string)
-            .filter(and(greaterThan(startTime), lessThan(endTime)))
+            // .filter(and(greaterThan(startTime), lessThan(endTime)))
     )
+    console.log(`timeKeys`, timeKeys)
     const graph = makeGraph(ship, legs, buoysById, indexedWind, timeKeys)
     console.log(` getAllRoutes graph`, graph)
-    return []
-    const count = 10
+    const count = hoursBetween(startTime)(endTime)
     const allRoutes = (
         await routeApiPost(`route/all?start=${startBuoy.id}&end=${endBuoy.id}&time=${plan.raceSecondsRemaining}&count=${count}`, graph)
     ) as AllRoutesOutput

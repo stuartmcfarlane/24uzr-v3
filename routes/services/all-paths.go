@@ -11,7 +11,7 @@ type adjacencyMatrix struct {
 	nodeIdx         map[string]int
 	link            [][]int
 	metres          [][]float32
-	metresPerSecond [][]float32
+	metresPerSecond [][][]float32
 }
 
 type traveledPath struct {
@@ -34,7 +34,7 @@ func FindAllPaths(
 	e := m.nodeIdx[route.End]
 
 	p := traveledPath{metres: 0, seconds: 0, path: []int{s}}
-	paths := findPaths(time, &p, s, e, &m)
+	paths := findPaths(0, time, &p, s, e, &m)
 
 	sort.Slice(paths, func(i, j int) bool {
 		return paths[i].metres > paths[j].metres
@@ -54,7 +54,7 @@ func FindAllPaths(
 	return routes
 }
 
-func findPaths(timeLeft float32, path *traveledPath, start int, end int, matrix *adjacencyMatrix) []traveledPath {
+func findPaths(timeStart float32, timeLeft float32, path *traveledPath, start int, end int, matrix *adjacencyMatrix) []traveledPath {
 	if start == end {
 		return []traveledPath{*path}
 	}
@@ -63,28 +63,27 @@ func findPaths(timeLeft float32, path *traveledPath, start int, end int, matrix 
 		return make([]traveledPath, 0)
 	}
 
-	// children := getChildrenByLength(start, matrix)
 	children := getChildren(start, matrix)
 
 	paths := make([]traveledPath, 0)
 	for _, c := range children {
 		m := removeEdge(matrix, start, c)
-		np := copyAndAppend(m, path, start, c)
-		pp := findPaths(timeLeft-edgeTime(m, start, c), np, c, end, m)
-		for _, p := range pp {
-			paths = append(paths, p)
-		}
+		ti := int(timeStart / (60 * 60))
+		np := copyAndAppend(m, path, ti, start, c)
+		et := edgeTime(m, start, c, ti)
+		pp := findPaths(timeStart+et, timeLeft-et, np, c, end, m)
+		paths = append(paths, pp...)
 		matrix = putEdge(m, start, c)
 	}
 	return paths
 }
 
-func copyAndAppend(matrix *adjacencyMatrix, path *traveledPath, start int, c int) *traveledPath {
+func copyAndAppend(matrix *adjacencyMatrix, path *traveledPath, ti int, start int, c int) *traveledPath {
 	np := traveledPath{metres: path.metres, seconds: path.seconds, path: make([]int, len(path.path))}
 	copy(np.path, path.path)
 	np.path = append(np.path, c)
 	np.metres = np.metres + matrix.metres[start][c]
-	np.seconds = np.seconds + (matrix.metres[start][c] / matrix.metresPerSecond[start][c])
+	np.seconds = np.seconds + (matrix.metres[start][c] / matrix.metresPerSecond[start][c][ti])
 	return &np
 }
 func getChildren(n int, m *adjacencyMatrix) []int {
@@ -96,14 +95,6 @@ func getChildren(n int, m *adjacencyMatrix) []int {
 		}
 	}
 
-	return children
-}
-
-func getChildrenByLength(n int, m *adjacencyMatrix) []int {
-	children := getChildren(n, m)
-	sort.Slice(children, func(i, j int) bool {
-		return m.metres[n][i]*m.metresPerSecond[n][i] > m.metres[n][j]*m.metresPerSecond[n][j]
-	})
 	return children
 }
 
@@ -135,25 +126,27 @@ func makeAdjacencyMatrix(g transport.Graph) adjacencyMatrix {
 		link[ei][si] = 1
 	}
 	metres := make([][]float32, nc)
-	metresPerSecond := make([][]float32, nc)
+	metresPerSecond := make([][][]float32, nc)
 	for i = 0; i < nc; i++ {
 		metres[i] = make([]float32, nc)
-		metresPerSecond[i] = make([]float32, nc)
+		metresPerSecond[i] = make([][]float32, nc)
 	}
 	for _, e := range g.Edges {
 		si := ni[e.Start]
 		ei := ni[e.End]
 		metres[si][ei] = e.Metres
 		metres[ei][si] = e.Metres
-		metresPerSecond[si][ei] = e.MetresPerSecondSE
-		metresPerSecond[ei][si] = e.MetresPerSecondES
+		metresPerSecond[si][ei] = make([]float32, len(e.MetresPerSecondSE))
+		metresPerSecond[ei][si] = make([]float32, len(e.MetresPerSecondES))
+		copy(metresPerSecond[si][ei], e.MetresPerSecondSE)
+		copy(metresPerSecond[ei][si], e.MetresPerSecondES)
 	}
 
 	return adjacencyMatrix{nodeNames: nn, nodeIdx: ni, link: link, metres: metres, metresPerSecond: metresPerSecond}
 }
 
-func edgeTime(m *adjacencyMatrix, si int, ei int) float32 {
-	return m.metres[si][ei] / m.metresPerSecond[si][ei]
+func edgeTime(m *adjacencyMatrix, si int, ei int, ti int) float32 {
+	return m.metres[si][ei] / m.metresPerSecond[si][ei][ti]
 }
 
 func removeEdge(m *adjacencyMatrix, s int, e int) *adjacencyMatrix {
