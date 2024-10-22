@@ -4,6 +4,7 @@ import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMa
 import MapCanvas from "./ MapCanvas"
 import { useState } from "react"
 import RouteOptions from "./RouteOptions"
+import { plan2region } from "@/lib/graph"
 
 type MapPlanRoutePageClientFunctionsProps = {
     map: IApiMapOutput
@@ -61,6 +62,7 @@ const MapPlanRoutePageClientFunctions = (props: MapPlanRoutePageClientFunctionsP
                 />
             </div>
             <MapCanvas
+                initialBoundingRegion={plan2region(plan)}
                 map={map}
                 geometry={geometry}
                 wind={wind}
