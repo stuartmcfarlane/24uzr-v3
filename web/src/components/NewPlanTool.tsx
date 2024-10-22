@@ -1,6 +1,6 @@
 "use client"
 
-import { createPlanWithForm } from "@/actions/map"
+import { createPlanWithForm } from "@/actions/plan"
 import { IApiBuoyOutput, IApiMapOutput, IApiShipOutput } from "@/types/api"
 import BuoyIcon from "./Icons/BuoyIcon"
 import PlanIcon from "./Icons/PlanIcon"

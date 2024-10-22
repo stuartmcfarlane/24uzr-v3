@@ -38,7 +38,6 @@ export const getAllRoutes = async (
     startTime: string,
     endTime: string,
 ): Promise<CreateRouteInput[]> => {
-    console.log(`>getAllRoutes`, plan)
     const buoysById = indexBy('id')(buoys)
 
     const indexedWind = makeIndexedWind(wind)
@@ -48,9 +47,7 @@ export const getAllRoutes = async (
             .map(timestamp2string)
             // .filter(and(greaterThan(startTime), lessThan(endTime)))
     )
-    console.log(`timeKeys`, timeKeys)
     const graph = makeGraph(ship, legs, buoysById, indexedWind, timeKeys)
-    console.log(` getAllRoutes graph`, graph)
     const count = hoursBetween(startTime)(endTime)
     const allRoutes = (
         await routeApiPost(`route/all?start=${startBuoy.id}&end=${endBuoy.id}&time=${plan.raceSecondsRemaining}&count=${count}`, graph)
@@ -173,7 +170,6 @@ const makeGraph = (
                 timeKey => {
                     const windSlice = wind.find(timestampIs(timeKey))
                     if (!windSlice) {
-                        console.log(`no wind at timestamp ${timeKey}`, wind.map(project('timestamp')))
                         return 0
                     }
                     return getMetresPerSecondVMG(
@@ -188,7 +184,6 @@ const makeGraph = (
                 timeKey => {
                     const windSlice = wind.find(timestampIs(timeKey))
                     if (!windSlice) {
-                        console.log(`no wind at timestamp ${timeKey}`, wind.map(project('timestamp')))
                         return 0
                     }
                     return getMetresPerSecondVMG(

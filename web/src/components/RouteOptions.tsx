@@ -1,9 +1,12 @@
-import { IApiBuoyOutput, IApiMapOutput, IApiPlanOutput, IApiRouteOutput, IApiUserOutput } from "@/types/api"
+import { IApiBuoyOutput, IApiPlanOutput, IApiRouteOutput } from "@/types/api"
 import Link from "next/link"
 import { NewRouteTool } from "./NewRouteTool"
 import RouteIcon from "./Icons/RouteIcon"
-import { MouseEvent } from "react"
 import { fmtNM, route2LengthNm } from "@/lib/route"
+import { useCallback, useState } from "react"
+import usePolling from "@/hooks/usePolling"
+import { useChange } from "@/hooks/useChange"
+import { getPlan } from "@/actions/plan"
 
 
 type RouteOptionsProps = {
@@ -24,9 +27,32 @@ const RouteOptions = (props: RouteOptionsProps) => {
         selectedRoute
     } = props
 
+    const [actualPlan, setActualPlan] = useState(plan)
+    const [actualRoutes, setActualRoutes] = useState(routes)
     const onMouseEnter = (route: IApiRouteOutput) => () => onHoverRoute && onHoverRoute(route)
     const onMouseLeave = (route: IApiRouteOutput) => () => onHoverRoute && onHoverRoute()
 
+    const poll = useCallback(async () => {
+            const plan = await getPlan(actualPlan.id)
+            return plan
+        }, [])
+    const {data: polledPlan, cancel: cancelPolling} = usePolling(
+        poll, {
+            interval: 1000,
+        }
+    )
+    useChange(
+        () => {
+            if (!polledPlan) return
+            if (polledPlan.status !== 'PENDING') {
+                cancelPolling()
+                setActualPlan(polledPlan)
+                setActualRoutes(polledPlan.routes)
+            }
+        },
+        [polledPlan?.status]
+    )
+    if (polledPlan?.status === 'DONE') cancelPolling()
     return (<>
         {!startBuoy && (<>
             <div className="flex gap-4">
@@ -36,9 +62,15 @@ const RouteOptions = (props: RouteOptionsProps) => {
                 <div className="">
                     Routes
                 </div>
+                {actualPlan.status === 'PENDING' && (
+                    <div>pending</div>
+                )}
+                {actualPlan.status === 'FAILED' && (
+                    <div>failed</div>
+                )}
             </div>
             <div className="flex flex-col gap-4 overflow-y-auto pr-4">
-                {(routes || []).map(route => (
+                {(actualRoutes || []).map(route => (
                     <div
                         key={route.id}
                         className={`flex justify-between border p-2 hover:bg-24uzr hover:text-white ${(
@@ -51,7 +83,7 @@ const RouteOptions = (props: RouteOptionsProps) => {
                         onMouseLeave={onMouseLeave(route)}
                     >
                         <Link className="flex-grow flex flex-col"
-                            href={`/map/${plan.mapId}/plan/${plan.id}/route/${route.id}`}
+                            href={`/map/${actualPlan.mapId}/plan/${actualPlan.id}/route/${route.id}`}
                         >
                             <div className="">
                                 {route.name}
@@ -66,7 +98,7 @@ const RouteOptions = (props: RouteOptionsProps) => {
         </>)}
         {startBuoy && (
             <NewRouteTool
-                plan={plan}
+                plan={actualPlan}
                 startBuoy={startBuoy}
                 endBuoy={endBuoy}
             />
