@@ -25,33 +25,6 @@ export const makeRect = (x: number, y: number, width: number, height: number):Re
     makePoint(x + width, y + height),
 ]
 export const makeLine = (p1: Point, p2: Point): Line => [p1, p2]
-export const fmtNM = (n: number) => `${fmtReal(n, 1)} nM`
-export const fmtUndefined = () => '<undefined>'
-export const fmtReal = (n: number, precision: number = 4) => n.toFixed(precision)
-export const fmtPoint = (point?: Point) => (
-    point
-    ? `(${fmtReal(point.x)}, ${fmtReal(point.y)})`
-    : fmtUndefined()
-)
-export const fmtVector = (point?: Point) => (
-    point
-    ? `[${fmtReal(point.x)}, ${fmtReal(point.y)}]`
-    : fmtUndefined()
-)
-export const fmtRect = (rect?: Rect) => (
-    rect
-    ? `<Rect ${fmtPoint(rectPoint(rect))} w ${fmtReal(rectWidth(rect))} h ${fmtReal(rectHeight(rect))}>`
-    : fmtUndefined()
-)
-export const fmtLine = (line?: Line) => (
-    line
-    ? `<Line ${fmtPoint(line[0])} -> ${fmtPoint(line[1])}>`
-    : fmtUndefined()
-)
-export const fmtTimestamp = (timestamp: string) => {
-    const formatter = new Intl.DateTimeFormat('nl-NL', { dateStyle: 'short', timeStyle: 'medium' });
-    return formatter.format(new Date(timestamp))
-}
 export const rectPoint = (rect: Rect): Point => rect[0]
 export const rectWidth = ([ { x: x1 },{ x: x2 } ]: Rect): number => x2 - x1
 export const rectHeight = ([{ y: y1, }, { y: y2, }]: Rect): number => y2 - y1

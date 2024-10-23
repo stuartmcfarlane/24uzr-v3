@@ -18,13 +18,11 @@ import {
     project,
     timestamp2string,
     knots2metersPerSecond,
-    makeIndexedWind,
     IndexedWind,
     greaterThan,
     lessThan,
-    fmtVector,
-    fmtReal,
     hoursBetween,
+    singleWind2indexedWind,
 } from 'tslib';
 
 export const getAllRoutes = async (
@@ -40,7 +38,7 @@ export const getAllRoutes = async (
 ): Promise<CreateRouteInput[]> => {
     const buoysById = indexBy('id')(buoys)
 
-    const indexedWind = makeIndexedWind(wind)
+    const indexedWind = singleWind2indexedWind(wind)
     const timeKeys = sort(cmpString)(
         indexedWind
             .map(project('timestamp'))
@@ -55,7 +53,7 @@ export const getAllRoutes = async (
     if (!allRoutes) return []
 
     const routes = allRoutes.Paths.map(path2legs(legs)).map((legs, idx) => ({
-        name: `${plan.name} route ${idx}`,
+        name: plan.name,
         ownerId: plan.ownerId,
         mapId: plan.mapId,
         planId: plan.id,
@@ -84,7 +82,7 @@ export const getShortestRoute = async (
 
         const buoysById = indexBy('id')(buoys)
 
-    const indexedWind = makeIndexedWind(wind)
+    const indexedWind = singleWind2indexedWind(wind)
     const timeKeys = sort(cmpString)(
         indexedWind
             .map(project('timestamp'))

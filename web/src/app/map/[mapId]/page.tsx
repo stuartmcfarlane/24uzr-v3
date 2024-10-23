@@ -5,6 +5,8 @@ import LockedMapPageClientFunctions from "@/components/LockedMapPageFunctions"
 import UnlockedMapPageClientFunctions from "@/components/UnlockedMapPageFunctions"
 import { apiGetBuoys, apiGetGeometry, apiGetLegs, apiGetMap, apiGetPlans, apiGetShipsByOwner, apiGetWind } from "@/services/api"
 import { redirect } from "next/navigation"
+import { now } from "tslib"
+import { addSeconds, hours2seconds } from '../../../../../tslib/src/time';
 
 const MapPage = async ({
     params
@@ -33,7 +35,9 @@ const MapPage = async ({
     if (!map) {
         redirect('/dashboard')
     }
-    const wind = await apiGetWind(session.apiToken!, 24, map)
+    const from = addSeconds(hours2seconds(-1))(now())
+    const until = addSeconds(hours2seconds(25))(from)
+    const wind = await apiGetWind(session.apiToken!, from, until, map)
 
     return (
         map.isLocked

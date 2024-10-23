@@ -1,4 +1,5 @@
 export * from './conversions'
+export * from './fmt'
 export * from './fp'
 export * from './geo'
 export * from './graph'

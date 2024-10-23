@@ -7,11 +7,13 @@ import { useCallback, useState } from "react"
 import usePolling from "@/hooks/usePolling"
 import { useChange } from "@/hooks/useChange"
 import { getPlan } from "@/actions/plan"
-import { desc, sort } from "tslib"
+import { desc, IndexedWind, ShipPolar, sort } from "tslib"
 import RouteOption from "./RouteOption"
 
 
 type RouteOptionsProps = {
+    shipPolar: ShipPolar
+    wind: IndexedWind[]
     plan: IApiPlanOutput
     routes: IApiRouteOutput[]
     startBuoy?: IApiBuoyOutput
@@ -19,9 +21,12 @@ type RouteOptionsProps = {
     onHoverRoute?: (route?: IApiRouteOutput) => void
     selectedRoute?: IApiRouteOutput
     showBuoys?: boolean
+    windTime: number
 }
 const RouteOptions = (props: RouteOptionsProps) => {
     const {
+        shipPolar,
+        wind,
         plan,
         routes,
         startBuoy,
@@ -29,6 +34,7 @@ const RouteOptions = (props: RouteOptionsProps) => {
         onHoverRoute,
         selectedRoute,
         showBuoys,
+        windTime,
     } = props
 
     const [actualPlan, setActualPlan] = useState(plan)
@@ -79,6 +85,9 @@ const RouteOptions = (props: RouteOptionsProps) => {
             <div className="flex flex-col gap-4 overflow-y-auto pr-4">
                 {selectedRoute && (
                     <RouteOption
+                        shipPolar={shipPolar}
+                        wind={wind}
+                        windTime={windTime}
                         plan={actualPlan}
                         route={selectedRoute}
                         onHoverRoute={onHoverRoute}
@@ -89,6 +98,9 @@ const RouteOptions = (props: RouteOptionsProps) => {
                 {sort(desc(cmpRouteLength))(actualRoutes || []).map(route => (
                     (!selectedRoute || route.id !== selectedRoute.id) && (
                         <RouteOption key={route.id}
+                            shipPolar={shipPolar}
+                            wind={wind}
+                            windTime={windTime}
                             plan={actualPlan}
                             route={route}
                             onHoverRoute={onHoverRoute}

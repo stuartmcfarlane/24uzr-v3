@@ -1,6 +1,7 @@
-import { indexByHash, project, toFixed, unique, cmpNumber, sort } from './fp'
+import { indexByHash, project, toFixed, unique, cmpNumber, sort, cmpString, head } from './fp';
 import { distanceLatLng, LatLng } from './geo'
 import { makeVector, Vector } from './vector'
+import { seconds2hours, timestamp2epoch, timestamp2string } from './time';
 
 export type Wind = {
   lat: number
@@ -23,7 +24,11 @@ export type IndexedWind = {
   lngs: number[]
   indexedByLatLng: { [hash: string]: Wind}
 }
+
+export type WindIndicatorMode = 'text' | 'graphic'
+
 const wind2vector = ({ u, v }: Wind): Vector => makeVector(u, v)
+const latLngHash = ({ lat, lng }: LatLng): string => `${toFixed(3)(lng)}:${toFixed(3)(lat)}`
 
 export const wind2resolution = (wind: SingleWind[]) => {
     const [head, ...tail] = wind
@@ -38,7 +43,6 @@ export const wind2resolution = (wind: SingleWind[]) => {
     )
     return resolution
 }
-export const timestamp2string = (timestamp: string | Date) => typeof timestamp === "string" ? timestamp : timestamp.toISOString()
 export const timestampIs = (timestamp: string | Date) => (wind: IndexedWind | BulkWind) => wind.timestamp === timestamp2string(timestamp)
 
 export const indexWindByTimestamp = (wind: SingleWind[]) => {
@@ -55,7 +59,7 @@ export const indexWindByTimestamp = (wind: SingleWind[]) => {
   )
 }
 
-export const makeTimestampSlicedWind = (wind: SingleWind[]): BulkWind[] => {
+export const singleWind2bulkWind = (wind: SingleWind[]): BulkWind[] => {
   const windByTimestamp = indexWindByTimestamp(wind)
     const timestamps = Object.keys(windByTimestamp) as string[]
     const bulkWind = timestamps.map(
@@ -66,10 +70,8 @@ export const makeTimestampSlicedWind = (wind: SingleWind[]): BulkWind[] => {
     )
     return bulkWind
 }
-const latLngHash = ({ lat, lng }: LatLng): string => `${toFixed(3)(lng)}:${toFixed(3)(lat)}`
-export const makeIndexedWind = (wind: SingleWind[]): IndexedWind[] => {
-  const timeSliced = makeTimestampSlicedWind(wind)
-  const indexed = timeSliced.map(
+export const bulkWind2indexedWind = (bulkWind: BulkWind[]): IndexedWind[] => {
+  const indexed = bulkWind.map(
     ({ timestamp, data }) => {
       return {
         timestamp: timestamp2string(timestamp),
@@ -80,6 +82,10 @@ export const makeIndexedWind = (wind: SingleWind[]): IndexedWind[] => {
     }
   )
   return indexed
+}
+
+export const singleWind2indexedWind = (wind: SingleWind[]): IndexedWind[] => {
+  return bulkWind2indexedWind(singleWind2bulkWind(wind))
 }
 function binarySearch(arr: number[], target: number): number {
   let low = 0
@@ -98,8 +104,12 @@ function binarySearch(arr: number[], target: number): number {
   }
   return arr[low]
 }
-let sdm = 0
+
 export const windAtLocation = (wind: IndexedWind, { lat, lng }: LatLng): Vector => {
+  if (!wind.timestamp) {
+    debugger
+  }
+
   const latLng = {
     lat: binarySearch(wind.lats, lat),
     lng: binarySearch(wind.lngs, lng),
@@ -111,3 +121,27 @@ export const windAtLocation = (wind: IndexedWind, { lat, lng }: LatLng): Vector 
   return wind2vector(wind.indexedByLatLng[latLngHash(latLng)])
   
 }
+export const windAtTime = (winds: IndexedWind[], timestamp: Date | string) => {
+  if (!timestamp) return undefined
+  const t0 = timestamp2epoch(
+    head(
+      sort(cmpString)(
+      winds
+        .map(project('timestamp'))
+          .map(timestamp2string)
+      )
+    )
+  )
+  const t1 = timestamp2epoch(timestamp)
+  const deltaHours = Math.trunc(seconds2hours(t1 - t0))
+  if (deltaHours < 0 || winds.length < deltaHours) {
+    return undefined
+  }
+  return winds[deltaHours]
+}
+export const windAtTimeAndLocation = (winds: IndexedWind[], timestamp: Date | string, location: LatLng) => {
+  const wind = windAtTime(winds, timestamp)
+  if (!wind) return makeVector(0, 0)
+  return windAtLocation(wind, location)
+}
+

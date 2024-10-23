@@ -6,7 +6,7 @@ type WindLegendProps = {
     wind: IApiBulkWind[]
     showWind?: boolean
     onShowWind?: (showWind: boolean) => void
-    timeDelta?: number
+    windTime?: number
     onTimeDelta?: (timeDelta: number) => void
 }
 const WindLegend = (props: WindLegendProps) => {
@@ -15,8 +15,8 @@ const WindLegend = (props: WindLegendProps) => {
         wind,
         showWind,
         onShowWind,
-        timeDelta,
-        onTimeDelta,
+        windTime,
+        onTimeDelta: onWindTime,
     } = props
 
     const maxDelta = wind ? wind.length - 1 : 0
@@ -24,7 +24,7 @@ const WindLegend = (props: WindLegendProps) => {
         onShowWind && onShowWind(!showWind)
     }
     const onChangeTimeDelta = (e: ChangeEvent<HTMLInputElement>) => {
-        onTimeDelta && onTimeDelta(parseInt(e.target.value))
+        onWindTime && onWindTime(parseInt(e.target.value))
     }
     return <div className="flex justify-between">
         <div>
@@ -42,25 +42,25 @@ const WindLegend = (props: WindLegendProps) => {
             </label>
         </div>
         {showWind && (<>
-            {timeDelta !== undefined && maxDelta > 1 && (
+            {windTime !== undefined && maxDelta > 1 && (
                 <div className="flex justify-evenly gap -4">
                     <button
-                        onClick={() => onTimeDelta && onTimeDelta(Math.max(0, timeDelta - 1))}
-                        disabled={timeDelta <= 0}
+                        onClick={() => onWindTime && onWindTime(Math.max(0, windTime - 1))}
+                        disabled={windTime <= 0}
                         className="border-2 rounded-sm px-4"
                     >-</button>
                     <input
                         type="text"
-                        value={timeDelta}
+                        value={windTime}
                         onChange={onChangeTimeDelta}
                         className="w-10 text-center"
                     />
                     <button
-                        onClick={() => onTimeDelta && onTimeDelta(Math.min(maxDelta, timeDelta + 1))}
-                        disabled={timeDelta >= maxDelta}
+                        onClick={() => onWindTime && onWindTime(Math.min(maxDelta, windTime + 1))}
+                        disabled={windTime >= maxDelta}
                         className="border-2 rounded-sm px-4"
                     >+</button>
-                    <div>{fmtTimestamp(wind[timeDelta].timestamp)}</div>
+                    <div>{fmtTimestamp(wind[windTime].timestamp)}</div>
                 </div>
             )}
             <div className="flex">

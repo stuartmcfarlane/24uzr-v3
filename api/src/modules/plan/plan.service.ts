@@ -12,7 +12,7 @@ export async function createPlan(plan: CreatePlanInput) {
         data,
     });
     
-    return created;
+    return findPlan(created.id);
 }
 
 export async function findPlan(id: number) {

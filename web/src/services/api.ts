@@ -1,5 +1,5 @@
 import { geo2decimal } from "@/lib/geo"
-import { indexWindByTimestamp, wind2resolution } from "tslib"
+import { indexWindByTimestamp, Timestamp, timestamp2epoch, timestamp2string, wind2resolution } from "tslib"
 import { IApiBulkWind, IApiBuoyInput, IApiBuoyOutput, IApiGeometryInput, IApiGeometryOutput, IApiLegInput, IApiLegOutput, IApiMapInput, IApiMapOutput, IApiMapUpdateInput, IApiPlanInput, IApiPlanOutput, IApiRouteInput, IApiRouteLegOutput, IApiRouteOutput, IApiShipInput, IApiShipOutput, IApiShipUpdateInput, IApiSingleWind, IApiUser, IApiUserOutput, IApiWind, IApiWindInput, IApiWindOutput } from "@/types/api"
 
 const makeApiUrl = (uri: string) => `${process.env.NEXT_PUBLIC_API_URL || process.env.API_URL}${uri}`
@@ -376,13 +376,10 @@ export const apiGetPlan = async (
 
 export const apiGetWind = async (
     accessToken: string,
-    hours: number = 1,
+    from: Timestamp,
+    until: Timestamp,
     map: IApiMapOutput,
 ): Promise<IApiBulkWind[]> => {
-
-    const now = Date.now()
-    const from = new Date(now - 1 * 60 * 60 * 1000).toISOString()
-    const until = new Date(now + hours * 60 * 60 * 1000).toISOString()
 
     const p1 = geo2decimal(`52° 21' 39.9" N, 4° 30' 31.4" E`)
     const p2 = geo2decimal(`53° 23' 22.6" N, 5° 46' 10.0" E`)
@@ -394,7 +391,7 @@ export const apiGetWind = async (
 
     const response = await get(
         accessToken,
-        `/api/winds?from=${from}&until=${until}&lat1=${lat1}&lng1=${lng1}&lat2=${lat2}&lng2=${lng2}`
+        `/api/winds?from=${timestamp2string(from)}&until=${timestamp2string(until)}&lat1=${lat1}&lng1=${lng1}&lat2=${lat2}&lng2=${lng2}`
     )
 
     if (!response.ok) return []

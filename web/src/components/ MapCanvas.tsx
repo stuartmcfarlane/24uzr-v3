@@ -29,6 +29,8 @@ type MapCanvasProps = {
     onMousePosition?: (latLng: LatLng) => void
     onMouseDragPosition?: (point?: LatLng, mark?: LatLng) => void
     selectedMapRegion?: Region
+    windTime?: number
+    onWindTime?: (windTime: number)=> void
 }
 
 const MapCanvas = (props: MapCanvasProps) => {
@@ -49,6 +51,8 @@ const MapCanvas = (props: MapCanvasProps) => {
         onSelectLeg,
         onCreateLeg,
         creatingLeg,
+        windTime,
+        onWindTime,
         showWind,
         onShowWind,
         onMousePosition,
@@ -56,8 +60,6 @@ const MapCanvas = (props: MapCanvasProps) => {
         selectedMapRegion,
     } = props
 
-    const [timeDelta, setTimeDelta] = useState(0)
-    const onTimeDelta = (timeDelta: number) => setTimeDelta(timeDelta)
     return (
         <div className="border flex-grow flex flex-col">
             <div className="flex-1">
@@ -79,7 +81,7 @@ const MapCanvas = (props: MapCanvasProps) => {
                     onCreateLeg={onCreateLeg}
                     creatingLeg={creatingLeg}
                     showWind={showWind}
-                    timeDelta={timeDelta}
+                    windTime={windTime}
                     onMousePosition={onMousePosition}
                     onMouseDragPosition={onMouseDragPosition}
                     selectedMapRegion={selectedMapRegion}
@@ -89,8 +91,8 @@ const MapCanvas = (props: MapCanvasProps) => {
                 wind={wind || []}
                 showWind={showWind}
                 onShowWind={onShowWind}
-                timeDelta={timeDelta}
-                onTimeDelta={onTimeDelta}
+                windTime={windTime}
+                onTimeDelta={onWindTime}
             />
         </div>
     )

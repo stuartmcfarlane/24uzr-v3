@@ -66,7 +66,7 @@ type MapSvgProps = {
     onCreateLeg?: (startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput) => void
     creatingLeg?: { startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput }
     showWind?: boolean
-    timeDelta?: number
+    windTime?: number
     onMousePosition?: (latLng: LatLng) => void
     onMouseDragPosition?: (point?: LatLng, mark?: LatLng) => void
     selectedMapRegion?: Region
@@ -91,7 +91,7 @@ const MapSvg = (props: MapSvgProps) => {
         onCreateLeg,
         creatingLeg,
         showWind,
-        timeDelta,
+        windTime,
         onMousePosition,
         onMouseDragPosition,
         selectedMapRegion,
@@ -303,7 +303,7 @@ const MapSvg = (props: MapSvgProps) => {
                     <MapWind
                         wind={wind}
                         screen2svgFactor={screen2svgFactor}
-                        timeDelta={timeDelta}
+                        windTime={windTime}
                         boundingRect={boundingRect}
                     />
                 )}
