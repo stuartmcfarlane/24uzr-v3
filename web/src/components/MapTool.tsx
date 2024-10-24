@@ -15,7 +15,7 @@ export const MapTool = async () => {
             <h2 className="text-xl border-b-2 pb-2">Maps</h2>
             {(maps || []).map((map) => (
                 <div key={map.id} className="my-2">
-                    <Link href={`/map/${map.id}`}className="">{map.name}</Link>
+                    <Link href={`/map/${map.id}`} className="">{map.name} { map.isActive && '(active)'}</Link>
                 </div>
             ))}
             <div>

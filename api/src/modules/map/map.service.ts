@@ -17,6 +17,14 @@ export async function findMap(id: number) {
     });
 }
 
+export async function findActiveMap() {
+    return prisma.map.findFirst({
+        where: {
+            isActive: true,
+        },
+    });
+}
+
 export async function updateMap(id: number, map: UpdateMapInput ) {
     return prisma.map.update({
         where: {

@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 import {
   createMapHandler,
+  getActiveMapHandler,
   getMapBuoysHandler,
   getMapGeometryHandler,
   getMapHandler,
@@ -26,6 +27,21 @@ async function mapRoutes(server: FastifyInstance) {
       preHandler: [server.authenticate],
     },
     createMapHandler
+  );
+  
+  server.get(
+    "/map/active",
+    {
+      schema: {
+        tags: ['map'],
+        security: [ { bearerAuth: [] } ],
+        response: {
+          200: $ref("mapResponseSchema"),
+        },
+      },
+      preHandler: [server.authenticate],
+    },
+    getActiveMapHandler
   );
   
   server.get(
