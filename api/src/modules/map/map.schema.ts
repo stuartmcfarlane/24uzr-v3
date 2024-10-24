@@ -4,6 +4,7 @@ import { buildJsonSchemas } from 'fastify-zod';
 const mapInput = {
     name: z.string(),
     isLocked: z.boolean(),
+    isActive: z.boolean(),
     lat1: z.number().default(0),
     lng1: z.number().default(0),
     lat2: z.number().default(0),
@@ -23,6 +24,7 @@ const createMapSchema = z.object({
 const updateMapSchema = z.object({
     name: z.string().optional(),
     isLocked: z.boolean().optional(),
+    isActive: z.boolean().optional(),
     lat1: z.number().optional(),
     lng1: z.number().optional(),
     lat2: z.number().optional(),

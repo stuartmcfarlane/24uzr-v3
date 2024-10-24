@@ -6,7 +6,7 @@ import UnlockedMapPageClientFunctions from "@/components/UnlockedMapPageFunction
 import { apiGetBuoys, apiGetGeometry, apiGetLegs, apiGetMap, apiGetPlans, apiGetShipsByOwner, apiGetWind } from "@/services/api"
 import { redirect } from "next/navigation"
 import { now } from "tslib"
-import { addSeconds, hours2seconds } from '../../../../../tslib/src/time';
+import { addSeconds, hours2seconds } from 'tslib';
 
 const MapPage = async ({
     params

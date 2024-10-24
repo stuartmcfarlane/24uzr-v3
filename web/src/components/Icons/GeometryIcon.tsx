@@ -10,7 +10,6 @@ const GeometryIcon = (props: GeometryIconProps) => {
         <svg
             fill="#000000"
             version="1.1"
-            id="Layer_1"
             xmlns="http://www.w3.org/2000/svg"
             xmlnsXlink="http://www.w3.org/1999/xlink"
             viewBox="0 0 488.101 488.101"

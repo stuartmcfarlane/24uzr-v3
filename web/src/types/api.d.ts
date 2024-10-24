@@ -34,6 +34,7 @@ export type PartialRegion = {
 export interface IApiMapInput {
   name: string
   isLocked: boolean
+  isActive: boolean
   lat1: number
   lng1: number
   lat2: number

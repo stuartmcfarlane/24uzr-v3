@@ -4,6 +4,7 @@ import { useChange } from "@/hooks/useChange"
 import { decimal2geo } from "@/lib/geo"
 import { IApiMapOutput, PartialRegion, Region } from "@/types/api"
 import { useState } from "react"
+import { regionBottomLeft, regionTopRight } from "tslib"
 
 type GeometryOptionsProps = {
     map: IApiMapOutput
@@ -15,14 +16,16 @@ const GeometryOptions = (props: GeometryOptionsProps) => {
         selectedMapRegion,
     } = props
 
-    const [bottomLeft, setBottomLeft] = useState('')
-    const [topRight, setTopRight] = useState('')
+    const [bottomLeft, setBottomLeft] = useState(decimal2geo(regionBottomLeft(map)))
+    const [topRight, setTopRight] = useState(decimal2geo(regionTopRight(map)))
 
+    console.log(`bottomLeft`, {bottomLeft, map, selectedMapRegion})
     useChange(
         () => {
+            console.log(`!change`)
             if (!selectedMapRegion) {
-                setTopRight('')
-                setBottomLeft('')
+                setTopRight(decimal2geo(regionTopRight(map)))
+                setBottomLeft(decimal2geo(regionBottomLeft(map)))
                 return
             }
             const newBottomLeft = decimal2geo({ lat: selectedMapRegion.lat1, lng: selectedMapRegion.lng1})

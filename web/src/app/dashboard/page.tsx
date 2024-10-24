@@ -13,7 +13,7 @@ const DashboardPage = async () => {
 
     return (
         <div className="my-8">
-            <h1 className="text-2xl">Dashboard page</h1>
+            <h1 className="text-2xl mb-4">Admin functions</h1>
             {session.isAdmin && (
                 <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
                     <MapTool/>

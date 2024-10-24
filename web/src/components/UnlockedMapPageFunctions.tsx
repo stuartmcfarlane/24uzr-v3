@@ -4,7 +4,7 @@ import { IApiBuoyOutput, IApiGeometryOutput, IApiLegInput, IApiLegOutput, IApiMa
 import MapCanvas from "./ MapCanvas"
 import { useEffect, useState } from "react"
 import { createLeg, deleteBuoy, updateMap } from "@/actions/map"
-import { idIs } from "tslib"
+import { idIs, LatLng } from "tslib"
 import PadlockIcon from "./Icons/PadlockIcon"
 import BuoyIcon from "./Icons/BuoyIcon"
 import useKeyPress from "@/hooks/useKeyPress"
@@ -15,6 +15,7 @@ import ChartOptions from "./ChartOptions"
 import GeometryIcon from "./Icons/GeometryIcon"
 import GeometryOptions from "./GeometryOptions"
 import { realEq } from "tslib"
+import MapIcon from "./Icons/MapIcon"
 
 type UnlockedMapPageClientFunctionsProps = {
     map: IApiMapOutput
@@ -120,6 +121,12 @@ const UnlockedMapPageClientFunctions = (props: UnlockedMapPageClientFunctionsPro
             isLocked: !map.isLocked,
         })
     }
+    const toggleActiveMap = async () => {
+        await updateMap(map.id, {
+            ...map,
+            isActive: !map.isActive,
+        })
+    }
     const onClearSelection = () => {
         setSelectedBuoy(undefined)
         setSelectedLeg(undefined)
@@ -152,6 +159,17 @@ const UnlockedMapPageClientFunctions = (props: UnlockedMapPageClientFunctionsPro
                         </span>
                     </h1>
                     <div className="flex-1 flex flex-col gap-4 mt-4 border-t-2 pt-4">
+                        <div
+                            className="flex gap-4"
+                            onClick={() => toggleActiveMap()}
+                        >
+                            <div className="w-7">
+                                <MapIcon />
+                            </div>
+                            <div className="">
+                                {map.isActive ? 'Deactivate map' : 'Activate map'}
+                            </div>
+                        </div>
                         <div
                             className="flex gap-4"
                             onClick={() => setGeometryOptionsOpen(open => !open)}

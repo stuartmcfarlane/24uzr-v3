@@ -134,6 +134,18 @@ export const apiGetMap = async (
 
     return  map
 }
+export const apiGetActiveMap = async (
+    accessToken: string,
+): Promise<IApiMapOutput | null> => {
+
+    const response = await get(accessToken, `/api/map/active`)
+
+    if (!response.ok) return null
+    
+    const map = await response.json()
+
+    return  map
+}
 
 export const apiCreateMap = async (
     accessToken: string,
