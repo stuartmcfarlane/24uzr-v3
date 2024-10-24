@@ -1,7 +1,7 @@
 import { WIND_ARROW_LENGTH, WIND_ARROW_WIDTH } from "@/lib/constants"
 import { latLng2canvas, line2SvgLine, screenUnits2canvasUnits } from "@/lib/graph"
 import { metersPerSecond2RGBA, rgba2string } from "@/lib/knotsColorScale"
-import { makeVector, vectorAdd, vectorScale, unitVector, vectorMagnitude, makeLine } from "tslib"
+import { makeVector, vectorAdd, vectorScale, unitVector, vectorMagnitude, makeLine, vectorRotate } from "tslib"
 import { IApiWind } from "@/types/api"
 
 type MapWindArrowProps = {
@@ -14,7 +14,7 @@ const MapWindArrow = (props: MapWindArrowProps) => {
     } = props
 
     const p = latLng2canvas(wind)
-    const V = makeVector(wind.u, wind.v)
+    const V = vectorRotate(Math.PI/2)(makeVector(wind.u, wind.v))
     const magnitude = vectorMagnitude(V)
     const color = metersPerSecond2RGBA(magnitude)
     const v = vectorScale(screenUnits2canvasUnits(screen2svgFactor, WIND_ARROW_LENGTH))(unitVector(V))

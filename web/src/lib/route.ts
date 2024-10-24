@@ -1,4 +1,4 @@
-import { ApiRouteStatus, IApiBuoyOutput, IApiPlanOutput, IApiRouteLegLegOutput, IApiRouteLegOutput, IApiRouteOutput } from "@/types/api";
+import { IApiBuoyOutput, IApiPlanOutput, IApiRouteLegOutput, IApiRouteOutput } from "@/types/api";
 import {
     bearingLatLan,
     CmpFunction,
@@ -8,22 +8,19 @@ import {
     idIs,
     IndexedWind,
     meters2nM,
-    radians2degrees,
     ShipPolar,
     shipSpeed,
     sort,
     Timestamp,
     Vector,
-    vectorAngle,
     vectorMagnitude,
     timestamp2epoch,
-    windAtTimeAndLocation,
     metersPerSecond2knots,
     knots2metersPerSecond,
     epoch2timestamp,
     windAtTime,
     windAtLocation,
-    timestamp2string,
+    wind2degrees,
 } from 'tslib';
 
 export type FleshedRouteBuoy = IApiBuoyOutput & {
@@ -82,7 +79,7 @@ const fleshenLeg = (shipPolar: ShipPolar, vWind: Vector, startTime: Timestamp, l
     const bearing = bearingLatLan(startBuoy, endBuoy)
     const distance = meters2nM(distanceM)
     const windSpeed = metersPerSecond2knots(vectorMagnitude(vWind))
-    const windAngle = radians2degrees(vectorAngle(vWind))
+    const windAngle = wind2degrees(vWind)
     const boatSpeed = shipSpeed(shipPolar)(bearing, vWind)
     const endTime = epoch2timestamp(timestamp2epoch(startTime) + distanceM / knots2metersPerSecond(boatSpeed))
 

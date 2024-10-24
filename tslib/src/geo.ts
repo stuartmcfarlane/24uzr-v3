@@ -30,6 +30,6 @@ export const bearingLatLan = ({ lat: lat1, lng: lng1 }: LatLng, {lat: lat2, lng:
     var x = Math.cos(φ1)*Math.sin(φ2) -
             Math.sin(φ1)*Math.cos(φ2)*Math.cos(Δλ)
     var bearing = radians2degrees(Math.atan2(y, x))
-    return bearing
+    return bearing < 0 ? bearing + 360 : bearing
 }
 

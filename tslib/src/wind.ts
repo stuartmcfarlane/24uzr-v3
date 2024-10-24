@@ -1,7 +1,8 @@
 import { indexByHash, project, toFixed, unique, cmpNumber, sort, cmpString, head } from './fp';
 import { distanceLatLng, LatLng } from './geo'
-import { makeVector, Vector } from './vector'
+import { makeVector, Vector, vectorAngle } from './vector'
 import { seconds2hours, timestamp2epoch, timestamp2string } from './time';
+import { radians2degrees } from './conversions';
 
 export type Wind = {
   lat: number
@@ -106,7 +107,7 @@ function binarySearch(arr: number[], target: number): number {
 }
 
 export const windAtLocation = (wind: IndexedWind, { lat, lng }: LatLng): Vector => {
-  if (!wind.timestamp) {
+  if (!wind || !wind.timestamp) {
     debugger
   }
 
@@ -123,20 +124,19 @@ export const windAtLocation = (wind: IndexedWind, { lat, lng }: LatLng): Vector 
 }
 export const windAtTime = (winds: IndexedWind[], timestamp: Date | string) => {
   if (!timestamp) return undefined
-  const t0 = timestamp2epoch(
-    head(
-      sort(cmpString)(
+  const timestamps = sort(cmpString)(
       winds
         .map(project('timestamp'))
-          .map(timestamp2string)
-      )
-    )
+        .map(timestamp2string)
   )
+  const t0 = timestamp2epoch(head(timestamps))
   const t1 = timestamp2epoch(timestamp)
   const deltaHours = Math.trunc(seconds2hours(t1 - t0))
   if (deltaHours < 0 || winds.length < deltaHours) {
+    console.log(`!windAtTime`, timestamp, timestamps, deltaHours)
     return undefined
   }
+   if (!winds[deltaHours]) console.log(`!windAtTime`, timestamp2string(timestamp), timestamps, deltaHours)
   return winds[deltaHours]
 }
 export const windAtTimeAndLocation = (winds: IndexedWind[], timestamp: Date | string, location: LatLng) => {
@@ -145,3 +145,4 @@ export const windAtTimeAndLocation = (winds: IndexedWind[], timestamp: Date | st
   return windAtLocation(wind, location)
 }
 
+export const wind2degrees = (vWind: Vector) => radians2degrees(vectorAngle(vWind))

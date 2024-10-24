@@ -1,7 +1,8 @@
 import { IApiPlanOutput, Region } from "@/types/api"
 import { RefObject } from "react"
 import { LatLng, Line, makePoint, makeRectSafe, makeVector, Point, points2vector, pointTranslate, Rect, rectHeight, rectPoint, rectWidth, unitVector, vectorRotate } from "tslib"
-import { vectorScale } from '../../../tslib/src/vector';
+import { vectorScale } from 'tslib';
+import { makeRegion, regionUnion } from 'tslib';
 
 const LNG_FACTOR = 100
 const LAT_FACTOR = -100
@@ -108,11 +109,18 @@ export const region2rect = (region: Region) => {
     return makeRectSafe(p1, p2)
 }
 export const plan2region = (plan: IApiPlanOutput): Region => {
-    const region = {
-        lat1: plan.startBuoy.lat,
-        lng1: plan.startBuoy.lng,
-        lat2: plan.endBuoy.lat,
-        lng2: plan.endBuoy.lng,
-    }
+    console.log(`>plan2region`, plan)
+    const region = plan.routes.reduce(
+        (region: Region, route) => {
+            return route.legs.reduce(
+                (region: Region, leg) => {
+                    return regionUnion(region, makeRegion(leg.leg.startBuoy, leg.leg.endBuoy))
+                },
+                region
+            )
+        },
+        makeRegion(plan.startBuoy, plan.endBuoy)
+    )
+    console.log(`<plan2region`, region)
     return region
 }

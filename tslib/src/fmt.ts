@@ -63,3 +63,13 @@ export const fmtLeftPad = (n: number, pad: string) => (v: string | number) => {
     return `${pad}${fmtLeftPad(n-1, pad)(vv)}`
 
 }
+
+export const fmtTwa = (twa: number) => {
+    if (twa > 180) twa = twa - 180
+    return twa < 0
+        ? `${fmtDegrees(-twa)} pt`
+        : twa > 0 
+        ? `${fmtDegrees(twa)} sb`
+        : fmtDegrees(twa)
+            
+}

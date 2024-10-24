@@ -1,13 +1,11 @@
-import { IApiBuoyOutput, IApiPlanOutput, IApiRouteLegOutput, IApiRouteOutput } from "@/types/api"
+import { IApiBuoyOutput, IApiPlanOutput, IApiRouteOutput } from "@/types/api"
 import Link from "next/link"
 import { cmpRouteLegOrder, FleshedRouteBuoy, FleshedRouteLeg, fleshenRoute, fmtNM, route2LengthNm } from "@/lib/route"
-import { fmtDegrees, fmtHoursMinutes, fmtHumanTime, fmtKnots, fmtWindSpeed, LatLng, metersPerSecond2knots, ShipPolar, sort, Timestamp, Vector, vectorAngle, vectorMagnitude, windAtLocation, WindIndicatorMode } from "tslib"
-import { IndexedWind, windAtTimeAndLocation } from '../../../tslib/src/wind';
-import { radians2degrees } from '../../../tslib/src/conversions';
+import { bearingLatLan, calcTwa, distanceLatLng, fmtDegrees, fmtHoursMinutes, fmtHumanTime, fmtWindSpeed, meters2nM, metersPerSecond2knots, ShipPolar, sort, Timestamp, Vector, vectorMagnitude, wind2degrees, WindIndicatorMode } from "tslib"
+import { IndexedWind, windAtTimeAndLocation } from 'tslib';
 import { useState } from "react";
 import { useChange } from "@/hooks/useChange";
-import { redirect } from "next/navigation";
-import { FleshedRoute } from '../lib/route';
+import { fmtTwa } from 'tslib';
 
 
 type RouteOptionProps = {
@@ -169,6 +167,7 @@ const SelectedRoute = (props: {
                     <div className="flex-col gap-2">
                         {sort(cmpRouteLegOrder)(fleshedRoute.legs).map(routeLeg => (
                             <RouteBuoy
+                                shopPolar={shipPolar}
                                 wind={wind}
                                 key={routeLeg.leg.id}
                                 plan={plan}
@@ -179,6 +178,7 @@ const SelectedRoute = (props: {
                             />
                         ))}
                         <RouteBuoy
+                            shopPolar={shipPolar}
                             wind={wind}
                             plan={plan}
                             route={route}
@@ -193,6 +193,7 @@ const SelectedRoute = (props: {
 
 const RouteBuoy = (props:
     {
+        shipPolar: ShipPolar
         wind: IndexedWind[]
         windTime?: number
         plan: IApiPlanOutput
@@ -208,6 +209,7 @@ const RouteBuoy = (props:
         route,
         routeLeg,
         buoy,
+        shipPolar,
     } = props
 
     const boatSpeed = routeLeg?.boatSpeed
@@ -239,11 +241,21 @@ const RouteBuoy = (props:
             </div>
             {windTime !== undefined && (
                 <div className="flex flex-row gap-2">
+                    <TimeIndicator
+                        timestamp={buoy.timestamp}
+                    />
+                    {routeLeg && (
+                        <LegIndicator
+                            startBuoy={routeLeg.startBuoy}
+                            endBuoy={routeLeg.endBuoy}
+                        />
+                    )}
                     <WindIndicator
                         timestamp={buoy.timestamp}
                         vWind={vWind}
                     />
                     <BoatIndicator
+                        shipPolar={shipPolar}
                         vWind={vWind}
                         boatSpeed={boatSpeed}
                         bearing={bearing}
@@ -252,6 +264,25 @@ const RouteBuoy = (props:
             )}
         </div>
     )
+}
+
+const LegIndicator = (props: {
+    startBuoy: IApiBuoyOutput
+    endBuoy: IApiBuoyOutput
+    mode?: WindIndicatorMode
+}) => {
+    const {
+        startBuoy,
+        endBuoy,
+        mode = 'text',
+    } = props
+    if (mode === 'text') return (
+        <>
+            <div>{fmtDegrees(bearingLatLan(startBuoy, endBuoy))}</div>
+            <div>{fmtNM(meters2nM(distanceLatLng(startBuoy, endBuoy)))}</div>
+        </>
+    )
+    return <></>
 }
 
 const WindIndicator = (props: {
@@ -266,31 +297,48 @@ const WindIndicator = (props: {
     } = props
     if (mode === 'text') return (
         <>
-            <div>{fmtHoursMinutes(timestamp)}</div>
-            <div>{fmtDegrees(radians2degrees(vectorAngle(vWind)))}</div>
+            <div>{fmtDegrees(wind2degrees(vWind))}</div>
             <div>{fmtWindSpeed(metersPerSecond2knots(vectorMagnitude(vWind)))}</div>
         </>
     )
     return <></>
 }
 
+const TimeIndicator = (props: {
+    timestamp: Timestamp
+    mode?: WindIndicatorMode
+}) => {
+    const {
+        timestamp,
+        mode = 'text',
+    } = props
+    if (mode === 'text') return (
+        <>
+            <div>{fmtHoursMinutes(timestamp)}</div>
+        </>
+    )
+    return <></>
+}
+
 const BoatIndicator = (props: {
+    shipPolar: ShipPolar
     vWind: Vector
     boatSpeed?: number
     bearing?: number
     mode?: WindIndicatorMode
 }) => {
     const {
+        shipPolar,
         vWind,
         boatSpeed,
         bearing,
         mode = 'text',
     } = props
     if (undefined === bearing || undefined === boatSpeed) return <></>
-    const twa = radians2degrees(vectorAngle(vWind)) - bearing
+    const twa = calcTwa(vWind, bearing)
     if (mode === 'text') return (
         <>
-            <div>{fmtDegrees(twa)} twa</div>
+            <div>{fmtTwa(twa)}</div>
             <div>{fmtWindSpeed(boatSpeed)}</div>
         </>
     )

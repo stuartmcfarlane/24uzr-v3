@@ -12,7 +12,7 @@ import RouteOption from "./RouteOption"
 
 
 type RouteOptionsProps = {
-    shipPolar: ShipPolar
+    shipPolar?: ShipPolar
     wind: IndexedWind[]
     plan: IApiPlanOutput
     routes: IApiRouteOutput[]

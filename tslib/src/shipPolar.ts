@@ -1,5 +1,7 @@
 import { cmpNumber, equal, head, int2string, not, sort, string2float, truthy } from "./fp"
 import { absDiff, } from "./math"
+import { Vector } from './vector';
+import { wind2degrees } from './wind';
 
 const CSV_SEPARATOR = ';'
 
@@ -256,4 +258,12 @@ export const getTwaRow = (shipPolar: ShipPolar) => (angle: number) => {
     const twaCol = diffs.findIndex(equal(minDiff))
     const twa = shipPolar.twa[twaCol]
     return shipPolar[twa]
+}
+
+export const calcTwa = (vWind: Vector, bearing: number) => {
+    console.log(`>calcTwa`, vWind, wind2degrees(vWind), bearing)
+    const windAngle = wind2degrees(vWind)
+    const twa = windAngle - bearing
+    console.log(`calcTwa`, twa)
+    return twa
 }
