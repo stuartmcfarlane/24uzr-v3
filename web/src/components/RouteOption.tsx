@@ -1,7 +1,7 @@
 import { IApiBuoyOutput, IApiPlanOutput, IApiRouteLegOutput, IApiRouteOutput } from "@/types/api"
 import Link from "next/link"
 import { cmpRouteLegOrder, FleshedRouteBuoy, FleshedRouteLeg, fleshenRoute, fmtNM, route2LengthNm } from "@/lib/route"
-import { fmtDegrees, fmtKnots, fmtWindSpeed, LatLng, metersPerSecond2knots, ShipPolar, sort, Vector, vectorAngle, vectorMagnitude, windAtLocation, WindIndicatorMode } from "tslib"
+import { fmtDegrees, fmtHoursMinutes, fmtHumanTime, fmtKnots, fmtWindSpeed, LatLng, metersPerSecond2knots, ShipPolar, sort, Timestamp, Vector, vectorAngle, vectorMagnitude, windAtLocation, WindIndicatorMode } from "tslib"
 import { IndexedWind, windAtTimeAndLocation } from '../../../tslib/src/wind';
 import { radians2degrees } from '../../../tslib/src/conversions';
 import { useState } from "react";
@@ -151,8 +151,13 @@ const SelectedRoute = (props: {
                 href={`/map/${plan.mapId}/plan/${plan.id}/route/${route.id}`}
             >
                 <div className="flex flex-row content-start gap-4">
-                    <div className="">
-                        {route.name}
+                    <div className="flex flex-col">
+                        <div className="">
+                            {route.name}
+                        </div>
+                        <div className="">
+                            {fmtHumanTime(plan.startTime)}
+                        </div>
                     </div>
                     {fleshedRoute && (
                         <div className="text-xs">
@@ -235,6 +240,7 @@ const RouteBuoy = (props:
             {windTime !== undefined && (
                 <div className="flex flex-row gap-2">
                     <WindIndicator
+                        timestamp={buoy.timestamp}
                         vWind={vWind}
                     />
                     <BoatIndicator
@@ -250,14 +256,17 @@ const RouteBuoy = (props:
 
 const WindIndicator = (props: {
     vWind: Vector
+    timestamp: Timestamp
     mode?: WindIndicatorMode
 }) => {
     const {
+        timestamp,
         vWind,
         mode = 'text',
     } = props
     if (mode === 'text') return (
         <>
+            <div>{fmtHoursMinutes(timestamp)}</div>
             <div>{fmtDegrees(radians2degrees(vectorAngle(vWind)))}</div>
             <div>{fmtWindSpeed(metersPerSecond2knots(vectorMagnitude(vWind)))}</div>
         </>

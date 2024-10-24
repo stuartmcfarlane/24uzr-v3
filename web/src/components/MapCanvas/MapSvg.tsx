@@ -285,7 +285,8 @@ const MapSvg = (props: MapSvgProps) => {
                 className="map-canvas absolute"
             >
                 <defs>
-                    <ArrowMarker />
+                    <ArrowMarker id={'arrow'} />
+                    <ArrowMarker id={'windArrow'} />
                 </defs>
                 <g>
                     <MapGeometry geometry={geometry}  />

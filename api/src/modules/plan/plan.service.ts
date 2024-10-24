@@ -9,10 +9,30 @@ export async function createPlan(plan: CreatePlanInput) {
         ...plan,
     }
     const created = await prisma.plan.create({
+        include: {
+            startBuoy: true,
+            endBuoy: true,
+            routes: {
+                include: {
+                    startBuoy: true,
+                    endBuoy: true,
+                    legs: {
+                        include: {
+                            leg: {
+                                include: {
+                                    startBuoy: true,
+                                    endBuoy: true,
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         data,
     });
-    
-    return findPlan(created.id);
+
+    return created
 }
 
 export async function findPlan(id: number) {
