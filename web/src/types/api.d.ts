@@ -186,11 +186,14 @@ export type IApiGeometryOutput = any
 
 export type IApiShipInput = {
   ownerId: number
+  isActive: boolean
   name: string
+  sailNumber: string
   polar: string
 }
 export type IApiShipUpdateInput = {
   ownerId?: number
+  isActive?: boolean
   name?: string
   polar?: string
 }

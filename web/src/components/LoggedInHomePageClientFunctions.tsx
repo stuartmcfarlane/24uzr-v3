@@ -1,15 +1,19 @@
 "use client"
 
-import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiPlanOutput, IApiShipOutput, IApiWindOutput } from "@/types/api"
+import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiPlanOutput, IApiShipOutput, IApiUserOutput, IApiWindOutput } from "@/types/api"
 import MapCanvas from "./ MapCanvas"
 import { useState } from "react"
 import { updateMap } from "@/actions/map"
-import { maybeFinishBuoy } from "tslib"
+import { fieldIs, maybeFinishBuoy } from "tslib"
 import PadlockIcon from "./Icons/PadlockIcon"
 import { useChange } from "@/hooks/useChange"
 import PlanOptions from "./PlanOptions"
+import { isActive } from "@/lib/ships"
+import SelectShipForm from "./SelectShipForm"
+import { updateActiveShip } from "@/actions/ship"
 
 type LoggedInHomePageClientFunctionsProps = {
+    user: IApiUserOutput
     map: IApiMapOutput
     ships: IApiShipOutput[]
     wind: IApiBulkWind[]
@@ -21,6 +25,7 @@ type LoggedInHomePageClientFunctionsProps = {
 
 const LoggedInHomePageClientFunctions = (props: LoggedInHomePageClientFunctionsProps) => {
     const {
+        user,
         map,
         ships,
         wind,
@@ -38,7 +43,7 @@ const LoggedInHomePageClientFunctions = (props: LoggedInHomePageClientFunctionsP
     const [creatingLeg, setCreatingLeg] = useState<{startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput} | undefined>(undefined)
     const [hoveredPlan, setHoveredPlan] = useState<IApiPlanOutput | undefined>(undefined)
     const [showWind, setShowWind] = useState(true)
-    const [activeShip, setActiveShip] = useState(ships?.length === 1 ? ships[0] : undefined)
+    const [activeShip, setActiveShip] = useState(ships.find(isActive) || ships[0])
     const onShowWind = (showWind: boolean) => setShowWind(showWind)
 
     const onClearSelection = () => {
@@ -66,29 +71,29 @@ const LoggedInHomePageClientFunctions = (props: LoggedInHomePageClientFunctionsP
             endBuoy,
         })
     }
-    const onToggleMapLock = async () => {
-        await updateMap(map.id, {
-            ...map,
-            isLocked: !map.isLocked,
-        })
-    }
     const onHoverPlan = (plan?: IApiPlanOutput) => {
         setHoveredPlan(plan)
     }
-    const onSelectShip = (ship?: IApiShipOutput) => {
-        setActiveShip(ship)
+    const onSelectShip = async (ship?: IApiShipOutput) => {
+        if (ship?.id !== activeShip?.id) {
+            const newActiveShip = await updateActiveShip(user.id, ship)
+            setActiveShip(newActiveShip || ship)
+        }
     }
     if (!map.isLocked) return <div>Error - map is locked</div>
 
+    console.log(ships)
     return (
         <div className="flex-grow my-8 flex gap-4">
             <div className="max-h-[calc(100vh-5rem-6rem)] md:max-h-[calc(100vh-5rem-4rem-2rem)] flex flex-col gap-4">
                 <div className="flex-1 flex flex-col">
                     <h1 className="text-lg flex gap-4">
-                        <span>Map {map?.name} </span>
-                        <span className="w-7">
-                            <PadlockIcon isLocked={map.isLocked} onClick={onToggleMapLock} />
-                        </span>
+                        {activeShip && (<>
+                            <span>{activeShip.name} </span>
+                        </>)}
+                        {!activeShip && (<>
+                            <SelectShipForm ships={ships} onSelectShip={onSelectShip}/>
+                        </>)}
                     </h1>
                     <div className="flex-1 flex flex-col gap-4 mt-4 border-t-2 pt-4">
                         <PlanOptions
@@ -125,3 +130,4 @@ const LoggedInHomePageClientFunctions = (props: LoggedInHomePageClientFunctionsP
 }
 
 export default LoggedInHomePageClientFunctions
+
