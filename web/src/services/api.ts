@@ -1,5 +1,5 @@
 import { geo2decimal } from "@/lib/geo"
-import { indexWindByTimestamp, Timestamp, timestamp2epoch, timestamp2string, wind2resolution } from "tslib"
+import { indexWindByTimestamp, LatLng, Timestamp, timestamp2epoch, timestamp2string, wind2resolution } from "tslib"
 import { IApiBulkWind, IApiBuoyInput, IApiBuoyOutput, IApiGeometryInput, IApiGeometryOutput, IApiLegInput, IApiLegOutput, IApiMapInput, IApiMapOutput, IApiMapUpdateInput, IApiPlanInput, IApiPlanOutput, IApiRouteInput, IApiRouteLegOutput, IApiRouteOutput, IApiShipInput, IApiShipOutput, IApiShipUpdateInput, IApiSingleWind, IApiUser, IApiUserOutput, IApiWind, IApiWindInput, IApiWindOutput } from "@/types/api"
 
 const makeApiUrl = (uri: string) => `${process.env.NEXT_PUBLIC_API_URL || process.env.API_URL}${uri}`
@@ -49,6 +49,20 @@ const put = async (accessToken: string | undefined, uri: string, data: object) =
         body: JSON.stringify(data),
     }
     return await fetch(makeApiUrl(uri), options)
+}
+
+export const apiGetByOwner = <T>(thing: ( 'ships' | 'plans' )) => async (
+    accessToken: string,
+    ownerId: number,
+): Promise<T[] | null> => {
+
+    const response = await get(accessToken, `/api/user/${ownerId}/${thing}`)
+
+    if (!response.ok) return null
+    
+    const got = await response.json()
+
+    return got
 }
 
 export const apiRegister = async ({
@@ -178,7 +192,7 @@ const withNumericLatLng = (
         lat,
         lng,
         ...rest
-    }: MaybeLatLng & IApiBuoyOutput
+    }: LatLng & IApiBuoyOutput
 ): IApiBuoyOutput => ({
     ...rest,
     lat: typeof lat === 'string' ? parseFloat(lat) : lat,
@@ -359,6 +373,8 @@ export const apiGetPlans = async (
     return  plans
 }
 
+export const apiGetPlansByOwner = apiGetByOwner<IApiPlanOutput>('plans')
+
 export const apiCreatePlan = async (
     accessToken: string,
     plan: IApiPlanInput,
@@ -506,17 +522,4 @@ export const apiGetShip = async (
     return  ship
 }
 
-export const apiGetShipsByOwner = async (
-    accessToken: string,
-    ownerId: number,
-): Promise<IApiShipOutput[] | null> => {
-
-    const response = await get(accessToken, `/api/user/${ownerId}/ships`)
-
-    if (!response.ok) return null
-    
-    const ships = await response.json()
-
-    return  ships
-}
-
+export const apiGetShipsByOwner = apiGetByOwner<IApiShipOutput>('ships')

@@ -43,7 +43,7 @@ const LoggedInHomePageClientFunctions = (props: LoggedInHomePageClientFunctionsP
     const [creatingLeg, setCreatingLeg] = useState<{startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput} | undefined>(undefined)
     const [hoveredPlan, setHoveredPlan] = useState<IApiPlanOutput | undefined>(undefined)
     const [showWind, setShowWind] = useState(true)
-    const [activeShip, setActiveShip] = useState(ships.find(isActive) || ships[0])
+    const [activeShip, setActiveShip] = useState<IApiShipOutput|undefined>(ships.find(isActive) || ships[0])
     const onShowWind = (showWind: boolean) => setShowWind(showWind)
 
     const onClearSelection = () => {
