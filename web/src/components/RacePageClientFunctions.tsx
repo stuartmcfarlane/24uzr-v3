@@ -12,7 +12,7 @@ import { isActive } from "@/lib/ships"
 import SelectShipForm from "./SelectShipForm"
 import { updateActiveShip } from "@/actions/ship"
 
-type LoggedInHomePageClientFunctionsProps = {
+type RacePageClientFunctionsProps = {
     user: IApiUserOutput
     map: IApiMapOutput
     ships: IApiShipOutput[]
@@ -23,7 +23,7 @@ type LoggedInHomePageClientFunctionsProps = {
     geometry: IApiGeometryOutput
 }
 
-const LoggedInHomePageClientFunctions = (props: LoggedInHomePageClientFunctionsProps) => {
+const RacePageClientFunctions = (props: RacePageClientFunctionsProps) => {
     const {
         user,
         map,
@@ -35,7 +35,7 @@ const LoggedInHomePageClientFunctions = (props: LoggedInHomePageClientFunctionsP
         geometry,
     } = props
 
-    console.log(`>LoggedInHomePageClientFunctions`, props)
+    console.log(`>RacePageClientFunctions`, props)
     const [selectedBuoy, setSelectedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
     const [startBuoy, setStartBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
     const [endBuoy, setEndBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
@@ -129,5 +129,5 @@ const LoggedInHomePageClientFunctions = (props: LoggedInHomePageClientFunctionsP
     )
 }
 
-export default LoggedInHomePageClientFunctions
+export default RacePageClientFunctions
 

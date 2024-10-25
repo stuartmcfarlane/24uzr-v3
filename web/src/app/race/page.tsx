@@ -1,13 +1,13 @@
 "use server"
 
 import { getSession } from "@/actions/session"
+import RacePageClientFunctions from "@/components/RacePageClientFunctions"
 import { apiGetActiveMap, apiGetBuoys, apiGetGeometry, apiGetLegs, apiGetPlans, apiGetPlansByOwner, apiGetShipsByOwner, apiGetUser, apiGetWind } from "@/services/api"
 import { redirect } from "next/navigation"
 import { now } from "tslib"
 import { addSeconds, hours2seconds } from 'tslib';
-import LoggedInHomePageClientFunctions from "./LoggedInHomePageClientFunctions"
 
-const LoggedInHomePage = async () => {
+const Race = async () => {
     const session = await getSession()
 
     if (!session.isLoggedIn) redirect('/login')
@@ -36,7 +36,7 @@ const LoggedInHomePage = async () => {
     const until = addSeconds(hours2seconds(25))(from)
     const wind = await apiGetWind(session.apiToken!, from, until, map)
 
-    return <LoggedInHomePageClientFunctions
+    return <RacePageClientFunctions
         user={user!}
         map={map}
         ships={ships || []}
@@ -47,4 +47,4 @@ const LoggedInHomePage = async () => {
         geometry={geometry || []}
     />
 }
-export default LoggedInHomePage
+export default Race
