@@ -1,7 +1,7 @@
 import { indexByHash, project, toFixed, unique, cmpNumber, sort, cmpString, head } from './fp';
 import { distanceLatLng, LatLng } from './geo'
 import { makeVector, Vector, vectorAngle } from './vector'
-import { seconds2hours, timestamp2epoch, timestamp2string } from './time';
+import { seconds2hours, Timestamp, timestamp2epoch, timestamp2string } from './time';
 import { radians2degrees } from './conversions';
 
 export type Wind = {
@@ -44,7 +44,8 @@ export const wind2resolution = (wind: SingleWind[]) => {
     )
     return resolution
 }
-export const timestampIs = (timestamp: string | Date) => (wind: IndexedWind | BulkWind) => wind.timestamp === timestamp2string(timestamp)
+export type Timestamped = { timestamp: Timestamp }
+export const timestampIs = (timestamp: string | Date) => (timestamped: Timestamped) => timestamp2string(timestamped.timestamp) === timestamp2string(timestamp)
 
 export const indexWindByTimestamp = (wind: SingleWind[]) => {
   return wind.reduce(
@@ -145,4 +146,7 @@ export const windAtTimeAndLocation = (winds: IndexedWind[], timestamp: Date | st
   return windAtLocation(wind, location)
 }
 
-export const wind2degrees = (vWind: Vector) => radians2degrees(vectorAngle(vWind))
+export const wind2degrees = (vWind: Vector) => {
+  const vDegrees = radians2degrees(vectorAngle(vWind))
+  return (360 - vDegrees - 90) % 360
+}

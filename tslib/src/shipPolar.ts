@@ -54,7 +54,6 @@ export const parseShipPolar = (polarCsv: string): ShipPolar => {
     }
 }
 export type ShipPolarOrc = {
-    tws: number[]
     beat_angle: number[]
     beat_vmg: number[]
     [angle: string]: number[]
@@ -64,24 +63,24 @@ export type ShipPolarOrc = {
     angles: number[]
 }
 
-export const shipPolarOrc2csv = (shipPolar: ShipPolarOrc): string => {
+export const shipPolarOrc2csv = (shipPolarOrc: ShipPolarOrc): string => {
 
     const csvA = [
-        ['twa/tws', ...shipPolar.speeds],
-        ...shipPolar.beat_angle.map(
+        ['twa/tws', ...shipPolarOrc.speeds],
+        ...shipPolarOrc.beat_angle.map(
             (angle, idx) => {
-                let a = new Array(shipPolar.speeds.length).fill('0')
-                a[idx] = shipPolar.beat_vmg[idx]
+                let a = new Array(shipPolarOrc.speeds.length).fill('0')
+                a[idx] = shipPolarOrc.beat_vmg[idx]
                 return [`${angle}`, ...a]
             }
         ),
-        ...shipPolar.angles.map(
-            angle => [ `${angle}`, ...shipPolar[angle]]
+        ...shipPolarOrc.angles.map(
+            angle => [ `${angle}`, ...shipPolarOrc[angle]]
         ),
-        ...shipPolar.run_angle.map(
+        ...shipPolarOrc.run_angle.map(
             (angle, idx) => {
-                let a = new Array(shipPolar.speeds.length).fill('0')
-                a[idx] = shipPolar.run_vmg[idx]
+                let a = new Array(shipPolarOrc.speeds.length).fill('0')
+                a[idx] = shipPolarOrc.run_vmg[idx]
                 return [`${angle}`, ...a]
             }
         )
@@ -253,6 +252,8 @@ export const getTwsCol = (shipPolar: ShipPolar) => (knots: number) => {
     return diffs.findIndex(equal(minDiff))
 }
 export const getTwaRow = (shipPolar: ShipPolar) => (angle: number) => {
+    if (angle < Math.min(...shipPolar.twa)) return shipPolar.beatVMG
+    if (Math.max(...shipPolar.twa) < angle) return shipPolar.runVMG
     const diffs = shipPolar.twa.map(absDiff(angle))
     const minDiff = Math.min(...diffs)
     const twaCol = diffs.findIndex(equal(minDiff))
@@ -261,9 +262,8 @@ export const getTwaRow = (shipPolar: ShipPolar) => (angle: number) => {
 }
 
 export const calcTwa = (vWind: Vector, bearing: number) => {
-    console.log(`>calcTwa`, vWind, wind2degrees(vWind), bearing)
     const windAngle = wind2degrees(vWind)
-    const twa = windAngle - bearing
-    console.log(`calcTwa`, twa)
-    return twa
+    const twa = 360 + bearing - windAngle
+    if (twa <= 180) return twa
+    return twa - 360
 }
