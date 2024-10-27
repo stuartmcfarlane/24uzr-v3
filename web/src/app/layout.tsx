@@ -1,21 +1,21 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { ContentSection } from "@/components/ContentSection";
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
+import "./globals.css"
+import Navbar from "@/components/Navbar"
+import Footer from "@/components/Footer"
+import { ContentSection } from "@/components/ContentSection"
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "24uzr",
-  description: "Optimise you 24 hour sailing race decisions.",
-};
+  description: "Optimize you 24 hour sailing race decisions.",
+}
 
 export default async function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
 
   return (
@@ -28,5 +28,5 @@ export default async function RootLayout({
         <Footer/>
       </body>
     </html>
-  );
+  )
 }
