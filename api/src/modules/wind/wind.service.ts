@@ -1,5 +1,5 @@
 import prisma from "../../utils/prisma";
-import { Region } from "../../utils/region";
+import { Region } from "tslib";
 import { CreateBulkWindInput, CreateSingleWindInput, CreateWindInput, UpdateWindInput } from './wind.schema';
 
 const bulkData2dbData = (data: CreateBulkWindInput): CreateSingleWindInput[] => (Array.isArray(data) ? data : [data]).reduce(
