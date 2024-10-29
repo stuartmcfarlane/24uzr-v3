@@ -217,7 +217,9 @@ export const createRouteWithForm = async (formData: FormData): Promise<ActionErr
     })
     if (!createdRoute) return { error: "Failed to create map" }
 
-    redirect(`/map/${createdRoute.mapId}/route/${createdRoute.id}`)
+    if (session.isAdmin) redirect(`/map/${createdRoute.mapId}/route/${createdRoute.id}`)
+
+    redirect(`/race/route/${createdRoute.id}`)
 }
 export const setMapRegion = async (formData: FormData): Promise<ActionError> => {
     const session = await getSession()

@@ -42,7 +42,8 @@ export const createPlanWithForm = async (formData: FormData): Promise<ActionErro
     })
     if (!createdPlan) return { error: "Failed to create plan" }
 
-    redirect(`/map/${createdPlan.mapId}/plan/${createdPlan.id}`)
+    if (session.isAdmin) redirect(`/map/${createdPlan.mapId}/plan/${createdPlan.id}`)
+    redirect(`/race/plan/${createdPlan.id}`)
 }
 
 export const getPlan = async (planId: number) => {

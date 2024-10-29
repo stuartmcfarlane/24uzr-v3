@@ -9,6 +9,7 @@ import { fmtTwa } from 'tslib';
 
 
 type RouteOptionProps = {
+    pageRoot: string
     shipPolar: ShipPolar
     wind: IndexedWind[]
     plan: IApiPlanOutput
@@ -20,6 +21,7 @@ type RouteOptionProps = {
 }
 const RouteOption = (props: RouteOptionProps) => {
     const {
+        pageRoot,
         shipPolar,
         wind,
         windTime,
@@ -43,6 +45,7 @@ const RouteOption = (props: RouteOptionProps) => {
         />
     )
     return <AlternateRoute
+        pageRoot={pageRoot}
         plan={plan}
         route={route}
         onHoverRoute={onHoverRoute}
@@ -53,12 +56,14 @@ const RouteOption = (props: RouteOptionProps) => {
 export default RouteOption
 
 const AlternateRoute = (props: {
+    pageRoot: string
     route: IApiRouteOutput
     plan: IApiPlanOutput
     onHoverRoute?: (route?: IApiRouteOutput) => void
     selectedRoute?: IApiRouteOutput
 }) => {
     const {
+        pageRoot,
         route,
         plan,
         onHoverRoute,
@@ -76,7 +81,7 @@ const AlternateRoute = (props: {
             onMouseLeave={onMouseLeave(route)}
         >
             <Link className="flex flex-col"
-                href={`/map/${plan.mapId}/plan/${plan.id}/route/${route.id}`}
+                href={`/${pageRoot}/plan/${plan.id}/route/${route.id}`}
             >
                 <div className="flex flex-row content-start gap-4">
                     <div className="">
@@ -92,6 +97,7 @@ const AlternateRoute = (props: {
 }
 
 const SelectedRoute = (props: {
+    pageRoot: string
     shipPolar: ShipPolar
     wind: IndexedWind[]
     windTime: number
@@ -102,6 +108,7 @@ const SelectedRoute = (props: {
     showBuoys?: boolean
 }) => {
     const {
+        pageRoot,
         shipPolar,
         wind,
         windTime,
@@ -146,7 +153,7 @@ const SelectedRoute = (props: {
             onMouseLeave={onMouseLeave(route)}
         >
             <Link className="flex flex-col"
-                href={`/map/${plan.mapId}/plan/${plan.id}/route/${route.id}`}
+                href={`/${pageRoot}/plan/${plan.id}/route/${route.id}`}
             >
                 <div className="flex flex-row content-start gap-4">
                     <div className="flex flex-col">
@@ -178,7 +185,7 @@ const SelectedRoute = (props: {
                             />
                         ))}
                         <RouteBuoy
-                            shopPolar={shipPolar}
+                            shipPolar={shipPolar}
                             wind={wind}
                             plan={plan}
                             route={route}

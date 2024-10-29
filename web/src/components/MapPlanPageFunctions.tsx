@@ -7,6 +7,7 @@ import RouteOptions from "./RouteOptions"
 import { plan2region } from "@/lib/graph"
 
 type MapPlanPageClientFunctionsProps = {
+    pageRoot: string
     map: IApiMapOutput
     wind: IApiBulkWind[]
     plan: IApiPlanOutput
@@ -16,6 +17,7 @@ type MapPlanPageClientFunctionsProps = {
 
 const MapPlanPageClientFunctions = (props: MapPlanPageClientFunctionsProps) => {
     const {
+        pageRoot,
         map,
         wind,
         plan,
@@ -53,6 +55,7 @@ const MapPlanPageClientFunctions = (props: MapPlanPageClientFunctionsProps) => {
                     </h1>
                 </div>
                 <RouteOptions
+                    pageRoot={pageRoot}
                     plan={plan}
                     routes={plan.routes}
                     onHoverRoute={onHoverRoute}

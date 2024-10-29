@@ -12,6 +12,7 @@ import RouteOption from "./RouteOption"
 
 
 type RouteOptionsProps = {
+    pageRoot: string
     shipPolar?: ShipPolar
     wind: IndexedWind[]
     plan: IApiPlanOutput
@@ -25,6 +26,7 @@ type RouteOptionsProps = {
 }
 const RouteOptions = (props: RouteOptionsProps) => {
     const {
+        pageRoot = 'race',
         shipPolar,
         wind,
         plan,
@@ -85,6 +87,7 @@ const RouteOptions = (props: RouteOptionsProps) => {
             <div className="flex flex-col gap-4 overflow-y-auto pr-4">
                 {selectedRoute && (
                     <RouteOption
+                        pageRoot={pageRoot}
                         shipPolar={shipPolar}
                         wind={wind}
                         windTime={windTime}
@@ -98,6 +101,7 @@ const RouteOptions = (props: RouteOptionsProps) => {
                 {sort(desc(cmpRouteLength))(actualRoutes || []).map(route => (
                     (!selectedRoute || route.id !== selectedRoute.id) && (
                         <RouteOption key={route.id}
+                            pageRoot={pageRoot}
                             shipPolar={shipPolar}
                             wind={wind}
                             windTime={windTime}
@@ -113,6 +117,7 @@ const RouteOptions = (props: RouteOptionsProps) => {
         </>)}
         {startBuoy && (
             <NewRouteTool
+                pageRoot={pageRoot}
                 plan={actualPlan}
                 startBuoy={startBuoy}
                 endBuoy={endBuoy}

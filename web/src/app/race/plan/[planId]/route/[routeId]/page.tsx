@@ -2,7 +2,7 @@
 
 import { getSession } from "@/actions/session"
 import MapPlanRoutePageClientFunctions from "@/components/MapPlanRoutePageFunctions"
-import { apiGetBuoys, apiGetGeometry, apiGetMap, apiGetPlan, apiGetRoute, apiGetShip, apiGetWind } from "@/services/api"
+import { apiGetActiveMap, apiGetBuoys, apiGetGeometry, apiGetPlan, apiGetRoute, apiGetShip, apiGetWind } from "@/services/api"
 import { redirect } from "next/navigation"
 import { addSeconds, hours2seconds } from "tslib"
 
@@ -10,38 +10,34 @@ const MapPlanRoutePage = async ({
     params
 }: {
         params: {
-            mapId: string,
             planId: string
             routeId: string
         }
 }) => {
 
-    const mapId = parseInt(params.mapId)
     const planId = parseInt(params.planId)
     const routeId = parseInt(params.routeId)
     const session = await getSession()
+    const map = await apiGetActiveMap(session.apiToken!)
+    if (!map) {
+        redirect('/')
+    }
     const [
-        map,
         plan,
         route,
         buoys,
         geometry,
     ] = await Promise.all([
-        apiGetMap(session.apiToken!, mapId),
         apiGetPlan(session.apiToken!, planId),
         apiGetRoute(session.apiToken!, routeId),
-        apiGetBuoys(session.apiToken!, mapId),
-        apiGetGeometry(session.apiToken!, mapId),
+        apiGetBuoys(session.apiToken!, map.id),
+        apiGetGeometry(session.apiToken!, map.id),
     ])
     
-    if (!map) {
-        redirect('/dashboard')
-    }
     if (!plan) {
-        redirect(`/map/${mapId}`)
+        redirect(`/race`)
     }
     if (!route) {
-        if (session.isAdmin) redirect(`/map/${mapId}/plan/${planId}`)
         redirect(`/race/plan/${planId}`)
     }
     const from = addSeconds(hours2seconds(-1))(plan.startTime)
@@ -54,7 +50,6 @@ const MapPlanRoutePage = async ({
         apiGetShip(session.apiToken!, plan.shipId),
     ])
     if (!ship) {
-        if (session.isAdmin) redirect(`/map/${mapId}/plan/${planId}`)
         redirect(`/race/plan/${planId}`)
     }
     return (
