@@ -1,6 +1,6 @@
-import prisma from "../../utils/prisma";
-import { Region } from "tslib";
-import { CreateBulkWindInput, CreateSingleWindInput, CreateWindInput, UpdateWindInput } from './wind.schema';
+import prisma from "../../utils/prisma"
+import { Region } from "tslib"
+import { CreateBulkWindInput, CreateSingleWindInput, CreateWindInput, UpdateWindInput } from './wind.schema'
 
 const bulkData2dbData = (data: CreateBulkWindInput): CreateSingleWindInput[] => (Array.isArray(data) ? data : [data]).reduce(
     (dbData, { data, timestamp }) => [
@@ -44,7 +44,7 @@ export async function createWind(data: CreateWindInput) {
             : createSingleWind(data as CreateSingleWindInput)
     )
     
-    return wind;
+    return wind
 }
 
 const chunk = <T>(size: number, a: T[]) => {
@@ -90,7 +90,7 @@ export async function findWind(timestamp: string, lat: number, lng: number) {
                 lng,
             },
         },
-    });
+    })
 }
 
 export async function findWindByRegion(region: Region, from: string, until?: string) {
@@ -116,7 +116,7 @@ export async function findWindByRegion(region: Region, from: string, until?: str
             ),
         },
     }
-    return prisma.wind.findMany(query);
+    return prisma.wind.findMany(query)
 }
 
 export async function updateWind(wind: UpdateWindInput ) {
@@ -129,7 +129,7 @@ export async function updateWind(wind: UpdateWindInput ) {
             },
         },
         data: wind
-    });
+    })
 }
 
 export async function deleteOldWind() {
@@ -141,5 +141,5 @@ export async function deleteOldWind() {
                 lt: oldTimestamp
             },
         },
-    });
+    })
 }
