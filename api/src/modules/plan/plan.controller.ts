@@ -78,7 +78,6 @@ export async function getPlanHandler(
 ) {
     const { id } = PlanIdParamSchema.parse(request.params)
     const plan = await findPlan(id)
-    console.log(`got plan`, plan)
     
     return plan;
 }

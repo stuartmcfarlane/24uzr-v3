@@ -17,7 +17,6 @@ const MapPlanPage = async ({
     const planId = parseInt(params.planId)
     const session = await getSession()
     const map = await apiGetActiveMap(session.apiToken!)
-    console.log(`map`, map)
     if (!map) {
         redirect('/')
     }
@@ -30,7 +29,6 @@ const MapPlanPage = async ({
         apiGetBuoys(session.apiToken!, map.id),
         apiGetGeometry(session.apiToken!, map.id),
     ])
-    console.log(`plan`, plan)
     
     if (!plan) {
         redirect(`/race`)
