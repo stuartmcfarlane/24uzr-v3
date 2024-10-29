@@ -41,8 +41,7 @@ const MapPlanRoutePage = async ({
         redirect(`/map/${mapId}`)
     }
     if (!route) {
-        if (session.isAdmin) redirect(`/map/${mapId}/plan/${planId}`)
-        redirect(`/race/plan/${planId}`)
+        redirect(`/map/${mapId}/plan/${planId}`)
     }
     const from = addSeconds(hours2seconds(-1))(plan.startTime)
     const until = addSeconds(plan.raceSecondsRemaining + hours2seconds(12))(plan.startTime)
@@ -54,11 +53,11 @@ const MapPlanRoutePage = async ({
         apiGetShip(session.apiToken!, plan.shipId),
     ])
     if (!ship) {
-        if (session.isAdmin) redirect(`/map/${mapId}/plan/${planId}`)
-        redirect(`/race/plan/${planId}`)
+        redirect(`/map/${mapId}/plan/${planId}`)
     }
     return (
         <MapPlanRoutePageClientFunctions
+            pageRoot={`/map/${mapId}`}
             ship={ship}
             map={map}
             geometry={geometry}

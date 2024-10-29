@@ -8,6 +8,7 @@ import { plan2region } from "@/lib/graph"
 import { bulkWind2indexedWind, parseShipPolar } from "tslib"
 
 type MapPlanRoutePageClientFunctionsProps = {
+    pageRoot: string
     ship: IApiShipOutput
     map: IApiMapOutput
     wind: IApiBulkWind[]
@@ -19,6 +20,7 @@ type MapPlanRoutePageClientFunctionsProps = {
 
 const MapPlanRoutePageClientFunctions = (props: MapPlanRoutePageClientFunctionsProps) => {
     const {
+        pageRoot,
         ship,
         map,
         wind,
@@ -61,6 +63,7 @@ const MapPlanRoutePageClientFunctions = (props: MapPlanRoutePageClientFunctionsP
                     </h1>
                 </div>
                 <RouteOptions
+                    pageRoot={pageRoot}
                     shipPolar={ship && parseShipPolar(ship.polar)}
                     wind={bulkWind2indexedWind(wind)}
                     plan={plan}

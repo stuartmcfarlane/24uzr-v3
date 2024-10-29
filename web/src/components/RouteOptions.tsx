@@ -26,7 +26,7 @@ type RouteOptionsProps = {
 }
 const RouteOptions = (props: RouteOptionsProps) => {
     const {
-        pageRoot = 'race',
+        pageRoot,
         shipPolar,
         wind,
         plan,

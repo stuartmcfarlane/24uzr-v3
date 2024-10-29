@@ -7,7 +7,7 @@ import { findLegsByMapId } from "../leg/leg.service";
 import { findShip } from "../ship/ship.service";
 import { findWindByRegion } from "../wind/wind.service";
 import { findMap } from "../map/map.service";
-import { addSeconds } from "tslib";
+import { addSeconds, timestamp2date } from "tslib";
 import { idIs } from "tslib";
 
 export async function createPlanHandler(
@@ -38,8 +38,8 @@ export async function createPlanHandler(
         const endBuoy = buoys.find(idIs(plan.endBuoyId))
 
         const startTime = plan.startTime.toISOString()
-        const endTime = addSeconds(plan.raceSecondsRemaining)(plan.startTime).toISOString()
-        const endTimePlusOneHour = addSeconds(plan.raceSecondsRemaining + 60*60)(plan.startTime).toISOString()
+        const endTime = timestamp2date(addSeconds(plan.raceSecondsRemaining)(plan.startTime)).toISOString()
+        const endTimePlusOneHour = timestamp2date(addSeconds(plan.raceSecondsRemaining + 60*60)(plan.startTime)).toISOString()
 
         const wind = await findWindByRegion(
             {
@@ -78,6 +78,7 @@ export async function getPlanHandler(
 ) {
     const { id } = PlanIdParamSchema.parse(request.params)
     const plan = await findPlan(id)
+    console.log(`got plan`, plan)
     
     return plan;
 }

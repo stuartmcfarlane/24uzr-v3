@@ -1,16 +1,18 @@
 "use client"
 
-import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiPlanOutput, IApiRouteOutput } from "@/types/api"
+import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiPlanOutput, IApiRouteOutput, IApiShipOutput } from "@/types/api"
 import MapCanvas from "./ MapCanvas"
 import { useState } from "react"
 import RouteOptions from "./RouteOptions"
 import { plan2region } from "@/lib/graph"
+import { bulkWind2indexedWind, parseShipPolar } from "tslib"
 
 type MapPlanPageClientFunctionsProps = {
     pageRoot: string
     map: IApiMapOutput
     wind: IApiBulkWind[]
     plan: IApiPlanOutput
+    ship: IApiShipOutput
     buoys: IApiBuoyOutput[]
     geometry: IApiGeometryOutput
 }
@@ -21,6 +23,7 @@ const MapPlanPageClientFunctions = (props: MapPlanPageClientFunctionsProps) => {
         map,
         wind,
         plan,
+        ship,
         buoys,
         geometry,
     } = props
@@ -56,6 +59,9 @@ const MapPlanPageClientFunctions = (props: MapPlanPageClientFunctionsProps) => {
                 </div>
                 <RouteOptions
                     pageRoot={pageRoot}
+                    wind={bulkWind2indexedWind(wind)}
+                    windTime={0}
+                    shipPolar={parseShipPolar(ship.polar)}
                     plan={plan}
                     routes={plan.routes}
                     onHoverRoute={onHoverRoute}

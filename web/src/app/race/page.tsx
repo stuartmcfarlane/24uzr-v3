@@ -32,7 +32,6 @@ const Race = async () => {
         apiGetGeometry(session.apiToken!, map.id),
     ])
 
-    console.log(`user's plans`, plans)
     const from = addSeconds(hours2seconds(-1))(now())
     const until = addSeconds(hours2seconds(25))(from)
     const wind = await apiGetWind(session.apiToken!, from, until, map)

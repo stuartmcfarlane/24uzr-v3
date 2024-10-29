@@ -54,6 +54,7 @@ const MapPlanRoutePage = async ({
     }
     return (
         <MapPlanRoutePageClientFunctions
+            pageRoot="/race"
             ship={ship}
             map={map}
             geometry={geometry}
