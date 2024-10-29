@@ -8,7 +8,6 @@ export type Region = {
 }
 
 export const regionBottomLeft = ({ lat1, lng1 }: Region): LatLng => {
-    console.log(`regionBottomLeft`, lat1, lng1)
     return {lat: lat1, lng: lng1 }
 }
 

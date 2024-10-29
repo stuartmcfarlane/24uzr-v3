@@ -121,3 +121,10 @@ export async function updatePlanRoutes(plan: Plan, routes: CreateRouteInput[]) {
         )
     )
 }
+export async function findPlansByOwnerId(ownerId: number) {
+    return prisma.plan.findMany({
+        where: {
+            ownerId
+        },
+    });
+}

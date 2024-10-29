@@ -81,7 +81,7 @@ const AlternateRoute = (props: {
             onMouseLeave={onMouseLeave(route)}
         >
             <Link className="flex flex-col"
-                href={`/${pageRoot}/plan/${plan.id}/route/${route.id}`}
+                href={`${pageRoot}/plan/${plan.id}/route/${route.id}`}
             >
                 <div className="flex flex-row content-start gap-4">
                     <div className="">
@@ -153,7 +153,7 @@ const SelectedRoute = (props: {
             onMouseLeave={onMouseLeave(route)}
         >
             <Link className="flex flex-col"
-                href={`/${pageRoot}/plan/${plan.id}/route/${route.id}`}
+                href={`${pageRoot}/plan/${plan.id}/route/${route.id}`}
             >
                 <div className="flex flex-row content-start gap-4">
                     <div className="flex flex-col">

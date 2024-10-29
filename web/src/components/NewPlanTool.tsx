@@ -8,6 +8,7 @@ import { useState } from "react"
 import { useChange } from "@/hooks/useChange"
 
 type NewPlanToolProps = {
+    rootPage: string
     map: IApiMapOutput
     ship: IApiShipOutput
     startBuoy?: IApiBuoyOutput
@@ -15,12 +16,13 @@ type NewPlanToolProps = {
 }
 export const NewPlanTool = (props: NewPlanToolProps) => {
     const {
+        rootPage,
         map,
         ship,
         startBuoy,
         endBuoy,
     } = props
-
+    
     const [defaultPlanName, setDefaultPlanName] = useState('plan name')
     useChange(
         () => {
@@ -85,6 +87,7 @@ export const NewPlanTool = (props: NewPlanToolProps) => {
                 <input type="hidden" name="endBuoyId" value={endBuoy?.id}/>
                 <input type="hidden" name="defaultName" value={defaultPlanName}/>
                 <input type="hidden" name="startTime" value={new Date().toISOString()}/>
+                <input type="hidden" name="rootPage" value={rootPage}/>
             </form>
         )}
     </>)

@@ -26,12 +26,13 @@ const Race = async () => {
     ] = await Promise.all([
         apiGetUser(session.apiToken!, session.userId),
         apiGetShipsByOwner(session.apiToken!, session.userId!),
-        apiGetPlansByOwner(session.apiToken!, map.id),
+        apiGetPlansByOwner(session.apiToken!, session.userId!),
         apiGetBuoys(session.apiToken!, map.id),
         apiGetLegs(session.apiToken!, map.id),
         apiGetGeometry(session.apiToken!, map.id),
     ])
 
+    console.log(`user's plans`, plans)
     const from = addSeconds(hours2seconds(-1))(now())
     const until = addSeconds(hours2seconds(25))(from)
     const wind = await apiGetWind(session.apiToken!, from, until, map)

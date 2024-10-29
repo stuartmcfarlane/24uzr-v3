@@ -35,7 +35,6 @@ const RacePageClientFunctions = (props: RacePageClientFunctionsProps) => {
         geometry,
     } = props
 
-    console.log(`>RacePageClientFunctions`, props)
     const [selectedBuoy, setSelectedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
     const [startBuoy, setStartBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
     const [endBuoy, setEndBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
@@ -82,7 +81,6 @@ const RacePageClientFunctions = (props: RacePageClientFunctionsProps) => {
     }
     if (!map.isLocked) return <div>Error - map is locked</div>
 
-    console.log(ships)
     return (
         <div className="flex-grow my-8 flex gap-4">
             <div className="max-h-[calc(100vh-5rem-6rem)] md:max-h-[calc(100vh-5rem-4rem-2rem)] flex flex-col gap-4">
@@ -97,6 +95,7 @@ const RacePageClientFunctions = (props: RacePageClientFunctionsProps) => {
                     </h1>
                     <div className="flex-1 flex flex-col gap-4 mt-4 border-t-2 pt-4">
                         <PlanOptions
+                            rootPage="/race"
                             map={map}
                             ships={ships}
                             plans={plans}

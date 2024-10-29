@@ -19,10 +19,8 @@ const GeometryOptions = (props: GeometryOptionsProps) => {
     const [bottomLeft, setBottomLeft] = useState(decimal2geo(regionBottomLeft(map)))
     const [topRight, setTopRight] = useState(decimal2geo(regionTopRight(map)))
 
-    console.log(`bottomLeft`, {bottomLeft, map, selectedMapRegion})
     useChange(
         () => {
-            console.log(`!change`)
             if (!selectedMapRegion) {
                 setTopRight(decimal2geo(regionTopRight(map)))
                 setBottomLeft(decimal2geo(regionBottomLeft(map)))

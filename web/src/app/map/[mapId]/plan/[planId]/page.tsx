@@ -42,7 +42,7 @@ const MapPlanPage = async ({
 
     return (
         <MapPlanPageClientFunctions
-            pageRoot='/race'
+            pageRoot={`/map/${mapId}`}
             map={map}
             geometry={geometry}
             wind={wind}

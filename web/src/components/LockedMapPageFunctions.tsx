@@ -10,6 +10,7 @@ import { useChange } from "@/hooks/useChange"
 import PlanOptions from "./PlanOptions"
 
 type LockedMapPageClientFunctionsProps = {
+    rootPage: string
     map: IApiMapOutput
     ships: IApiShipOutput[]
     wind: IApiBulkWind[]
@@ -21,6 +22,7 @@ type LockedMapPageClientFunctionsProps = {
 
 const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) => {
     const {
+        rootPage,
         map,
         ships,
         wind,
@@ -91,6 +93,7 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
                     </h1>
                     <div className="flex-1 flex flex-col gap-4 mt-4 border-t-2 pt-4">
                         <PlanOptions
+                            rootPage={rootPage}
                             map={map}
                             ships={ships}
                             plans={plans}

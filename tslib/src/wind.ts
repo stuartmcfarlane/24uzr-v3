@@ -134,10 +134,8 @@ export const windAtTime = (winds: IndexedWind[], timestamp: Date | string) => {
   const t1 = timestamp2epoch(timestamp)
   const deltaHours = Math.trunc(seconds2hours(t1 - t0))
   if (deltaHours < 0 || winds.length < deltaHours) {
-    console.log(`!windAtTime`, timestamp, timestamps, deltaHours)
     return undefined
   }
-   if (!winds[deltaHours]) console.log(`!windAtTime`, timestamp2string(timestamp), timestamps, deltaHours)
   return winds[deltaHours]
 }
 export const windAtTimeAndLocation = (winds: IndexedWind[], timestamp: Date | string, location: LatLng) => {

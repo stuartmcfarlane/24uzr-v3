@@ -8,6 +8,7 @@ import { ChangeEvent } from 'react'
 import { idIs } from "tslib"
 
 type PlanOptionsProps = {
+    rootPage: string
     map: IApiMapOutput
     ships: IApiShipOutput[]
     plans: IApiPlanOutput[]
@@ -19,6 +20,7 @@ type PlanOptionsProps = {
 }
 const PlanOptions = (props: PlanOptionsProps) => {
     const {
+        rootPage,
         map,
         ships,
         plans,
@@ -61,14 +63,14 @@ const PlanOptions = (props: PlanOptionsProps) => {
                 </div>
             </div>
             <div className="flex flex-col gap-4 overflow-y-auto pr-4">
-                {(plans || []).map(plan => (
+                {(plans || []).filter(plan => !activeShip || activeShip.id === plan.shipId).map(plan => (
                     <div
                         key={plan.id}
                         className="border p-2 hover:bg-24uzr hover:text-white"
                         onMouseEnter={onMouseEnter(plan)}
                         onMouseLeave={onMouseLeave(plan)}
                     >
-                        <Link href={`/map/${map.id}/plan/${plan.id}`}>
+                        <Link href={`${rootPage}/plan/${plan.id}`}>
                             {plan.name}
                         </Link>
                     </div>
@@ -77,6 +79,7 @@ const PlanOptions = (props: PlanOptionsProps) => {
         </>)}
         {activeShip && startBuoy && (
             <NewPlanTool
+                rootPage={rootPage}
                 map={map}
                 ship={activeShip}
                 startBuoy={startBuoy}

@@ -3,6 +3,7 @@ import { verifyPassword } from "../../utils/hash";
 import { CreateUserInput, LoginInput, UpdateUserInput, UserIdParamInput, UserIdParamSchema } from "./user.schema";
 import { createUser, findUserByEmail, findUsers, findUser, updateUser } from "./user.service";
 import { findShipsByOwnerId } from "../ship/ship.service";
+import { findPlansByOwnerId } from "../plan/plan.service";
 
 export async function registerUserHandler(
   request: FastifyRequest<{
@@ -141,5 +142,17 @@ export async function getUserShipsHandler(
   const ships = await findShipsByOwnerId(id)
   
   return ships;
+}
+
+export async function getUserPlansHandler(
+  request: FastifyRequest<{
+    Params: UserIdParamInput
+  }>,
+) {
+  const { id } = UserIdParamSchema.parse(request.params) || request.user 
+
+  const plans = await findPlansByOwnerId(id)
+  
+  return plans;
 }
 

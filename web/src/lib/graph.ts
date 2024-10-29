@@ -109,7 +109,6 @@ export const region2rect = (region: Region) => {
     return makeRectSafe(p1, p2)
 }
 export const plan2region = (plan: IApiPlanOutput): Region => {
-    console.log(`>plan2region`, plan)
     const region = plan.routes.reduce(
         (region: Region, route) => {
             return route.legs.reduce(
@@ -121,6 +120,5 @@ export const plan2region = (plan: IApiPlanOutput): Region => {
         },
         makeRegion(plan.startBuoy, plan.endBuoy)
     )
-    console.log(`<plan2region`, region)
     return region
 }

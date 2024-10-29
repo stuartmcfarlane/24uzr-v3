@@ -17,6 +17,7 @@ export const createPlanWithForm = async (formData: FormData): Promise<ActionErro
     const raceSecondsRemaining = parseInt(formData.get("raceSecondsRemaining") as string)
     const raceHoursRemaining = parseInt(formData.get("raceHoursRemaining") as string)
     const startTime = formData.get("startTime") as string
+    const rootPage = formData.get("rootPage") as string
 
     if (!session.userId ||
         !mapId ||
@@ -42,8 +43,7 @@ export const createPlanWithForm = async (formData: FormData): Promise<ActionErro
     })
     if (!createdPlan) return { error: "Failed to create plan" }
 
-    if (session.isAdmin) redirect(`/map/${createdPlan.mapId}/plan/${createdPlan.id}`)
-    redirect(`/race/plan/${createdPlan.id}`)
+    redirect(`${rootPage}/plan/${createdPlan.id}`)
 }
 
 export const getPlan = async (planId: number) => {

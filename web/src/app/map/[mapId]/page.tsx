@@ -41,7 +41,8 @@ const MapPage = async ({
 
     return (
         map.isLocked
-         ? <LockedMapPageClientFunctions
+        ? <LockedMapPageClientFunctions
+            rootPage={`/map/${map.id}`}
             map={map}
             ships={ships || []}
             wind={wind || []}

@@ -8,6 +8,7 @@ import {
   getUserShipsHandler,
   getCurrentUserHandler,
   putCurrentUserHandler,
+  getUserPlansHandler,
 } from "./user.controller";
 import { $ref } from "./user.schema";
 
@@ -152,6 +153,38 @@ async function userRoutes(server: FastifyInstance) {
       ],
     },
     getUserShipsHandler
+  );
+
+  server.get(
+    "/user/plans",
+    {
+      schema: {
+        tags: ['user'],
+        security: [ { bearerAuth: [] } ],
+        response: {
+          200: $ref("getUserPlansResponseSchema"),
+        },
+      },
+      preHandler: [server.authenticate],
+    },
+    getUserPlansHandler
+  );
+
+  server.get(
+    "/user/:id/plans",
+    {
+      schema: {
+        tags: ['user'],
+        security: [ { bearerAuth: [] } ],
+        response: {
+          200: $ref("getUserPlansResponseSchema"),
+        },
+      },
+      preHandler: [
+        server.authenticate,
+      ],
+    },
+    getUserPlansHandler
   );
 
 }

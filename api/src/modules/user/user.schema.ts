@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { buildJsonSchemas } from "fastify-zod";
-import { ShipSchema } from "../../../prisma/generated/zod";
+import { PlanSchema, ShipSchema } from "../../../prisma/generated/zod";
 
 const userCore = {
   email: z
@@ -39,6 +39,8 @@ const getUserResponseSchema = z.object({
 
 const getUserShipsResponseSchema = z.array(ShipSchema);
 
+const getUserPlansResponseSchema = z.array(PlanSchema);
+
 export const UserIdParamSchema = z.object({
     id: z.coerce.number(),
 }).strict()
@@ -53,8 +55,8 @@ const loginSchema = z.object({
     .email(),
   password: z
     .string({
-      required_error: "Passowrd is required",
-      invalid_type_error: "Passowrd must be a string",
+      required_error: "Password is required",
+      invalid_type_error: "Password must be a string",
     }),
 });
 
@@ -72,6 +74,7 @@ export const { schemas: userSchemas, $ref } = buildJsonSchemas({
   createUserResponseSchema,
   getUserResponseSchema,
   getUserShipsResponseSchema,
+  getUserPlansResponseSchema,
   loginSchema,
   loginResponseSchema,
   updateUserSchema,
