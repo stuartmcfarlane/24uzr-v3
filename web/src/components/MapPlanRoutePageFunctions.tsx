@@ -1,6 +1,6 @@
 "use client"
 
-import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiPlanOutput, IApiRouteOutput, IApiShipOutput } from "@/types/api"
+import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiPlanOutput, IApiRouteLegOutput, IApiRouteOutput, IApiShipOutput } from "@/types/api"
 import MapCanvas from "./ MapCanvas"
 import { useState } from "react"
 import RouteOptions from "./RouteOptions"
@@ -33,6 +33,8 @@ const MapPlanRoutePageClientFunctions = (props: MapPlanRoutePageClientFunctionsP
     const [selectedBuoy, setSelectedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
     const [selectedLeg, setSelectedLeg] = useState<IApiLegOutput | undefined>(undefined)
     const [hoveredRoute, setHoveredRoute] = useState<IApiRouteOutput | undefined>(undefined)
+    const [selectedRouteLeg, setSelectedRouteLeg] = useState<IApiRouteLegOutput | undefined>(undefined)
+    const [hoveredRouteLeg, setHoveredRouteLeg] = useState<IApiRouteLegOutput | undefined>(undefined)
     const [showWind, setShowWind] = useState(true)
     const [windTime, setWindTime] = useState(0)
 
@@ -53,6 +55,12 @@ const MapPlanRoutePageClientFunctions = (props: MapPlanRoutePageClientFunctionsP
     const onHoverRoute = (route?: IApiRouteOutput) => {
         setHoveredRoute(route)
     }
+    const onSelectRouteLeg = (leg?: IApiRouteLegOutput) => {
+        setSelectedRouteLeg(leg)
+    }
+    const onHoverRouteLeg = (leg?: IApiRouteLegOutput) => {
+        setHoveredRouteLeg(leg)
+    }
 
     return (
         <div className="flex-grow my-8 flex gap-4">
@@ -69,7 +77,10 @@ const MapPlanRoutePageClientFunctions = (props: MapPlanRoutePageClientFunctionsP
                     plan={plan}
                     routes={plan.routes}
                     onHoverRoute={onHoverRoute}
+                    onHoverLeg={onHoverRouteLeg}
                     selectedRoute={route}
+                    selectedLeg={selectedRouteLeg}
+                    hoveredLeg={hoveredRouteLeg}
                     windTime={windTime}
                 />
             </div>
@@ -83,8 +94,12 @@ const MapPlanRoutePageClientFunctions = (props: MapPlanRoutePageClientFunctionsP
                 onClearSelections={onClearSelection}
                 selectedBuoy={selectedBuoy}
                 onSelectBuoy={onSelectBuoy}
-                selectedLeg={selectedLeg}
                 onSelectLeg={onSelectLeg}
+                selectedLeg={selectedLeg}
+                onSelectRouteLeg={onSelectRouteLeg}
+                onHoverRouteLeg={onHoverRouteLeg}
+                selectedRouteLeg={selectedRouteLeg}
+                hoveredRouteLeg={hoveredRouteLeg}
                 routeLegs={route.legs}
                 hoverRouteLegs={hoveredRoute?.legs}
                 showWind={showWind}

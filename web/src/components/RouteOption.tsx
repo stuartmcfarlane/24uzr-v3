@@ -1,4 +1,4 @@
-import { IApiBuoyOutput, IApiPlanOutput, IApiRouteOutput } from "@/types/api"
+import { IApiBuoyOutput, IApiPlanOutput, IApiRouteLegOutput, IApiRouteOutput } from "@/types/api"
 import Link from "next/link"
 import { cmpRouteLegOrder, FleshedRouteBuoy, FleshedRouteLeg, fleshenRoute, fmtNM, route2LengthNm } from "@/lib/route"
 import { bearingLatLan, calcTwa, distanceLatLng, fmtDegrees, fmtHoursMinutes, fmtHumanTime, fmtWindSpeed, meters2nM, metersPerSecond2knots, ShipPolar, sort, Timestamp, Vector, vectorMagnitude, wind2degrees, WindIndicatorMode } from "tslib"
@@ -15,7 +15,10 @@ type RouteOptionProps = {
     plan: IApiPlanOutput
     route: IApiRouteOutput
     onHoverRoute?: (route?: IApiRouteOutput) => void
+    onHoverLeg?: (leg?: IApiRouteLegOutput) => void
     selectedRoute?: IApiRouteOutput
+    selectedLeg?: IApiRouteLegOutput
+    hoveredLeg?: IApiRouteLegOutput
     showBuoys?: boolean
     windTime: number
 }
@@ -28,7 +31,10 @@ const RouteOption = (props: RouteOptionProps) => {
         plan,
         route,
         onHoverRoute,
+        onHoverLeg,
         selectedRoute,
+        selectedLeg,
+        hoveredLeg,
         showBuoys,
     } = props
 
@@ -40,7 +46,10 @@ const RouteOption = (props: RouteOptionProps) => {
             plan={plan}
             route={route}
             onHoverRoute={onHoverRoute}
+            onHoverLeg={onHoverLeg}
             selectedRoute={selectedRoute}
+            selectedLeg={selectedLeg}
+            hoveredLeg={hoveredLeg}
             showBuoys={showBuoys}
         />
     )
@@ -97,25 +106,29 @@ const AlternateRoute = (props: {
 }
 
 const SelectedRoute = (props: {
-    pageRoot: string
     shipPolar: ShipPolar
     wind: IndexedWind[]
     windTime: number
     route: IApiRouteOutput
     plan: IApiPlanOutput
     onHoverRoute?: (route?: IApiRouteOutput) => void
+    onHoverLeg?: (leg?: IApiRouteLegOutput) => void
     selectedRoute?: IApiRouteOutput
+    selectedLeg?: IApiRouteLegOutput
+    hoveredLeg?: IApiRouteLegOutput
     showBuoys?: boolean
 }) => {
     const {
-        pageRoot,
         shipPolar,
         wind,
         windTime,
         route,
         plan,
         onHoverRoute,
+        onHoverLeg,
         selectedRoute,
+        selectedLeg,
+        hoveredLeg,
         showBuoys,
     } = props
 
@@ -152,9 +165,7 @@ const SelectedRoute = (props: {
             onMouseEnter={onMouseEnter(route)}
             onMouseLeave={onMouseLeave(route)}
         >
-            <Link className="flex flex-col"
-                href={`${pageRoot}/plan/${plan.id}/route/${route.id}`}
-            >
+            <div className="flex flex-col">
                 <div className="flex flex-row content-start gap-4">
                     <div className="flex flex-col">
                         <div className="">
@@ -182,6 +193,9 @@ const SelectedRoute = (props: {
                                 routeLeg={routeLeg}
                                 buoy={routeLeg.startBuoy}
                                 windTime={windTime}
+                                onHoverLeg={onHoverLeg}
+                                selectedLeg={selectedLeg}
+                                hoveredLeg={hoveredLeg}
                             />
                         ))}
                         <RouteBuoy
@@ -190,10 +204,13 @@ const SelectedRoute = (props: {
                             plan={plan}
                             route={route}
                             buoy={fleshedRoute.endBuoy}
+                            onHoverLeg={onHoverLeg}
+                            selectedLeg={selectedLeg}
+                            hoveredLeg={hoveredLeg}
                         />
                     </div>
                 )}
-            </Link>
+            </div>
         </div>
     )
 }
@@ -207,6 +224,9 @@ const RouteBuoy = (props:
         route: IApiRouteOutput
         buoy: FleshedRouteBuoy
         routeLeg?: FleshedRouteLeg
+        onHoverLeg?: (leg?: IApiRouteLegOutput) => void
+        selectedLeg?: IApiRouteLegOutput
+        hoveredLeg?: IApiRouteLegOutput
     }
 ) => {
     const {
@@ -217,19 +237,34 @@ const RouteBuoy = (props:
         routeLeg,
         buoy,
         shipPolar,
+        onHoverLeg,
+        selectedLeg,
+        hoveredLeg,
     } = props
 
     const boatSpeed = routeLeg?.boatSpeed
     const bearing = routeLeg?.bearing
     const vWind=windAtTimeAndLocation(wind, buoy.timestamp, buoy)
     
+    const onMouseEnter = () => onHoverLeg && onHoverLeg(routeLeg)
+    const onMouseLeave = () => onHoverLeg && onHoverLeg()
+
     return (
         <div
-            className="
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            className={`
                 flex
                 justify-between
                 gap-4 
-                bg-blue-100
+                ${
+                selectedLeg && routeLeg?.leg.id === selectedLeg.leg.id
+                ||
+                hoveredLeg && routeLeg?.leg.id === hoveredLeg.leg.id
+                ? "bg-white"
+                : "bg-blue-100"
+                }
+                hover:bg-white
                 text-blue-800
                 text-xs
                 font-medium
@@ -241,7 +276,7 @@ const RouteBuoy = (props:
                 dark:text-blue-400
                 border
                 border-blue-400
-            "
+            `}
         >
             <div>
                 {buoy.name}

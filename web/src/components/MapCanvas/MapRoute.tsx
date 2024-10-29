@@ -1,15 +1,15 @@
-import { IApiBuoyOutput, IApiLegOutput, IApiRouteLegOutput } from "@/types/api"
+import { IApiBuoyOutput, IApiRouteLegOutput } from "@/types/api"
 import MapRouteLeg from "./MapRouteLeg"
 import { idIs } from "tslib"
-import { useState } from "react"
 
 type MapRouteProps = {
     buoys: IApiBuoyOutput[]
     routeLegs: IApiRouteLegOutput[]
     color?: string
-    selectedLeg?: IApiLegOutput
-    onSelectLeg?: (buoy?: IApiLegOutput) => void
-    onHoverLeg?: (leg?: IApiRouteLegOutput) => void
+    onSelectRouteLeg?: (buoy?: IApiRouteLegOutput) => void
+    onHoverRouteLeg?: (leg?: IApiRouteLegOutput) => void
+    hoveredRouteLeg?: IApiRouteLegOutput
+    selectedRouteLeg?: IApiRouteLegOutput
     screen2svgFactor?: number
 }
 
@@ -18,8 +18,10 @@ const MapRoute = (props: MapRouteProps) => {
         buoys,
         routeLegs,
         color,
-        onSelectLeg,
-        selectedLeg,
+        onSelectRouteLeg,
+        onHoverRouteLeg,
+        selectedRouteLeg,
+        hoveredRouteLeg,
     } = props
 
     return (
@@ -29,8 +31,10 @@ const MapRoute = (props: MapRouteProps) => {
                 routeLeg={routeLeg}
                 startBuoy={buoys?.find(idIs(routeLeg.leg.startBuoyId))}
                 endBuoy={buoys?.find(idIs(routeLeg.leg.endBuoyId))}
-                onSelect={onSelectLeg}
-                isSelected={routeLeg.leg.id === selectedLeg?.id}
+                onSelect={onSelectRouteLeg}
+                onHover={onHoverRouteLeg}
+                isSelected={routeLeg.leg.id === selectedRouteLeg?.leg.id}
+                isHovered={routeLeg.leg.id === hoveredRouteLeg?.leg.id}
             />
         ))
     )

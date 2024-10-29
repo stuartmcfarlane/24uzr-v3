@@ -1,4 +1,4 @@
-import { IApiBuoyOutput, IApiPlanOutput, IApiRouteOutput } from "@/types/api"
+import { IApiBuoyOutput, IApiPlanOutput, IApiRouteLegOutput, IApiRouteOutput } from "@/types/api"
 import Link from "next/link"
 import { NewRouteTool } from "./NewRouteTool"
 import RouteIcon from "./Icons/RouteIcon"
@@ -13,14 +13,17 @@ import RouteOption from "./RouteOption"
 
 type RouteOptionsProps = {
     pageRoot: string
-    shipPolar?: ShipPolar
+    shipPolar: ShipPolar
     wind: IndexedWind[]
     plan: IApiPlanOutput
     routes: IApiRouteOutput[]
     startBuoy?: IApiBuoyOutput
     endBuoy?: IApiBuoyOutput
     onHoverRoute?: (route?: IApiRouteOutput) => void
+    onHoverLeg?: (leg?: IApiRouteLegOutput) => void
     selectedRoute?: IApiRouteOutput
+    selectedLeg?: IApiRouteLegOutput
+    hoveredLeg?: IApiRouteLegOutput
     showBuoys?: boolean
     windTime: number
 }
@@ -34,7 +37,10 @@ const RouteOptions = (props: RouteOptionsProps) => {
         startBuoy,
         endBuoy,
         onHoverRoute,
+        onHoverLeg,
         selectedRoute,
+        selectedLeg,
+        hoveredLeg,
         showBuoys,
         windTime,
     } = props
@@ -94,7 +100,10 @@ const RouteOptions = (props: RouteOptionsProps) => {
                         plan={actualPlan}
                         route={selectedRoute}
                         onHoverRoute={onHoverRoute}
+                        onHoverLeg={onHoverLeg}
                         selectedRoute={selectedRoute}
+                        selectedLeg={selectedLeg}
+                        hoveredLeg={hoveredLeg}
                         showBuoys={true}
                     />
                 )}

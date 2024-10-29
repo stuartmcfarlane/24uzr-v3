@@ -20,8 +20,12 @@ type MapCanvasProps = {
     onClearSelections?: () => void
     selectedBuoy?: IApiBuoyOutput
     onSelectBuoy?: (buoy?: IApiBuoyOutput) => void
-    selectedLeg?: IApiLegOutput
     onSelectLeg?: (buoy?: IApiLegOutput) => void
+    onSelectRouteLeg?: (leg?: IApiRouteLegOutput) => void
+    onHoverRouteLeg?: (leg?: IApiRouteLegOutput) => void
+    selectedLeg?: IApiLegOutput
+    hoveredRouteLeg?: IApiRouteLegOutput
+    selectedRouteLeg?: IApiRouteLegOutput
     onCreateLeg?: (startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput) => void
     creatingLeg?: { startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput }
     showWind?: boolean
@@ -51,6 +55,10 @@ const MapCanvas = (props: MapCanvasProps) => {
         onSelectLeg,
         onCreateLeg,
         creatingLeg,
+        onSelectRouteLeg,
+        onHoverRouteLeg,
+        selectedRouteLeg,
+        hoveredRouteLeg,
         windTime,
         onWindTime,
         showWind,
@@ -80,6 +88,10 @@ const MapCanvas = (props: MapCanvasProps) => {
                     selectedLeg={selectedLeg}
                     onCreateLeg={onCreateLeg}
                     creatingLeg={creatingLeg}
+                    onSelectRouteLeg={onSelectRouteLeg}
+                    onHoverRouteLeg={onHoverRouteLeg}
+                    selectedRouteLeg={selectedRouteLeg}
+                    hoveredRouteLeg={hoveredRouteLeg}
                     showWind={showWind}
                     windTime={windTime}
                     onMousePosition={onMousePosition}

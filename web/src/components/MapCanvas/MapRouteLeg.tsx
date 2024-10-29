@@ -9,6 +9,7 @@ type MapRouteLegProps = {
     endBuoy?: IApiBuoyOutput
     onSelect?: (leg?: IApiRouteLegOutput) => void
     isSelected?: boolean
+    isHovered?: boolean
     color?: string
     onHover?: (routeLeg?: IApiRouteLegOutput) => void
     screen2svgFactor?: number
@@ -21,6 +22,7 @@ const MapRouteLeg = (props: MapRouteLegProps) => {
         endBuoy,
         onSelect,
         isSelected,
+        isHovered,
         color,
         onHover,
         screen2svgFactor,
@@ -49,7 +51,7 @@ const MapRouteLeg = (props: MapRouteLegProps) => {
         <line
             {...line2SvgLine([start, end])}
             stroke={color || ROUTE_LEG_COLOR}
-            strokeWidth={hover || isSelected ? 2 : 1}
+            strokeWidth={hover || isSelected || isHovered ? 2 : 1}
             vectorEffect="non-scaling-stroke"
             markerEnd="url(#arrow)"
         />

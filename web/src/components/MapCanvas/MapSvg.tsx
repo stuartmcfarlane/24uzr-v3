@@ -63,8 +63,12 @@ type MapSvgProps = {
     onSelectBuoy?: (buoy?: IApiBuoyOutput) => void
     selectedLeg?: IApiLegOutput
     onSelectLeg?: (buoy?: IApiLegOutput) => void
+    onSelectRouteLeg?: (buoy?: IApiRouteLegOutput) => void
+    onHoverRouteLeg?: (buoy?: IApiRouteLegOutput) => void
     onCreateLeg?: (startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput) => void
     creatingLeg?: { startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput }
+    hoveredRouteLeg?: IApiRouteLegOutput
+    selectedRouteLeg?: IApiRouteLegOutput
     showWind?: boolean
     windTime?: number
     onMousePosition?: (latLng: LatLng) => void
@@ -90,6 +94,10 @@ const MapSvg = (props: MapSvgProps) => {
         selectedLeg,
         onCreateLeg,
         creatingLeg,
+        onSelectRouteLeg,
+        onHoverRouteLeg,
+        selectedRouteLeg,
+        hoveredRouteLeg,
         showWind,
         windTime,
         onMousePosition,
@@ -329,8 +337,10 @@ const MapSvg = (props: MapSvgProps) => {
                         routeLegs={routeLegs}
                         color={ROUTE_LEG_COLOR}
                         buoys={buoys || []}
-                        onSelectLeg={onSelectLeg}
-                        selectedLeg={selectedLeg}
+                        onSelectRouteLeg={onSelectRouteLeg}
+                        onHoverRouteLeg={onHoverRouteLeg}
+                        selectedRouteLeg={selectedRouteLeg}
+                        hoveredRouteLeg={hoveredRouteLeg}
                         screen2svgFactor={screen2svgFactor}
                     />)
                 }
