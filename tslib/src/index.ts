@@ -1,6 +1,7 @@
 export * from './conversions'
 export * from './fmt'
 export * from './fp'
+export * from './functor'
 export * from './geo'
 export * from './graph'
 export * from './math'
