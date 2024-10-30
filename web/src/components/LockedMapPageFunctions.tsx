@@ -4,10 +4,11 @@ import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMa
 import MapCanvas from "./ MapCanvas"
 import { useState } from "react"
 import { updateMap } from "@/actions/map"
-import { maybeFinishBuoy } from "tslib"
+import { maybeFinishBuoy, Timestamp } from "tslib"
 import PadlockIcon from "./Icons/PadlockIcon"
 import { useChange } from "@/hooks/useChange"
 import PlanOptions from "./PlanOptions"
+import { timestamp2epoch } from '../../../tslib/src/time';
 
 type LockedMapPageClientFunctionsProps = {
     rootPage: string
@@ -40,6 +41,10 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
     const [hoveredPlan, setHoveredPlan] = useState<IApiPlanOutput | undefined>(undefined)
     const [showWind, setShowWind] = useState(true)
     const [activeShip, setActiveShip] = useState(ships?.length === 1 ? ships[0] : undefined)
+    const [selectedWindTimestamp, setSelectedWindTimestamp] = useState<Timestamp>(wind[0].timestamp)
+    
+    const onSelectWindTimestamp = (timestamp: Timestamp) => setSelectedWindTimestamp(timestamp)
+
     const onShowWind = (showWind: boolean) => setShowWind(showWind)
 
     const onClearSelection = () => {
@@ -120,7 +125,8 @@ const LockedMapPageClientFunctions = (props: LockedMapPageClientFunctionsProps) 
                 creatingLeg={creatingLeg}
                 showWind={showWind}
                 onShowWind={onShowWind}
-            
+                selectedWindTimestamp={selectedWindTimestamp}
+                onSelectWindTimestamp={onSelectWindTimestamp}
             />
         </div>
     )

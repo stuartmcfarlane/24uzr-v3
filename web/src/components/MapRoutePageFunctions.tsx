@@ -4,6 +4,7 @@ import { IApiBuoyOutput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput, IApiR
 import MapCanvas from "./ MapCanvas"
 import { useState } from "react"
 import routeRoutes from '../../../api/src/modules/route/route.route';
+import { Timestamp } from "tslib";
 
 type MapRoutePageClientFunctionsProps = {
     map: IApiMapOutput
@@ -23,6 +24,9 @@ const MapRoutePageClientFunctions = (props: MapRoutePageClientFunctionsProps) =>
     const [selectedBuoy, setSelectedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
     const [selectedLeg, setSelectedLeg] = useState<IApiLegOutput | undefined>(undefined)
     const [showWind, setShowWind] = useState(true)
+    const [selectedWindTimestamp, setSelectedWindTimestamp] = useState<Timestamp>(wind[0].timestamp)
+    
+    const onSelectWindTimestamp = (timestamp: Timestamp) => setSelectedWindTimestamp(timestamp)
 
     const onShowWind = (showWind: boolean) => setShowWind(showWind)
 
@@ -58,6 +62,8 @@ const MapRoutePageClientFunctions = (props: MapRoutePageClientFunctionsProps) =>
                 onSelectLeg={onSelectLeg}
                 showWind={showWind}
                 onShowWind={onShowWind}
+                selectedWindTimestamp={selectedWindTimestamp}
+                onSelectWindTimestamp={onSelectWindTimestamp}
             />
         </div>
     )

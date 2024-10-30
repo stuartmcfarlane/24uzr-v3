@@ -5,7 +5,7 @@ import MapCanvas from "./ MapCanvas"
 import { useState } from "react"
 import RouteOptions from "./RouteOptions"
 import { plan2region } from "@/lib/graph"
-import { bulkWind2indexedWind, parseShipPolar } from "tslib"
+import { bulkWind2indexedWind, parseShipPolar, Timestamp } from "tslib"
 
 type MapPlanPageClientFunctionsProps = {
     pageRoot: string
@@ -32,6 +32,9 @@ const MapPlanPageClientFunctions = (props: MapPlanPageClientFunctionsProps) => {
     const [selectedLeg, setSelectedLeg] = useState<IApiLegOutput | undefined>(undefined)
     const [hoveredRoute, setHoveredRoute] = useState<IApiRouteOutput | undefined>(undefined)
     const [showWind, setShowWind] = useState(true)
+    const [selectedWindTimestamp, setSelectedWindTimestamp] = useState<Timestamp>(wind[0]?.timestamp)
+    
+    const onSelectWindTimestamp = (timestamp: Timestamp) => setSelectedWindTimestamp(timestamp)
 
     const onShowWind = (showWind: boolean) => setShowWind(showWind)
 
@@ -60,11 +63,11 @@ const MapPlanPageClientFunctions = (props: MapPlanPageClientFunctionsProps) => {
                 <RouteOptions
                     pageRoot={pageRoot}
                     wind={bulkWind2indexedWind(wind)}
-                    windTime={0}
                     shipPolar={parseShipPolar(ship.polar)}
                     plan={plan}
                     routes={plan.routes}
                     onHoverRoute={onHoverRoute}
+                    selectedWindTimestamp={selectedWindTimestamp}
                 />
             </div>
             <MapCanvas
@@ -82,6 +85,8 @@ const MapPlanPageClientFunctions = (props: MapPlanPageClientFunctionsProps) => {
                 routeLegs={hoveredRoute?.legs}
                 showWind={showWind}
                 onShowWind={onShowWind}
+                selectedWindTimestamp={selectedWindTimestamp}
+                onSelectWindTimestamp={onSelectWindTimestamp}
             />
         </div>
     )

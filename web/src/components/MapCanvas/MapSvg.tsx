@@ -19,7 +19,8 @@ import {
     pointInRect,
     LatLng,
     Rect,
-    Point
+    Point,
+    Timestamp
 } from 'tslib'
 import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput, IApiShipOutput, Region } from "@/types/api"
 import MapBuoy from "./MapBuoy"
@@ -37,7 +38,6 @@ import { actualLegs } from "@/lib/legs"
 import { useScrollWheelZoom } from "@/hooks/useScrollWheelZoom"
 import MouseCursor from "./MouseCursor"
 import ArrowMarker from "./ArrowMarker"
-import MapRouteLeg from "./MapRouteLeg"
 import MapCreatingLeg from "./MapCreatingLeg"
 import { COLOR_BLUE, ROUTE_LEG_COLOR, ROUTE_LEG_HOVER_COLOR } from "@/lib/constants"
 import MapWind from "./MapWind"
@@ -69,8 +69,9 @@ type MapSvgProps = {
     creatingLeg?: { startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput }
     hoveredRouteLeg?: IApiRouteLegOutput
     selectedRouteLeg?: IApiRouteLegOutput
-    showWind?: boolean
-    windTime?: number
+    selectedWindTimestamp?: Timestamp
+    onSelectWindTimestamp?: (timestamp: Timestamp) => void
+    showWind: boolean
     onMousePosition?: (latLng: LatLng) => void
     onMouseDragPosition?: (point?: LatLng, mark?: LatLng) => void
     selectedMapRegion?: Region
@@ -99,7 +100,8 @@ const MapSvg = (props: MapSvgProps) => {
         selectedRouteLeg,
         hoveredRouteLeg,
         showWind,
-        windTime,
+        selectedWindTimestamp,
+        onSelectWindTimestamp,
         onMousePosition,
         onMouseDragPosition,
         selectedMapRegion,
@@ -312,7 +314,7 @@ const MapSvg = (props: MapSvgProps) => {
                     <MapWind
                         wind={wind}
                         screen2svgFactor={screen2svgFactor}
-                        windTime={windTime}
+                        selectedWindTimestamp={selectedWindTimestamp}
                         boundingRect={boundingRect}
                     />
                 )}

@@ -1,25 +1,22 @@
 import { IApiBulkWind } from "@/types/api"
 import MapWindArrow from "./MapWindArrow"
-import { Rect } from "tslib"
+import { Rect, Timestamp, timestampIs } from "tslib"
 
 type MapWindProps = {
     wind: IApiBulkWind[]
-    selectedTime?: string
     screen2svgFactor: number
-    windTime?: number
+    selectedWindTimestamp?: Timestamp
     boundingRect?: Rect
 }
 const MapWind = (props: MapWindProps) => {
     const {
         wind,
         screen2svgFactor,
-        windTime,
+        selectedWindTimestamp,
         boundingRect,
     } = props
 
-    const timestamps = wind.map(w => w.timestamp)
-    const timestamp = timestamps[windTime || 0]
-    const shownWind = wind && wind.find(w => w.timestamp === timestamp)
+    const shownWind = wind && selectedWindTimestamp && wind.find(timestampIs(selectedWindTimestamp))
     return (<>
         {shownWind && shownWind.data.map(
             (wind, key) => (

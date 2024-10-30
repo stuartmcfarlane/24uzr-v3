@@ -20,14 +20,14 @@ type RouteOptionProps = {
     selectedLeg?: IApiRouteLegOutput
     hoveredLeg?: IApiRouteLegOutput
     showBuoys?: boolean
-    windTime: number
+    selectedWindTimestamp?: Timestamp
 }
 const RouteOption = (props: RouteOptionProps) => {
     const {
         pageRoot,
         shipPolar,
         wind,
-        windTime,
+        selectedWindTimestamp,
         plan,
         route,
         onHoverRoute,
@@ -42,7 +42,7 @@ const RouteOption = (props: RouteOptionProps) => {
         <SelectedRoute
             shipPolar={shipPolar}
             wind={wind}
-            windTime={windTime}
+            selectedWindTimestamp={selectedWindTimestamp}
             plan={plan}
             route={route}
             onHoverRoute={onHoverRoute}
@@ -108,7 +108,7 @@ const AlternateRoute = (props: {
 const SelectedRoute = (props: {
     shipPolar: ShipPolar
     wind: IndexedWind[]
-    windTime: number
+    selectedWindTimestamp?: Timestamp
     route: IApiRouteOutput
     plan: IApiPlanOutput
     onHoverRoute?: (route?: IApiRouteOutput) => void
@@ -121,7 +121,7 @@ const SelectedRoute = (props: {
     const {
         shipPolar,
         wind,
-        windTime,
+        selectedWindTimestamp,
         route,
         plan,
         onHoverRoute,
@@ -192,7 +192,7 @@ const SelectedRoute = (props: {
                                 route={route}
                                 routeLeg={routeLeg}
                                 buoy={routeLeg.startBuoy}
-                                windTime={windTime}
+                                selectedWindTimestamp={selectedWindTimestamp}
                                 onHoverLeg={onHoverLeg}
                                 selectedLeg={selectedLeg}
                                 hoveredLeg={hoveredLeg}
@@ -219,7 +219,7 @@ const RouteBuoy = (props:
     {
         shipPolar: ShipPolar
         wind: IndexedWind[]
-        windTime?: number
+        selectedWindTimestamp?: Timestamp
         plan: IApiPlanOutput
         route: IApiRouteOutput
         buoy: FleshedRouteBuoy
@@ -231,7 +231,7 @@ const RouteBuoy = (props:
 ) => {
     const {
         wind,
-        windTime,
+        selectedWindTimestamp,
         plan,
         route,
         routeLeg,
@@ -281,7 +281,7 @@ const RouteBuoy = (props:
             <div>
                 {buoy.name}
             </div>
-            {windTime !== undefined && (
+            {selectedWindTimestamp !== undefined && (
                 <div className="flex flex-row gap-2">
                     <TimeIndicator
                         timestamp={buoy.timestamp}

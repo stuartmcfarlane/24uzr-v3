@@ -4,7 +4,7 @@ import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMa
 import MapCanvas from "./ MapCanvas"
 import { useState } from "react"
 import { updateMap } from "@/actions/map"
-import { fieldIs, maybeFinishBuoy } from "tslib"
+import { fieldIs, maybeFinishBuoy, Timestamp } from "tslib"
 import PadlockIcon from "./Icons/PadlockIcon"
 import { useChange } from "@/hooks/useChange"
 import PlanOptions from "./PlanOptions"
@@ -43,6 +43,10 @@ const RacePageClientFunctions = (props: RacePageClientFunctionsProps) => {
     const [hoveredPlan, setHoveredPlan] = useState<IApiPlanOutput | undefined>(undefined)
     const [showWind, setShowWind] = useState(true)
     const [activeShip, setActiveShip] = useState<IApiShipOutput|undefined>(ships.find(isActive) || ships[0])
+    const [selectedWindTimestamp, setSelectedWindTimestamp] = useState<Timestamp>(wind[0].timestamp)
+    
+    const onSelectWindTimestamp = (timestamp: Timestamp) => setSelectedWindTimestamp(timestamp)
+
     const onShowWind = (showWind: boolean) => setShowWind(showWind)
 
     const onClearSelection = () => {
@@ -122,7 +126,8 @@ const RacePageClientFunctions = (props: RacePageClientFunctionsProps) => {
                 creatingLeg={creatingLeg}
                 showWind={showWind}
                 onShowWind={onShowWind}
-            
+                selectedWindTimestamp={selectedWindTimestamp}
+                onSelectWindTimestamp={onSelectWindTimestamp}
             />
         </div>
     )

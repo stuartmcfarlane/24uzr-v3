@@ -4,7 +4,7 @@ import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMa
 import MapSvg from "./MapCanvas/MapSvg"
 import WindLegend from "./WindLegend"
 import { useState } from "react"
-import { LatLng } from "tslib"
+import { LatLng, Timestamp } from "tslib"
 import { region2rect } from "@/lib/graph"
 
 type MapCanvasProps = {
@@ -33,8 +33,8 @@ type MapCanvasProps = {
     onMousePosition?: (latLng: LatLng) => void
     onMouseDragPosition?: (point?: LatLng, mark?: LatLng) => void
     selectedMapRegion?: Region
-    windTime?: number
-    onWindTime?: (windTime: number)=> void
+    selectedWindTimestamp?: Timestamp
+    onSelectWindTimestamp?: (timestamp: Timestamp) => void
 }
 
 const MapCanvas = (props: MapCanvasProps) => {
@@ -59,8 +59,8 @@ const MapCanvas = (props: MapCanvasProps) => {
         onHoverRouteLeg,
         selectedRouteLeg,
         hoveredRouteLeg,
-        windTime,
-        onWindTime,
+        selectedWindTimestamp,
+        onSelectWindTimestamp,
         showWind,
         onShowWind,
         onMousePosition,
@@ -93,7 +93,8 @@ const MapCanvas = (props: MapCanvasProps) => {
                     selectedRouteLeg={selectedRouteLeg}
                     hoveredRouteLeg={hoveredRouteLeg}
                     showWind={showWind}
-                    windTime={windTime}
+                    selectedWindTimestamp={selectedWindTimestamp}
+                    onSelectWindTimestamp={onSelectWindTimestamp}
                     onMousePosition={onMousePosition}
                     onMouseDragPosition={onMouseDragPosition}
                     selectedMapRegion={selectedMapRegion}
@@ -103,8 +104,8 @@ const MapCanvas = (props: MapCanvasProps) => {
                 wind={wind || []}
                 showWind={showWind}
                 onShowWind={onShowWind}
-                windTime={windTime}
-                onTimeDelta={onWindTime}
+                selectedWindTimestamp={selectedWindTimestamp}
+                onSelectWindTimestamp={onSelectWindTimestamp}
             />
         </div>
     )

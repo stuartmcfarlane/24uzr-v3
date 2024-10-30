@@ -7,7 +7,7 @@ import { useCallback, useState } from "react"
 import usePolling from "@/hooks/usePolling"
 import { useChange } from "@/hooks/useChange"
 import { getPlan } from "@/actions/plan"
-import { desc, IndexedWind, ShipPolar, sort } from "tslib"
+import { desc, IndexedWind, ShipPolar, sort, Timestamp } from "tslib"
 import RouteOption from "./RouteOption"
 
 
@@ -25,7 +25,7 @@ type RouteOptionsProps = {
     selectedLeg?: IApiRouteLegOutput
     hoveredLeg?: IApiRouteLegOutput
     showBuoys?: boolean
-    windTime: number
+    selectedWindTimestamp?: Timestamp
 }
 const RouteOptions = (props: RouteOptionsProps) => {
     const {
@@ -42,7 +42,7 @@ const RouteOptions = (props: RouteOptionsProps) => {
         selectedLeg,
         hoveredLeg,
         showBuoys,
-        windTime,
+        selectedWindTimestamp,
     } = props
 
     const [actualPlan, setActualPlan] = useState(plan)
@@ -96,7 +96,7 @@ const RouteOptions = (props: RouteOptionsProps) => {
                         pageRoot={pageRoot}
                         shipPolar={shipPolar}
                         wind={wind}
-                        windTime={windTime}
+                        selectedWindTimestamp={selectedWindTimestamp}
                         plan={actualPlan}
                         route={selectedRoute}
                         onHoverRoute={onHoverRoute}
@@ -113,7 +113,7 @@ const RouteOptions = (props: RouteOptionsProps) => {
                             pageRoot={pageRoot}
                             shipPolar={shipPolar}
                             wind={wind}
-                            windTime={windTime}
+                            selectedWindTimestamp={selectedWindTimestamp}
                             plan={actualPlan}
                             route={route}
                             onHoverRoute={onHoverRoute}

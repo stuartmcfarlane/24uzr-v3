@@ -123,8 +123,8 @@ export const windAtLocation = (wind: IndexedWind, { lat, lng }: LatLng): Vector 
   return wind2vector(wind.indexedByLatLng[latLngHash(latLng)])
   
 }
-export const windAtTime = (winds: IndexedWind[], timestamp: Date | string) => {
-  if (!timestamp) return undefined
+export const windIndexAtTime = (winds: Timestamped[], timestamp: Timestamp) => {
+  if (!timestamp) return 0
   const timestamps = sort(cmpString)(
       winds
         .map(project('timestamp'))
@@ -134,11 +134,17 @@ export const windAtTime = (winds: IndexedWind[], timestamp: Date | string) => {
   const t1 = timestamp2epoch(timestamp)
   const deltaHours = Math.trunc(seconds2hours(t1 - t0))
   if (deltaHours < 0 || winds.length < deltaHours) {
-    return undefined
+    return 0
   }
-  return winds[deltaHours]
+  if (winds.length < deltaHours) {
+    return winds.length
+  }
+  return deltaHours
 }
-export const windAtTimeAndLocation = (winds: IndexedWind[], timestamp: Date | string, location: LatLng) => {
+export const windAtTime = <T>(winds: (Timestamped & T)[], timestamp: Timestamp): T => {
+  return winds[windIndexAtTime(winds, timestamp)]
+}
+export const windAtTimeAndLocation = (winds: IndexedWind[], timestamp: Timestamp, location: LatLng) => {
   const wind = windAtTime(winds, timestamp)
   if (!wind) return makeVector(0, 0)
   return windAtLocation(wind, location)

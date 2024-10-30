@@ -1,13 +1,15 @@
-import { fmtTimestamp } from "tslib"
+import { fmtTimestamp, Timestamp } from "tslib"
 import { IApiBulkWind } from "@/types/api"
 import { ChangeEvent, MouseEvent, useState } from "react"
+import { windIndexAtTime } from '../../../tslib/src/wind';
+import { useChange } from "@/hooks/useChange";
 
 type WindLegendProps = {
     wind: IApiBulkWind[]
     showWind?: boolean
     onShowWind?: (showWind: boolean) => void
-    windTime?: number
-    onTimeDelta?: (timeDelta: number) => void
+    selectedWindTimestamp?: Timestamp
+    onSelectWindTimestamp?: (timestamp: Timestamp) => void
 }
 const WindLegend = (props: WindLegendProps) => {
 
@@ -15,17 +17,33 @@ const WindLegend = (props: WindLegendProps) => {
         wind,
         showWind,
         onShowWind,
-        windTime,
-        onTimeDelta: onWindTime,
+        selectedWindTimestamp,
+        onSelectWindTimestamp,
     } = props
 
+    const [timeIndex, setTimeIndex] = useState(
+        selectedWindTimestamp !== undefined
+            ? windIndexAtTime(wind, selectedWindTimestamp)
+            : 0
+    )
     const maxDelta = wind ? wind.length - 1 : 0
     const onToggleWind = (e: ChangeEvent<HTMLInputElement>) => {
         onShowWind && onShowWind(!showWind)
     }
-    const onChangeTimeDelta = (e: ChangeEvent<HTMLInputElement>) => {
-        onWindTime && onWindTime(parseInt(e.target.value))
+    const onChangeTimeIndex = (e: ChangeEvent<HTMLInputElement>) => {
+        onUpdateTimeIndex(parseInt(e.target.value) - timeIndex)
     }
+    const onUpdateTimeIndex = (delta: number) => {
+        const newTimeIndex = Math.min(Math.max(0, timeIndex + delta), maxDelta)
+        onSelectWindTimestamp && onSelectWindTimestamp(wind[newTimeIndex].timestamp)
+    }
+    useChange(
+        () => {
+            if (!selectedWindTimestamp) return
+            setTimeIndex(windIndexAtTime(wind, selectedWindTimestamp))
+        },
+        [selectedWindTimestamp]
+    )
     return <div className="flex justify-between">
         <div>
             <input
@@ -42,25 +60,25 @@ const WindLegend = (props: WindLegendProps) => {
             </label>
         </div>
         {showWind && (<>
-            {windTime !== undefined && maxDelta > 1 && (
-                <div className="flex justify-evenly gap -4">
+            {timeIndex !== undefined && maxDelta > 1 && (
+                <div className="flex gap-2 content-center">
                     <button
-                        onClick={() => onWindTime && onWindTime(Math.max(0, windTime - 1))}
-                        disabled={windTime <= 0}
+                        onClick={() => onUpdateTimeIndex(-1)}
+                        disabled={timeIndex <= 0}
                         className="border-2 rounded-sm px-4"
                     >-</button>
                     <input
                         type="text"
-                        value={windTime}
-                        onChange={onChangeTimeDelta}
+                        value={timeIndex}
+                        onChange={onChangeTimeIndex}
                         className="w-10 text-center"
                     />
                     <button
-                        onClick={() => onWindTime && onWindTime(Math.min(maxDelta, windTime + 1))}
-                        disabled={windTime >= maxDelta}
+                        onClick={() => onUpdateTimeIndex(+1)}
+                        disabled={timeIndex >= maxDelta}
                         className="border-2 rounded-sm px-4"
                     >+</button>
-                    <div>{fmtTimestamp(wind[windTime].timestamp)}</div>
+                    <span className="text-md align-middle inline-block">{fmtTimestamp(wind[timeIndex].timestamp)}</span>
                 </div>
             )}
             <div className="flex">
