@@ -45,6 +45,7 @@ import MapGeometry from "./MapGeometry"
 import MouseRegion from "./MouseRegion"
 import MapRegion from "./MapRegion"
 import MapRoute from "./MapRoute"
+import { FleshedRouteLeg } from "@/lib/route"
 
 const DEBUG = false
 
@@ -63,12 +64,12 @@ type MapSvgProps = {
     onSelectBuoy?: (buoy?: IApiBuoyOutput) => void
     selectedLeg?: IApiLegOutput
     onSelectLeg?: (buoy?: IApiLegOutput) => void
-    onSelectRouteLeg?: (buoy?: IApiRouteLegOutput) => void
-    onHoverRouteLeg?: (buoy?: IApiRouteLegOutput) => void
+    onSelectRouteLeg?: (buoy?: FleshedRouteLeg) => void
+    onHoverRouteLeg?: (buoy?: FleshedRouteLeg) => void
     onCreateLeg?: (startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput) => void
     creatingLeg?: { startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput }
-    hoveredRouteLeg?: IApiRouteLegOutput
-    selectedRouteLeg?: IApiRouteLegOutput
+    hoveredRouteLeg?: FleshedRouteLeg
+    selectedRouteLeg?: FleshedRouteLeg
     selectedWindTimestamp?: Timestamp
     onSelectWindTimestamp?: (timestamp: Timestamp) => void
     showWind: boolean

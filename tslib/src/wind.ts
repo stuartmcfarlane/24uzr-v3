@@ -1,7 +1,7 @@
 import { indexByHash, project, toFixed, unique, cmpNumber, sort, cmpString, head } from './fp';
 import { distanceLatLng, LatLng } from './geo'
 import { makeVector, Vector, vectorAngle } from './vector'
-import { seconds2hours, Timestamp, timestamp2epoch, timestamp2string } from './time';
+import { seconds2hours, Timestamp, timestamp2epoch, timestamp2string, Timestamped } from './time';
 import { radians2degrees } from './conversions';
 
 export type Wind = {
@@ -11,19 +11,20 @@ export type Wind = {
   v: number
 }
 export type SingleWind = Wind & {
-  timestamp: string | Date
+  timestamp: Timestamp
 }
 
 export type BulkWind = {
-  timestamp: string | Date
+  timestamp: Timestamp
   data: Wind[]
 }
 
 export type IndexedWind = {
-  timestamp: string
+  timestamp: Timestamp
   lats: number[]
   lngs: number[]
-  indexedByLatLng: { [hash: string]: Wind}
+  indexedByLatLng: { [hash: string]: Wind }
+  data: Wind[],
 }
 
 export type WindIndicatorMode = 'text' | 'graphic'
@@ -44,8 +45,6 @@ export const wind2resolution = (wind: SingleWind[]) => {
     )
     return resolution
 }
-export type Timestamped = { timestamp: Timestamp }
-export const timestampIs = (timestamp: string | Date) => (timestamped: Timestamped) => timestamp2string(timestamped.timestamp) === timestamp2string(timestamp)
 
 export const indexWindByTimestamp = (wind: SingleWind[]) => {
   return wind.reduce(
@@ -76,10 +75,11 @@ export const bulkWind2indexedWind = (bulkWind: BulkWind[]): IndexedWind[] => {
   const indexed = bulkWind.map(
     ({ timestamp, data }) => {
       return {
-        timestamp: timestamp2string(timestamp),
+        timestamp: timestamp,
         lats: sort(cmpNumber)(unique(data.map(project('lat')))),
         lngs: sort(cmpNumber)(unique(data.map(project('lng')))),
-        indexedByLatLng: indexByHash<Wind>(latLngHash)(data)
+        indexedByLatLng: indexByHash<Wind>(latLngHash)(data),
+        data,
       }
     }
   )
@@ -109,7 +109,7 @@ function binarySearch(arr: number[], target: number): number {
 
 export const windAtLocation = (wind: IndexedWind, { lat, lng }: LatLng): Vector => {
   if (!wind || !wind.timestamp) {
-    debugger
+    return makeVector(0, 0)
   }
 
   const latLng = {

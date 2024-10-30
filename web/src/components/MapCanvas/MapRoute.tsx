@@ -6,10 +6,10 @@ type MapRouteProps = {
     buoys: IApiBuoyOutput[]
     routeLegs: IApiRouteLegOutput[]
     color?: string
-    onSelectRouteLeg?: (buoy?: IApiRouteLegOutput) => void
-    onHoverRouteLeg?: (leg?: IApiRouteLegOutput) => void
-    hoveredRouteLeg?: IApiRouteLegOutput
-    selectedRouteLeg?: IApiRouteLegOutput
+    onSelectRouteLeg?: (buoy?: FleshedRouteLeg) => void
+    onHoverRouteLeg?: (leg?: FleshedRouteLeg) => void
+    hoveredRouteLeg?: FleshedRouteLeg
+    selectedRouteLeg?: FleshedRouteLeg
     screen2svgFactor?: number
 }
 

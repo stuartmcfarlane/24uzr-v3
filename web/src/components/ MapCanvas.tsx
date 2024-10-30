@@ -1,11 +1,11 @@
 "use client"
 
-import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput, IApiShipOutput, IApiWindOutput, Region } from "@/types/api"
+import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput, IApiShipOutput, Region } from "@/types/api"
 import MapSvg from "./MapCanvas/MapSvg"
 import WindLegend from "./WindLegend"
-import { useState } from "react"
 import { LatLng, Timestamp } from "tslib"
 import { region2rect } from "@/lib/graph"
+import { FleshedRouteLeg } from "@/lib/route"
 
 type MapCanvasProps = {
     initialBoundingRegion?: Region
@@ -21,11 +21,11 @@ type MapCanvasProps = {
     selectedBuoy?: IApiBuoyOutput
     onSelectBuoy?: (buoy?: IApiBuoyOutput) => void
     onSelectLeg?: (buoy?: IApiLegOutput) => void
-    onSelectRouteLeg?: (leg?: IApiRouteLegOutput) => void
-    onHoverRouteLeg?: (leg?: IApiRouteLegOutput) => void
+    onSelectRouteLeg?: (leg?: FleshedRouteLeg) => void
+    onHoverRouteLeg?: (leg?: FleshedRouteLeg) => void
     selectedLeg?: IApiLegOutput
-    hoveredRouteLeg?: IApiRouteLegOutput
-    selectedRouteLeg?: IApiRouteLegOutput
+    hoveredRouteLeg?: FleshedRouteLeg
+    selectedRouteLeg?: FleshedRouteLeg
     onCreateLeg?: (startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput) => void
     creatingLeg?: { startBuoy: IApiBuoyOutput, endBuoy: IApiBuoyOutput }
     showWind?: boolean
@@ -61,7 +61,7 @@ const MapCanvas = (props: MapCanvasProps) => {
         hoveredRouteLeg,
         selectedWindTimestamp,
         onSelectWindTimestamp,
-        showWind,
+        showWind = false,
         onShowWind,
         onMousePosition,
         onMouseDragPosition,

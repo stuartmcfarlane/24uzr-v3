@@ -1,5 +1,9 @@
 export type Timestamp = Date | string
 
+export type Timestamped = { timestamp: Timestamp }
+export const timestampIs = (timestamp: Timestamp) => (timestamped: Timestamped) => timestamp2string(timestamped.timestamp) === timestamp2string(timestamp)
+
+
 export const timestamp2string = (timestamp: Timestamp) => typeof timestamp === "string" ? timestamp : timestamp.toISOString()
 export const timestamp2date = (timestamp: Timestamp) => typeof timestamp === "string" ? new Date(timestamp) : timestamp
 

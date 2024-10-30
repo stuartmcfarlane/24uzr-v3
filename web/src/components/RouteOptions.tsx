@@ -2,7 +2,7 @@ import { IApiBuoyOutput, IApiPlanOutput, IApiRouteLegOutput, IApiRouteOutput } f
 import Link from "next/link"
 import { NewRouteTool } from "./NewRouteTool"
 import RouteIcon from "./Icons/RouteIcon"
-import { cmpRouteLegOrder, cmpRouteLength, fmtNM, route2LengthNm } from "@/lib/route"
+import { cmpRouteLegOrder, cmpRouteLength, FleshedRoute, FleshedRouteLeg, fmtNM, route2LengthNm } from "@/lib/route"
 import { useCallback, useState } from "react"
 import usePolling from "@/hooks/usePolling"
 import { useChange } from "@/hooks/useChange"
@@ -20,10 +20,11 @@ type RouteOptionsProps = {
     startBuoy?: IApiBuoyOutput
     endBuoy?: IApiBuoyOutput
     onHoverRoute?: (route?: IApiRouteOutput) => void
-    onHoverRouteLeg?: (leg?: IApiRouteLegOutput) => void
-    selectedRoute?: IApiRouteOutput
-    selectedRouteLeg?: IApiRouteLegOutput
-    hoveredRouteLeg?: IApiRouteLegOutput
+    onHoverRouteLeg?: (leg?: FleshedRouteLeg) => void
+    onSelectRouteLeg?: (leg?: FleshedRouteLeg) => void
+    selectedRoute?: FleshedRoute
+    selectedRouteLeg?: FleshedRouteLeg
+    hoveredRouteLeg?: FleshedRouteLeg
     showBuoys?: boolean
     selectedWindTimestamp?: Timestamp
 }
@@ -38,6 +39,7 @@ const RouteOptions = (props: RouteOptionsProps) => {
         endBuoy,
         onHoverRoute,
         onHoverRouteLeg,
+        onSelectRouteLeg,
         selectedRoute,
         selectedRouteLeg,
         hoveredRouteLeg,
@@ -101,6 +103,7 @@ const RouteOptions = (props: RouteOptionsProps) => {
                         route={selectedRoute}
                         onHoverRoute={onHoverRoute}
                         onHoverRouteLeg={onHoverRouteLeg}
+                        onSelectRouteLeg={onSelectRouteLeg}
                         selectedRoute={selectedRoute}
                         selectedRouteLeg={selectedRouteLeg}
                         hoveredRouteLeg={hoveredRouteLeg}

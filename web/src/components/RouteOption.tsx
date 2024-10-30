@@ -1,6 +1,6 @@
 import { IApiBuoyOutput, IApiPlanOutput, IApiRouteLegOutput, IApiRouteOutput } from "@/types/api"
 import Link from "next/link"
-import { cmpRouteLegOrder, FleshedRouteBuoy, FleshedRouteLeg, fleshenRoute, fmtNM, route2LengthNm } from "@/lib/route"
+import { cmpRouteLegOrder, FleshedRoute, FleshedRouteBuoy, FleshedRouteLeg, fleshenRoute, fmtNM, route2LengthNm } from "@/lib/route"
 import { bearingLatLan, calcTwa, distanceLatLng, fmtDegrees, fmtHoursMinutes, fmtHumanTime, fmtWindSpeed, meters2nM, metersPerSecond2knots, ShipPolar, sort, Timestamp, Vector, vectorMagnitude, wind2degrees, WindIndicatorMode } from "tslib"
 import { IndexedWind, windAtTimeAndLocation } from 'tslib';
 import { useState } from "react";
@@ -13,13 +13,13 @@ type RouteOptionProps = {
     shipPolar: ShipPolar
     wind: IndexedWind[]
     plan: IApiPlanOutput
-    route: IApiRouteOutput
+    route: FleshedRoute
     onHoverRoute?: (route?: IApiRouteOutput) => void
-    onHoverRouteLeg?: (leg?: IApiRouteLegOutput) => void
-    onSelectRouteLeg?: (leg?: IApiRouteLegOutput) => void
-    selectedRoute?: IApiRouteOutput
-    selectedRouteLeg?: IApiRouteLegOutput
-    hoveredRouteLeg?: IApiRouteLegOutput
+    onHoverRouteLeg?: (leg?: FleshedRouteLeg) => void
+    onSelectRouteLeg?: (leg?: FleshedRouteLeg) => void
+    selectedRoute?: FleshedRoute
+    selectedRouteLeg?: FleshedRouteLeg
+    hoveredRouteLeg?: FleshedRouteLeg
     showBuoys?: boolean
     selectedWindTimestamp?: Timestamp
 }
@@ -112,14 +112,14 @@ const SelectedRoute = (props: {
     shipPolar: ShipPolar
     wind: IndexedWind[]
     selectedWindTimestamp?: Timestamp
-    route: IApiRouteOutput
+    route: FleshedRoute
     plan: IApiPlanOutput
     onHoverRoute?: (route?: IApiRouteOutput) => void
-    onHoverRouteLeg?: (leg?: IApiRouteLegOutput) => void
-    onSelectRouteLeg?: (leg?: IApiRouteLegOutput) => void
+    onHoverRouteLeg?: (leg?: FleshedRouteLeg) => void
+    onSelectRouteLeg?: (leg?: FleshedRouteLeg) => void
     selectedRoute?: IApiRouteOutput
-    selectedRouteLeg?: IApiRouteLegOutput
-    hoveredRouteLeg?: IApiRouteLegOutput
+    selectedRouteLeg?: FleshedRouteLeg
+    hoveredRouteLeg?: FleshedRouteLeg
     showBuoys?: boolean
 }) => {
     const {
@@ -137,20 +137,10 @@ const SelectedRoute = (props: {
         showBuoys,
     } = props
 
-    const [fleshedRoute, setFleshedRoute] = useState(fleshenRoute(shipPolar, wind, plan, route))
-    
     const onMouseEnter = (route: IApiRouteOutput) => () => onHoverRoute && onHoverRoute(route)
     const onMouseLeave = (route: IApiRouteOutput) => () => onHoverRoute && onHoverRoute()
 
-    useChange(
-        () => {
-            const fleshedRoute = fleshenRoute(shipPolar, wind, plan, route)
-            setFleshedRoute(fleshedRoute)
-        },
-        [route]
-    )
-
-    if (!fleshedRoute) {
+    if (!route) {
         return <div>Error, old plan</div>
     }
     
@@ -180,23 +170,23 @@ const SelectedRoute = (props: {
                             {fmtHumanTime(plan.startTime)}
                         </div>
                     </div>
-                    {fleshedRoute && (
+                    {route && (
                         <div className="text-xs">
-                            {fmtNM(fleshedRoute.distance)}
+                            {fmtNM(route.distance)}
                         </div>
                     )}
                 </div>
                 {showBuoys && (
                     <div className="flex-col gap-2">
-                        {sort(cmpRouteLegOrder)(fleshedRoute.legs).map(routeLeg => (
+                        {sort(cmpRouteLegOrder)(route.legs).map(routeLeg => (
                             <RouteBuoy
-                                shopPolar={shipPolar}
+                                shipPolar={shipPolar}
                                 wind={wind}
                                 key={routeLeg.leg.id}
                                 plan={plan}
                                 route={route}
-                                routeLeg={routeLeg}
-                                buoy={routeLeg.startBuoy}
+                                routeLeg={routeLeg as FleshedRouteLeg}
+                                buoy={(routeLeg as FleshedRouteLeg).startBuoy}
                                 selectedWindTimestamp={selectedWindTimestamp}
                                 onHoverRouteLeg={onHoverRouteLeg}
                                 onSelectRouteLeg={onSelectRouteLeg}
@@ -209,7 +199,7 @@ const SelectedRoute = (props: {
                             wind={wind}
                             plan={plan}
                             route={route}
-                            buoy={fleshedRoute.endBuoy}
+                            buoy={route.endBuoy}
                             onHoverRouteLeg={onHoverRouteLeg}
                             onSelectRouteLeg={onSelectRouteLeg}
                             selectedRouteLeg={selectedRouteLeg}
@@ -228,13 +218,13 @@ const RouteBuoy = (props:
         wind: IndexedWind[]
         selectedWindTimestamp?: Timestamp
         plan: IApiPlanOutput
-        route: IApiRouteOutput
+        route: FleshedRoute
         buoy: FleshedRouteBuoy
         routeLeg?: FleshedRouteLeg
-        onHoverRouteLeg?: (leg?: IApiRouteLegOutput) => void
-        onSelectRouteLeg?: (leg?: IApiRouteLegOutput) => void
-        selectedRouteLeg?: IApiRouteLegOutput
-        hoveredRouteLeg?: IApiRouteLegOutput
+        onHoverRouteLeg?: (leg?: FleshedRouteLeg) => void
+        onSelectRouteLeg?: (leg?: FleshedRouteLeg) => void
+        selectedRouteLeg?: FleshedRouteLeg
+        hoveredRouteLeg?: FleshedRouteLeg
     }
 ) => {
     const {
@@ -257,7 +247,10 @@ const RouteBuoy = (props:
     
     const onMouseEnter = () => onHoverRouteLeg && onHoverRouteLeg(routeLeg)
     const onMouseLeave = () => onHoverRouteLeg && onHoverRouteLeg()
-    const onClick = () => onSelectRouteLeg && onSelectRouteLeg(routeLeg)
+    const onClick = () => {
+        console.log(`click`, routeLeg)
+        onSelectRouteLeg && onSelectRouteLeg(routeLeg)
+    }
 
     const isSelected = selectedRouteLeg && routeLeg?.leg.id === selectedRouteLeg.leg.id
     const isHovered = hoveredRouteLeg && routeLeg?.leg.id === hoveredRouteLeg.leg.id

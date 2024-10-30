@@ -5,7 +5,8 @@ import MapCanvas from "./ MapCanvas"
 import { useState } from "react"
 import RouteOptions from "./RouteOptions"
 import { plan2region } from "@/lib/graph"
-import { bulkWind2indexedWind, parseShipPolar, Timestamp } from "tslib"
+import { bulkWind2indexedWind, parseShipPolar, Timestamp, timestamp2epoch, windAtTime } from "tslib"
+import { FleshedRouteLeg, fleshenRoute } from "@/lib/route"
 
 type MapPlanRoutePageClientFunctionsProps = {
     pageRoot: string
@@ -30,11 +31,13 @@ const MapPlanRoutePageClientFunctions = (props: MapPlanRoutePageClientFunctionsP
         geometry,
     } = props
 
+    const [indexedWind, setIndexedWind] = useState(bulkWind2indexedWind(wind))
+    const [fleshedRoute, setFleshedRoute] = useState(fleshenRoute(parseShipPolar(ship.polar), indexedWind, plan, route))
     const [selectedBuoy, setSelectedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
     const [selectedLeg, setSelectedLeg] = useState<IApiLegOutput | undefined>(undefined)
     const [hoveredRoute, setHoveredRoute] = useState<IApiRouteOutput | undefined>(undefined)
-    const [selectedRouteLeg, setSelectedRouteLeg] = useState<IApiRouteLegOutput | undefined>(undefined)
-    const [hoveredRouteLeg, setHoveredRouteLeg] = useState<IApiRouteLegOutput | undefined>(undefined)
+    const [selectedRouteLeg, setSelectedRouteLeg] = useState<FleshedRouteLeg | undefined>(undefined)
+    const [hoveredRouteLeg, setHoveredRouteLeg] = useState<FleshedRouteLeg | undefined>(undefined)
     const [showWind, setShowWind] = useState(true)
     const [selectedWindTimestamp, setSelectedWindTimestamp] = useState<Timestamp>(wind[0].timestamp)
     
@@ -57,10 +60,14 @@ const MapPlanRoutePageClientFunctions = (props: MapPlanRoutePageClientFunctionsP
     const onHoverRoute = (route?: IApiRouteOutput) => {
         setHoveredRoute(route)
     }
-    const onSelectRouteLeg = (leg?: IApiRouteLegOutput) => {
+    const onSelectRouteLeg = (leg?: FleshedRouteLeg) => {
         setSelectedRouteLeg(leg)
+        if (!leg) return
+        const windTime = windAtTime(indexedWind, leg.startTime).timestamp
+        setSelectedWindTimestamp(windTime)
+        console.log(`set wind time`, windTime, leg)
     }
-    const onHoverRouteLeg = (leg?: IApiRouteLegOutput) => {
+    const onHoverRouteLeg = (leg?: FleshedRouteLeg) => {
         console.log(`set hover`, leg)
         setHoveredRouteLeg(leg)
     }
@@ -76,12 +83,13 @@ const MapPlanRoutePageClientFunctions = (props: MapPlanRoutePageClientFunctionsP
                 <RouteOptions
                     pageRoot={pageRoot}
                     shipPolar={ship && parseShipPolar(ship.polar)}
-                    wind={bulkWind2indexedWind(wind)}
+                    wind={indexedWind}
                     plan={plan}
                     routes={plan.routes}
                     onHoverRoute={onHoverRoute}
                     onHoverRouteLeg={onHoverRouteLeg}
-                    selectedRoute={route}
+                    onSelectRouteLeg={onSelectRouteLeg}
+                    selectedRoute={fleshedRoute}
                     selectedRouteLeg={selectedRouteLeg}
                     hoveredRouteLeg={hoveredRouteLeg}
                     selectedWindTimestamp={selectedWindTimestamp}
@@ -103,7 +111,7 @@ const MapPlanRoutePageClientFunctions = (props: MapPlanRoutePageClientFunctionsP
                 onHoverRouteLeg={onHoverRouteLeg}
                 selectedRouteLeg={selectedRouteLeg}
                 hoveredRouteLeg={hoveredRouteLeg}
-                routeLegs={route.legs}
+                routeLegs={fleshedRoute?.legs}
                 hoverRouteLegs={hoveredRoute?.legs}
                 showWind={showWind}
                 onShowWind={onShowWind}

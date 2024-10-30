@@ -108,6 +108,7 @@ export interface IApiRouteOutput extends IApiRouteInput{
   createdAt: string
   updatedAt: string
   legs: IApiRouteLegOutput[]
+  startTime: Timestamp
   startBuoy: IApiBuoyOutput
   endBuoy: IApiBuoyOutput
 }
