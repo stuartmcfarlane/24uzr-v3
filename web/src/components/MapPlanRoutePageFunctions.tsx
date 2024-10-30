@@ -38,7 +38,9 @@ const MapPlanRoutePageClientFunctions = (props: MapPlanRoutePageClientFunctionsP
     const [showWind, setShowWind] = useState(true)
     const [selectedWindTimestamp, setSelectedWindTimestamp] = useState<Timestamp>(wind[0].timestamp)
     
-    const onSelectWindTimestamp = (timestamp: Timestamp) => setSelectedWindTimestamp(timestamp)
+    const onSelectWindTimestamp = (timestamp: Timestamp) => {
+        setSelectedWindTimestamp(timestamp)
+    }
 
     const onShowWind = (showWind: boolean) => setShowWind(showWind)
 
@@ -59,6 +61,7 @@ const MapPlanRoutePageClientFunctions = (props: MapPlanRoutePageClientFunctionsP
         setSelectedRouteLeg(leg)
     }
     const onHoverRouteLeg = (leg?: IApiRouteLegOutput) => {
+        console.log(`set hover`, leg)
         setHoveredRouteLeg(leg)
     }
 
@@ -77,10 +80,10 @@ const MapPlanRoutePageClientFunctions = (props: MapPlanRoutePageClientFunctionsP
                     plan={plan}
                     routes={plan.routes}
                     onHoverRoute={onHoverRoute}
-                    onHoverLeg={onHoverRouteLeg}
+                    onHoverRouteLeg={onHoverRouteLeg}
                     selectedRoute={route}
-                    selectedLeg={selectedRouteLeg}
-                    hoveredLeg={hoveredRouteLeg}
+                    selectedRouteLeg={selectedRouteLeg}
+                    hoveredRouteLeg={hoveredRouteLeg}
                     selectedWindTimestamp={selectedWindTimestamp}
                 />
             </div>

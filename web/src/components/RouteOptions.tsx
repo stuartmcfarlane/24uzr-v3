@@ -20,10 +20,10 @@ type RouteOptionsProps = {
     startBuoy?: IApiBuoyOutput
     endBuoy?: IApiBuoyOutput
     onHoverRoute?: (route?: IApiRouteOutput) => void
-    onHoverLeg?: (leg?: IApiRouteLegOutput) => void
+    onHoverRouteLeg?: (leg?: IApiRouteLegOutput) => void
     selectedRoute?: IApiRouteOutput
-    selectedLeg?: IApiRouteLegOutput
-    hoveredLeg?: IApiRouteLegOutput
+    selectedRouteLeg?: IApiRouteLegOutput
+    hoveredRouteLeg?: IApiRouteLegOutput
     showBuoys?: boolean
     selectedWindTimestamp?: Timestamp
 }
@@ -37,10 +37,10 @@ const RouteOptions = (props: RouteOptionsProps) => {
         startBuoy,
         endBuoy,
         onHoverRoute,
-        onHoverLeg,
+        onHoverRouteLeg,
         selectedRoute,
-        selectedLeg,
-        hoveredLeg,
+        selectedRouteLeg,
+        hoveredRouteLeg,
         showBuoys,
         selectedWindTimestamp,
     } = props
@@ -100,10 +100,10 @@ const RouteOptions = (props: RouteOptionsProps) => {
                         plan={actualPlan}
                         route={selectedRoute}
                         onHoverRoute={onHoverRoute}
-                        onHoverLeg={onHoverLeg}
+                        onHoverRouteLeg={onHoverRouteLeg}
                         selectedRoute={selectedRoute}
-                        selectedLeg={selectedLeg}
-                        hoveredLeg={hoveredLeg}
+                        selectedRouteLeg={selectedRouteLeg}
+                        hoveredRouteLeg={hoveredRouteLeg}
                         showBuoys={true}
                     />
                 )}

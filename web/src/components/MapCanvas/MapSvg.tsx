@@ -351,8 +351,8 @@ const MapSvg = (props: MapSvgProps) => {
                         routeLegs={hoverRouteLegs}
                         color={ROUTE_LEG_HOVER_COLOR}
                         buoys={buoys || []}
-                        onSelectLeg={onSelectLeg}
-                        selectedLeg={selectedLeg}
+                        onSelectRouteLeg={onSelectRouteLeg}
+                        selectedRouteLeg={selectedRouteLeg}
                         screen2svgFactor={screen2svgFactor}
                     />)
                 }

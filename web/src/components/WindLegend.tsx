@@ -1,7 +1,7 @@
 import { fmtTimestamp, Timestamp } from "tslib"
 import { IApiBulkWind } from "@/types/api"
-import { ChangeEvent, MouseEvent, useState } from "react"
-import { windIndexAtTime } from '../../../tslib/src/wind';
+import { ChangeEvent, useState } from "react"
+import { windIndexAtTime } from 'tslib';
 import { useChange } from "@/hooks/useChange";
 
 type WindLegendProps = {
@@ -27,7 +27,7 @@ const WindLegend = (props: WindLegendProps) => {
             : 0
     )
     const maxDelta = wind ? wind.length - 1 : 0
-    const onToggleWind = (e: ChangeEvent<HTMLInputElement>) => {
+    const onToggleWind = () => {
         onShowWind && onShowWind(!showWind)
     }
     const onChangeTimeIndex = (e: ChangeEvent<HTMLInputElement>) => {
