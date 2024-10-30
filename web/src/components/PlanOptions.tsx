@@ -5,8 +5,9 @@ import Link from "next/link"
 import { NewPlanTool } from "./NewPlanTool"
 import PlanIcon from "./Icons/PlanIcon"
 import { ChangeEvent } from 'react'
-import { and, desc, idIs, not, sort } from "tslib"
+import { and, idIs, not, plural, seconds2hours, sort } from "tslib"
 import { cmpStartTime, planHasShip, planIsOld } from "@/lib/plan"
+import { fmtHumanDateTime } from 'tslib';
 
 type PlanOptionsProps = {
     rootPage: string
@@ -68,16 +69,28 @@ const PlanOptions = (props: PlanOptionsProps) => {
                     (plans || [])
                     .filter(and(planHasShip(activeShip), not(planIsOld(24))))
                 ).map(plan => (
-                    <div
-                        key={plan.id}
-                        className="border p-2 hover:bg-24uzr hover:text-white"
-                        onMouseEnter={onMouseEnter(plan)}
-                        onMouseLeave={onMouseLeave(plan)}
-                    >
-                        <Link href={`${rootPage}/plan/${plan.id}`}>
-                            {plan.name}
-                        </Link>
-                    </div>
+                    <Link href={`${rootPage}/plan/${plan.id}`}>
+                        <div
+                            key={plan.id}
+                            className="flex flex-col border p-2 hover:bg-24uzr hover:text-white"
+                            onMouseEnter={onMouseEnter(plan)}
+                            onMouseLeave={onMouseLeave(plan)}
+                        >
+                            <div className="text-md">
+                                {plan.name}
+                            </div>
+                            <div className="flex text-sm gap-2">
+                                <div>
+                                    {fmtHumanDateTime(plan.startTime)}
+                                </div>
+                                <div>
+                                    {(
+                                            (hours: number) => (plural(`${hours} hour`, `${hours} hours`)(hours))
+                                    )(seconds2hours(plan.raceSecondsRemaining))}
+                                </div>
+                            </div>
+                        </div>
+                    </Link>
                 ))}
             </div>
         </>)}

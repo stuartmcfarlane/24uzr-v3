@@ -38,7 +38,7 @@ export const fmtHoursMinutes = (timestamp: Timestamp) => {
     const m = date.getMinutes()
     return `${h}:${fmtLeftPad(2, '0')(m)}`
 }
-export const fmtHumanTime = (timestamp: Timestamp) => {
+export const fmtHumanDateTime = (timestamp: Timestamp) => {
     const dateFormatter = new Intl.DateTimeFormat('nl-NL', {
         // localeMatcher?: "best fit" | "lookup" | undefined;
         weekday: 'long', //"long" | "short" | "narrow" | undefined;
@@ -51,6 +51,25 @@ export const fmtHumanTime = (timestamp: Timestamp) => {
         // second?: "numeric" | "2-digit" | undefined;
         // timeZoneName?: "short" | "long" | "shortOffset" | "longOffset" | "shortGeneric" | "longGeneric" | undefined;
         // formatMatcher?: "best fit" | "basic" | undefined;
+        // hour12?: boolean | undefined;
+        // timeZone?: string | undefined;
+})
+    const formattedDate = dateFormatter.format(timestamp2date(timestamp))
+    return formattedDate
+}
+export const fmtHumanTime = (timestamp: Timestamp) => {
+    const dateFormatter = new Intl.DateTimeFormat('nl-NL', {
+        // localeMatcher?: "best fit" | "lookup" | undefined;
+        // weekday: "long" | "short" | "narrow" | undefined;
+        // era?: "long" | "short" | "narrow" | undefined;
+        // year?: "numeric" | "2-digit" | undefined;
+        // month?: "numeric" | "2-digit" | "long" | "short" | "narrow" | undefined;
+        // day?: "numeric" | "2-digit" | undefined;
+        hour: '2-digit', // "numeric" | "2-digit" | undefined;
+        minute: '2-digit', // "numeric" | "2-digit" | undefined;
+        // second?: "numeric" | "2-digit" | undefined;
+        // timeZoneName?: "short" | "long" | "shortOffset" | "longOffset" | "shortGeneric" | "longGeneric" | undefined;
+        formatMatcher: "basic", // "best fit" | "basic" | undefined;
         // hour12?: boolean | undefined;
         // timeZone?: string | undefined;
 })
