@@ -5,8 +5,8 @@ import MapCanvas from "./ MapCanvas"
 import { useState } from "react"
 import RouteOptions from "./RouteOptions"
 import { plan2region } from "@/lib/graph"
-import { bulkWind2indexedWind, parseShipPolar, Timestamp, timestamp2epoch, windAtTime } from "tslib"
-import { FleshedRouteLeg, fleshenRoute } from "@/lib/route"
+import { bulkWind2indexedWind, last, parseShipPolar, Timestamp, timestamp2epoch, windAtTime } from "tslib"
+import { findRouteLegAtTime, FleshedRouteLeg, fleshenRoute } from "@/lib/route"
 
 type MapPlanRoutePageClientFunctionsProps = {
     pageRoot: string
@@ -43,6 +43,8 @@ const MapPlanRoutePageClientFunctions = (props: MapPlanRoutePageClientFunctionsP
     
     const onSelectWindTimestamp = (timestamp: Timestamp) => {
         setSelectedWindTimestamp(timestamp)
+        const routeLegAtTime = findRouteLegAtTime(timestamp)(fleshedRoute)
+        setSelectedRouteLeg(routeLegAtTime)
     }
 
     const onShowWind = (showWind: boolean) => setShowWind(showWind)
@@ -65,10 +67,8 @@ const MapPlanRoutePageClientFunctions = (props: MapPlanRoutePageClientFunctionsP
         if (!leg) return
         const windTime = windAtTime(indexedWind, leg.startTime).timestamp
         setSelectedWindTimestamp(windTime)
-        console.log(`set wind time`, windTime, leg)
     }
     const onHoverRouteLeg = (leg?: FleshedRouteLeg) => {
-        console.log(`set hover`, leg)
         setHoveredRouteLeg(leg)
     }
 

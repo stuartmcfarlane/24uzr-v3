@@ -31,12 +31,10 @@ const MapRouteLeg = (props: MapRouteLegProps) => {
     const [hover, setHover] = useState(false)
     const onClick = () => onSelect && onSelect(routeLeg)
     const onMouseEnter = () => {
-        console.log(`hover`, routeLeg)
         onHover && onHover(routeLeg)
         setHover(() => true)
     }
     const onMouseLeave = () => {
-        console.log(`hover`)
         onHover && onHover()
         setHover(() => false)
     }

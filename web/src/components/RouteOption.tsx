@@ -248,13 +248,11 @@ const RouteBuoy = (props:
     const onMouseEnter = () => onHoverRouteLeg && onHoverRouteLeg(routeLeg)
     const onMouseLeave = () => onHoverRouteLeg && onHoverRouteLeg()
     const onClick = () => {
-        console.log(`click`, routeLeg)
         onSelectRouteLeg && onSelectRouteLeg(routeLeg)
     }
 
     const isSelected = selectedRouteLeg && routeLeg?.leg.id === selectedRouteLeg.leg.id
     const isHovered = hoveredRouteLeg && routeLeg?.leg.id === hoveredRouteLeg.leg.id
-    isHovered && console.log(`hovered`, isHovered, routeLeg)
     return (
         <div
             onMouseEnter={onMouseEnter}

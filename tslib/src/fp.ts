@@ -52,6 +52,7 @@ export const maybeFinishBuoy =  (o: { name: string }): boolean => /finish/i.test
 
 export const pick = <T>(i: number) => (array: T[]) => array[i]
 export const head = <T>(array: T[]) => pick<T>(0)(array)
+export const last = <T>(array: T[]) => pick<T>(array.length - 1)(array)
 export const idIsNot = (needle: number) => (o: { id: number }): boolean => needle !== o.id
 export const project = <O, K extends keyof O>(k: K) => (o: O) => o[k]
 export const unique = <T>(array: T[]) => {

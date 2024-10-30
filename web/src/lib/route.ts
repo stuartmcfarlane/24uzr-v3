@@ -21,6 +21,7 @@ import {
     windAtTime,
     windAtLocation,
     wind2degrees,
+    last,
 } from 'tslib';
 
 export type FleshedRouteBuoy = IApiBuoyOutput & {
@@ -132,4 +133,18 @@ export const fleshenRoute = (shipPolar: ShipPolar, winds: IndexedWind[], plan: I
         } as FleshedRoute
     )
     return fleshedRoute
+}
+
+export const isFleshedRouteLeg = (leg: FleshedRouteLeg | IApiRouteLegOutput) => 'startTime' in leg
+
+export const findRouteLegAtTime = (timestamp: Timestamp,) => (route?: FleshedRoute) => {
+    const timestampEpoch = timestamp2epoch(timestamp)
+    const fleshedLegs = (route?.legs || []).filter(isFleshedRouteLeg)
+    const routeLegsBeforeTime = fleshedLegs.filter(
+        leg => (
+            timestamp2epoch(leg.startTime) <= timestampEpoch
+            && timestampEpoch <= timestamp2epoch(leg.endTime)
+        )
+    )
+    return last(routeLegsBeforeTime)
 }
