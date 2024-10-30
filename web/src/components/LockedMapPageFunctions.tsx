@@ -8,7 +8,6 @@ import { maybeFinishBuoy, Timestamp } from "tslib"
 import PadlockIcon from "./Icons/PadlockIcon"
 import { useChange } from "@/hooks/useChange"
 import PlanOptions from "./PlanOptions"
-import { timestamp2epoch } from '../../../tslib/src/time';
 
 type LockedMapPageClientFunctionsProps = {
     rootPage: string

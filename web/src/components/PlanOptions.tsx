@@ -5,7 +5,8 @@ import Link from "next/link"
 import { NewPlanTool } from "./NewPlanTool"
 import PlanIcon from "./Icons/PlanIcon"
 import { ChangeEvent } from 'react'
-import { idIs } from "tslib"
+import { and, desc, idIs, not, sort } from "tslib"
+import { cmpStartTime, planHasShip, planIsOld } from "@/lib/plan"
 
 type PlanOptionsProps = {
     rootPage: string
@@ -63,7 +64,10 @@ const PlanOptions = (props: PlanOptionsProps) => {
                 </div>
             </div>
             <div className="flex flex-col gap-4 overflow-y-auto pr-4">
-                {(plans || []).filter(plan => !activeShip || activeShip.id === plan.shipId).map(plan => (
+                {sort(cmpStartTime)(
+                    (plans || [])
+                    .filter(and(planHasShip(activeShip), not(planIsOld(24))))
+                ).map(plan => (
                     <div
                         key={plan.id}
                         className="border p-2 hover:bg-24uzr hover:text-white"

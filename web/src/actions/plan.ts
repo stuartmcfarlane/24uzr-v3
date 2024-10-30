@@ -4,6 +4,7 @@ import { ActionError } from "@/types/action"
 import { getSession } from "./session"
 import { apiCreatePlan, apiGetPlan } from "@/services/api"
 import { redirect } from "next/navigation"
+import { hours2seconds, now, timestamp2string } from "tslib"
 
 export const createPlanWithForm = async (formData: FormData): Promise<ActionError> => {
     const session = await getSession()
@@ -38,8 +39,8 @@ export const createPlanWithForm = async (formData: FormData): Promise<ActionErro
         shipId,
         startBuoyId,
         endBuoyId,
-        startTime,
-        raceSecondsRemaining: raceSecondsRemaining | raceHoursRemaining * 60 * 60,
+        startTime: startTime || timestamp2string(now()),
+        raceSecondsRemaining: raceSecondsRemaining ? raceHoursRemaining * 60 * 60 : hours2seconds(8),
     })
     if (!createdPlan) return { error: "Failed to create plan" }
 

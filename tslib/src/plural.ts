@@ -1,0 +1,1 @@
+export const plural = (single: string, multiple: string) => (count: number) => count === 1 ? single : multiple

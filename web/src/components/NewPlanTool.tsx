@@ -6,6 +6,7 @@ import BuoyIcon from "./Icons/BuoyIcon"
 import PlanIcon from "./Icons/PlanIcon"
 import { useState } from "react"
 import { useChange } from "@/hooks/useChange"
+import { addSeconds, hours2seconds, now, plural, seq, timestamp2string } from "tslib"
 
 type NewPlanToolProps = {
     rootPage: string
@@ -56,12 +57,43 @@ export const NewPlanTool = (props: NewPlanToolProps) => {
                     placeholder={defaultPlanName}
                     className="ring-2 ring-gray-300 rounded-md p-4 w-full my-2"
                 />
-                <input
-                    type="text"
+                <label>Start time</label>
+                <select
+                    defaultValue={8}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    name="startTime"
+                >
+                    {seq(0, 24)
+                        .map(deltaHours => (
+                            <option
+                                key={deltaHours}
+                                value={timestamp2string(addSeconds(hours2seconds(deltaHours))(now()))}
+                            >
+                                {deltaHours === 0 ? 'starting now' : <>
+                                    +{deltaHours} hours
+                                </>
+                                }
+                            </option>
+                        ))
+                    }
+                </select>
+                <label>Plan length</label>
+                <select
+                    defaultValue={timestamp2string(now())}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     name="raceHoursRemaining"
-                    placeholder='race remaining hours'
-                    className="ring-2 ring-gray-300 rounded-md p-4 w-full my-2"
-                />
+                >
+                    {seq(1, 12)
+                        .map(hours => (
+                            <option
+                                key={hours}
+                                value={hours}
+                            >
+                                {plural(`${hours} hour`, `${hours} hours`)(hours)}
+                            </option>
+                        ))
+                    }
+                </select>
                 <div className="p-4 w-full my-2 flex">
                     <div>Start</div>
                     <div className="w-7"><BuoyIcon /></div>
@@ -86,7 +118,6 @@ export const NewPlanTool = (props: NewPlanToolProps) => {
                 <input type="hidden" name="startBuoyId" value={startBuoy?.id}/>
                 <input type="hidden" name="endBuoyId" value={endBuoy?.id}/>
                 <input type="hidden" name="defaultName" value={defaultPlanName}/>
-                <input type="hidden" name="startTime" value={new Date().toISOString()}/>
                 <input type="hidden" name="rootPage" value={rootPage}/>
             </form>
         )}

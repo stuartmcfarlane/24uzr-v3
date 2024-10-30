@@ -1,3 +1,4 @@
+import { Timestamp, timestamp2epoch } from './time';
 // Drop N entries from array T
 type Drop<N extends number, T extends any[], I extends any[] = []> =
     Length<I> extends N
@@ -102,3 +103,4 @@ export const string2int = (s: string) => parseInt(s)
 export const string2float = (s: string) => parseFloat(s)
 export const int2string = (i: number) => `${i}`
 export const toFixed = (decimals: number) => (x: number) => x.toFixed(decimals)
+export const seq = (a: number, b: number) => [...Array(b-a)].map((_,i) => i+a)
