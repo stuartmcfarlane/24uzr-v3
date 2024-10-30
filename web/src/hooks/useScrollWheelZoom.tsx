@@ -51,7 +51,6 @@ export const useScrollWheelZoom = (
     }
     const onWheel = useCallback(
         (e: WheelEvent) => {
-            e.preventDefault()
             const maxBoundingRect = maxRef.current
             const zoomedViewBoxRect = zoomedRef.current
             if (
@@ -78,7 +77,7 @@ export const useScrollWheelZoom = (
     useEffect(
         () => {
             const svg = svgRef.current
-            svg?.addEventListener('wheel', onWheel)
+            svg?.addEventListener( 'wheel', onWheel, { passive: true } )
             return () => {
                 svg?.removeEventListener('wheel', onWheel)
             }
