@@ -69,6 +69,7 @@ const PlanOptions = (props: PlanOptionsProps) => {
                     .filter(and(planHasShip(activeShip), not(planIsOld(24))))
                 ).map(plan => (
                     <PlanOption
+                        key={plan.id}
                         rootPage={rootPage}
                         plan={plan}
                         onHoverPlan={onHoverPlan}

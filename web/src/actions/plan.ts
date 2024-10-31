@@ -8,7 +8,6 @@ import { hours2seconds, now, timestamp2string } from "tslib"
 import { revalidatePath } from "next/cache"
 
 export const createPlanWithForm = async (formData: FormData): Promise<ActionError> => {
-    console.log(`createPlanWithForm`, formData)
     const session = await getSession()
 
     const name = formData.get("name") as string
@@ -54,7 +53,6 @@ export const getPlan = async (planId: number) => {
 }
 
 export const deletePlan = async (planId: number) => {
-    console.log(`deletePlan`, planId)
     const session = await getSession()
     await apiDeletePlan(session.apiToken!, planId)
 

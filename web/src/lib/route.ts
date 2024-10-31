@@ -22,6 +22,8 @@ import {
     windAtLocation,
     wind2degrees,
     last,
+    desc,
+    head,
 } from 'tslib';
 
 export type FleshedRouteBuoy = IApiBuoyOutput & {
@@ -57,7 +59,7 @@ export const route2LengthNm = (route: IApiRouteOutput): number => {
     return meters2nM(meters)
     
 }
-export const cmpRouteLength: CmpFunction<IApiRouteOutput> = (a, b) => {
+export const cmpRouteLength: CmpFunction<IApiRouteOutput|FleshedRoute> = (a, b) => {
     return cmpNumber(route2LengthNm(a), route2LengthNm(b))
 }
 export const cmpRouteLegOrder: CmpFunction<IApiRouteLegOutput | FleshedRouteLeg> = (
@@ -99,6 +101,7 @@ const fleshenLeg = (shipPolar: ShipPolar, vWind: Vector, startTime: Timestamp, l
     return fleshedLeg
 }
 export const fleshenRoute = (shipPolar: ShipPolar, winds: IndexedWind[], plan: IApiPlanOutput) => (route: IApiRouteOutput): FleshedRoute | undefined => {
+    if (!route) return undefined
     const planRoute = plan.routes.find(idIs(route.id))
     if (!planRoute) return undefined
     if (!windAtTime(winds, plan.startTime)) return undefined
@@ -135,7 +138,8 @@ export const fleshenRoute = (shipPolar: ShipPolar, winds: IndexedWind[], plan: I
     return fleshedRoute
 }
 
-export const isFleshedRouteLeg = (leg: FleshedRouteLeg | IApiRouteLegOutput) => 'startTime' in leg
+export const isFleshedRoute = (route?: FleshedRoute | IApiRouteOutput) => !!route && 'distance' in route
+export const isFleshedRouteLeg = (leg?: FleshedRouteLeg | IApiRouteLegOutput) => !!leg && 'startTime' in leg
 
 export const findRouteLegAtTime = (timestamp: Timestamp,) => (route?: FleshedRoute) => {
     const timestampEpoch = timestamp2epoch(timestamp)
@@ -148,3 +152,4 @@ export const findRouteLegAtTime = (timestamp: Timestamp,) => (route?: FleshedRou
     )
     return last(routeLegsBeforeTime)
 }
+export const plan2longestRoute = (plan: IApiPlanOutput) => plan.status === "DONE" ? head(sort(desc(cmpRouteLength))(plan.routes)) : undefined

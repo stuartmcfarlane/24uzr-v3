@@ -4,6 +4,7 @@ import { cmpRouteLegOrder, FleshedRoute, FleshedRouteBuoy, FleshedRouteLeg, fmtN
 import { bearingLatLan, calcTwa, distanceLatLng, fmtDegrees, fmtHoursMinutes, fmtHumanTime, fmtWindSpeed, meters2nM, metersPerSecond2knots, ShipPolar, sort, Timestamp, Vector, vectorMagnitude, wind2degrees, WindIndicatorMode } from "tslib"
 import { IndexedWind, windAtTimeAndLocation } from 'tslib';
 import { fmtTwa } from 'tslib';
+import { useChange } from "@/hooks/useChange";
 
 
 type RouteOptionProps = {
@@ -11,7 +12,7 @@ type RouteOptionProps = {
     shipPolar: ShipPolar
     wind: IndexedWind[]
     plan: IApiPlanOutput
-    route: FleshedRoute
+    route?: FleshedRoute
     onHoverRoute?: (route?: IApiRouteOutput) => void
     onHoverRouteLeg?: (leg?: FleshedRouteLeg) => void
     onSelectRouteLeg?: (leg?: FleshedRouteLeg) => void
@@ -37,7 +38,9 @@ const RouteOption = (props: RouteOptionProps) => {
         hoveredRouteLeg,
         showBuoys,
     } = props
-
+    if (!route) return (<>
+        Pending...
+    </>)
     if (selectedRoute?.id === route.id) return (
         <SelectedRoute
             shipPolar={shipPolar}

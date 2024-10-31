@@ -20,7 +20,8 @@ import {
     LatLng,
     Rect,
     Point,
-    Timestamp
+    Timestamp,
+    rectArea
 } from 'tslib'
 import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput, IApiShipOutput, Region } from "@/types/api"
 import MapBuoy from "./MapBuoy"
@@ -223,7 +224,7 @@ const MapSvg = (props: MapSvgProps) => {
             setBoundingRect(boundingRect)
             setInitialBoundingViewBoxRect(boundingRect)
         },
-        [ buoys, map, initialBoundingRect ]
+        [ buoys, map, rectArea(initialBoundingRect) ]
     )
     useEffect(
         () => {

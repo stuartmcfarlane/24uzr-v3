@@ -26,7 +26,8 @@ export const makeRect = (x: number, y: number, width: number, height: number):Re
 ]
 export const makeLine = (p1: Point, p2: Point): Line => [p1, p2]
 export const rectPoint = (rect: Rect): Point => rect[0]
-export const rectWidth = ([ { x: x1 },{ x: x2 } ]: Rect): number => x2 - x1
+export const rectWidth = ([{ x: x1 }, { x: x2 }]: Rect): number => x2 - x1
+export const rectArea = (rect?: Rect) => !rect ? 0 : rectWidth(rect) * rectHeight(rect)
 export const rectHeight = ([{ y: y1, }, { y: y2, }]: Rect): number => y2 - y1
 export const rectAspectRatio = (rect?: Rect) => (
     rect

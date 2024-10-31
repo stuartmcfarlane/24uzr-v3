@@ -2,7 +2,7 @@ import { IApiBuoyOutput, IApiPlanOutput, IApiRouteLegOutput, IApiRouteOutput } f
 import Link from "next/link"
 import { NewRouteTool } from "./NewRouteTool"
 import RouteIcon from "./Icons/RouteIcon"
-import { cmpRouteLegOrder, cmpRouteLength, FleshedRoute, FleshedRouteLeg, fmtNM, route2LengthNm } from "@/lib/route"
+import { cmpRouteLegOrder, cmpRouteLength, FleshedRoute, FleshedRouteLeg, fleshenRoute, fmtNM, isFleshedRoute, plan2longestRoute, route2LengthNm } from "@/lib/route"
 import { useCallback, useState } from "react"
 import usePolling from "@/hooks/usePolling"
 import { useChange } from "@/hooks/useChange"
@@ -16,7 +16,7 @@ type RouteOptionsProps = {
     shipPolar: ShipPolar
     wind: IndexedWind[]
     plan: IApiPlanOutput
-    routes: IApiRouteOutput[]
+    routes: FleshedRoute[]
     startBuoy?: IApiBuoyOutput
     endBuoy?: IApiBuoyOutput
     onHoverRoute?: (route?: IApiRouteOutput) => void
@@ -47,35 +47,10 @@ const RouteOptions = (props: RouteOptionsProps) => {
         selectedWindTimestamp,
     } = props
 
-    const [actualPlan, setActualPlan] = useState(plan)
-    const [actualRoutes, setActualRoutes] = useState(routes)
     const onMouseEnter = (route: IApiRouteOutput) => () => onHoverRoute && onHoverRoute(route)
     const onMouseLeave = (route: IApiRouteOutput) => () => onHoverRoute && onHoverRoute()
 
-    const poll = useCallback(
-        async () => {
-            const plan = await getPlan(actualPlan.id)
-            return plan
-        }, []
-    )
-    const {data: polledPlan, cancel: cancelPolling} = usePolling(
-        poll, {
-            interval: 1000,
-        }
-    )
-    useChange(
-        () => {
-            if (!polledPlan) return
-            if (polledPlan.status !== 'PENDING') {
-                cancelPolling()
-                setActualPlan(polledPlan)
-                setActualRoutes(polledPlan.routes)
-            }
-        },
-        [polledPlan?.status]
-    )
-    if (polledPlan?.status === 'DONE') cancelPolling()
-
+    
     return (<>
         {!startBuoy && (<>
             <div className="flex gap-4">
@@ -85,10 +60,10 @@ const RouteOptions = (props: RouteOptionsProps) => {
                 <div className="">
                     Routes
                 </div>
-                {actualPlan.status === 'PENDING' && (
+                {plan.status === 'PENDING' && (
                     <div>pending</div>
                 )}
-                {actualPlan.status === 'FAILED' && (
+                {plan.status === 'FAILED' && (
                     <div>failed</div>
                 )}
             </div>
@@ -99,7 +74,7 @@ const RouteOptions = (props: RouteOptionsProps) => {
                         shipPolar={shipPolar}
                         wind={wind}
                         selectedWindTimestamp={selectedWindTimestamp}
-                        plan={actualPlan}
+                        plan={plan}
                         route={selectedRoute}
                         onHoverRoute={onHoverRoute}
                         onHoverRouteLeg={onHoverRouteLeg}
@@ -110,14 +85,14 @@ const RouteOptions = (props: RouteOptionsProps) => {
                         showBuoys={true}
                     />
                 )}
-                {sort(desc(cmpRouteLength))(actualRoutes || []).map(route => (
+                {sort(desc(cmpRouteLength))(routes || []).filter(isFleshedRoute).map(route => (
                     (!selectedRoute || route.id !== selectedRoute.id) && (
                         <RouteOption key={route.id}
                             pageRoot={pageRoot}
                             shipPolar={shipPolar}
                             wind={wind}
                             selectedWindTimestamp={selectedWindTimestamp}
-                            plan={actualPlan}
+                            plan={plan}
                             route={route}
                             onHoverRoute={onHoverRoute}
                             selectedRoute={selectedRoute}
@@ -130,7 +105,7 @@ const RouteOptions = (props: RouteOptionsProps) => {
         {startBuoy && (
             <NewRouteTool
                 pageRoot={pageRoot}
-                plan={actualPlan}
+                plan={plan}
                 startBuoy={startBuoy}
                 endBuoy={endBuoy}
             />
