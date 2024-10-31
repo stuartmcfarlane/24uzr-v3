@@ -98,7 +98,7 @@ const fleshenLeg = (shipPolar: ShipPolar, vWind: Vector, startTime: Timestamp, l
    }
     return fleshedLeg
 }
-export const fleshenRoute = (shipPolar: ShipPolar, winds: IndexedWind[], plan: IApiPlanOutput, route: IApiRouteOutput): FleshedRoute | undefined => {
+export const fleshenRoute = (shipPolar: ShipPolar, winds: IndexedWind[], plan: IApiPlanOutput) => (route: IApiRouteOutput): FleshedRoute | undefined => {
     const planRoute = plan.routes.find(idIs(route.id))
     if (!planRoute) return undefined
     if (!windAtTime(winds, plan.startTime)) return undefined

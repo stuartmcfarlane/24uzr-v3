@@ -1,10 +1,11 @@
 "use server"
 
 import { getSession } from "@/actions/session"
-import MapPlanPageClientFunctions from "@/components/MapPlanPageFunctions"
+import MapPlanRoutePageClientFunctions from "@/components/MapPlanRoutePageFunctions"
+import { cmpRouteLength } from "@/lib/route"
 import { apiGetActiveMap, apiGetBuoys, apiGetGeometry, apiGetPlan, apiGetShip, apiGetWind } from "@/services/api"
 import { redirect } from "next/navigation"
-import { addSeconds, hours2seconds } from "tslib"
+import { addSeconds, desc, head, hours2seconds, sort } from "tslib"
 
 const MapPlanPage = async ({
     params
@@ -33,23 +34,31 @@ const MapPlanPage = async ({
     if (!plan) {
         redirect(`/race`)
     }
-    const ship = await apiGetShip(session.apiToken!, plan.shipId)
+    console.log(`plan`, plan)
+    const from = addSeconds(hours2seconds(-1))(plan.startTime)
+    const until = addSeconds(plan.raceSecondsRemaining)(plan.startTime)
+    const [
+        ship,
+        wind,
+    ] = await Promise.all([
+        apiGetShip(session.apiToken!, plan.shipId),
+        apiGetWind(session.apiToken!, from, until, map),
+    ])
     if (!ship) {
         redirect(`/race`)
     }
-    const from = addSeconds(hours2seconds(-1))(plan.startTime)
-    const until = addSeconds(plan.raceSecondsRemaining)(plan.startTime)
-    const wind = await apiGetWind(session.apiToken!, from, until, map)
 
+    const route = head(sort(desc(cmpRouteLength))(plan.routes))
     return (
-        <MapPlanPageClientFunctions
+        <MapPlanRoutePageClientFunctions
             pageRoot="/race"
+            ship={ship}
             map={map}
             geometry={geometry}
             wind={wind}
             plan={plan}
-            ship={ship}
             buoys={buoys || []}
+            route={route}
         />
     )
 }

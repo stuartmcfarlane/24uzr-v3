@@ -32,7 +32,7 @@ const MapPlanRoutePageClientFunctions = (props: MapPlanRoutePageClientFunctionsP
     } = props
 
     const [indexedWind, setIndexedWind] = useState(bulkWind2indexedWind(wind))
-    const [fleshedRoute, setFleshedRoute] = useState(fleshenRoute(parseShipPolar(ship.polar), indexedWind, plan, route))
+    const [fleshedRoute, setFleshedRoute] = useState(fleshenRoute(parseShipPolar(ship.polar), indexedWind, plan)(route))
     const [selectedBuoy, setSelectedBuoy] = useState<IApiBuoyOutput | undefined>(undefined)
     const [selectedLeg, setSelectedLeg] = useState<IApiLegOutput | undefined>(undefined)
     const [hoveredRoute, setHoveredRoute] = useState<IApiRouteOutput | undefined>(undefined)
