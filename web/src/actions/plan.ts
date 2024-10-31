@@ -2,9 +2,10 @@
 
 import { ActionError } from "@/types/action"
 import { getSession } from "./session"
-import { apiCreatePlan, apiGetPlan } from "@/services/api"
+import { apiCreatePlan, apiDeletePlan, apiGetPlan } from "@/services/api"
 import { redirect } from "next/navigation"
 import { hours2seconds, now, timestamp2string } from "tslib"
+import { revalidatePath } from "next/cache"
 
 export const createPlanWithForm = async (formData: FormData): Promise<ActionError> => {
     console.log(`createPlanWithForm`, formData)
@@ -50,4 +51,12 @@ export const createPlanWithForm = async (formData: FormData): Promise<ActionErro
 export const getPlan = async (planId: number) => {
     const session = await getSession()
     return apiGetPlan(session.apiToken!, planId)
+}
+
+export const deletePlan = async (planId: number) => {
+    console.log(`deletePlan`, planId)
+    const session = await getSession()
+    await apiDeletePlan(session.apiToken!, planId)
+
+    revalidatePath(`/race`)
 }

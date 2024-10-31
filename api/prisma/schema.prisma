@@ -96,12 +96,12 @@ model Route {
   endBuoyId   Int
   legs        LegsOnRoute[]
   ownerId     Int
-  plan        Plan          @relation(fields: [planId], references: [id])
+  plan        Plan          @relation(fields: [planId], references: [id], onDelete: Cascade)
   planId      Int
 }
 
 model LegsOnRoute {
-  route   Route @relation(fields: [routeId], references: [id])
+  route   Route @relation(fields: [routeId], references: [id], onDelete: Cascade)
   routeId Int
   legId   Int
   leg     Leg   @relation(fields: [legId], references: [id])

@@ -22,6 +22,7 @@ const del = async (accessToken: string | undefined, uri: string) => {
             ...(accessToken ? {'Authorization': `Bearer ${accessToken}`} : {}),
         }
     }
+    console.log(`del ${uri}`)
     return await fetch(makeApiUrl(uri), options)
 }
 
@@ -400,6 +401,15 @@ export const apiGetPlan = async (
     const plan = await response.json()
 
     return plan
+}
+
+export const apiDeletePlan = async (
+    accessToken: string,
+    planId: number,
+): Promise<null> => {
+    console.log(`apiDeletePlan`, planId)
+    await del(accessToken, `/api/plan/${planId}`)
+    return null
 }
 
 export const apiGetWind = async (

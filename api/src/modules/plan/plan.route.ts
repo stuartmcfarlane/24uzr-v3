@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 import {
     createPlanHandler,
+    deletePlanHandler,
     getPlanHandler,
     getPlansHandler,
     putPlanHandler,
@@ -36,6 +37,20 @@ async function planRoutes(server: FastifyInstance) {
             preHandler: [server.authenticate],
         },
         getPlanHandler
+    );
+    
+    server.delete(
+        "/plan/:id",
+        {
+            schema: {
+                tags: ['plan'],
+                security: [ { bearerAuth: [] } ],
+                response: {
+                },
+            },
+            preHandler: [server.authenticate],
+        },
+        deletePlanHandler
     );
     
     server.put(

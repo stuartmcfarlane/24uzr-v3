@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { PlanIdParamInput, PlanIdParamSchema, CreatePlanInput, UpdatePlanInput } from './plan.schema';
-import { createPlan, findPlan, findPlans, updatePlan, updatePlanRoutes, updatePlanStatus } from "./plan.service";
+import { createPlan, deletePlan, findPlan, findPlans, updatePlan, updatePlanRoutes, updatePlanStatus } from "./plan.service";
 import { getAllRoutes } from "../../services/routeApi";
 import { findBuoysByMapId } from "../buoy/buoy.service";
 import { findLegsByMapId } from "../leg/leg.service";
@@ -92,5 +92,14 @@ export async function putPlanHandler(
     const route = await updatePlan(id, request.body)
     
     return route;
+}
+
+export async function deletePlanHandler(
+    request: FastifyRequest<{
+        Params: PlanIdParamInput,
+    }>,
+) {
+    const { id } = PlanIdParamSchema.parse(request.params)
+    await deletePlan(id)
 }
 

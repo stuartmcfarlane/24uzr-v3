@@ -63,6 +63,13 @@ export async function findPlan(id: number) {
     });
 }
 
+export async function deletePlan(id: number) {
+    return prisma.plan.delete({
+        where: {
+            id,
+        },
+    });
+}
 export async function updatePlan(id: number, plan: UpdatePlanInput) {
     return prisma.plan.update({
         where: {
