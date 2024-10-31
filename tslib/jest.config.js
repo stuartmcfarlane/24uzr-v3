@@ -3,6 +3,8 @@ module.exports = {
   verbose: true,
   testEnvironment: "node",
   transform: {
-    "^.+.tsx?$": ["ts-jest",{}],
+    "^.+.tsx?$": ["ts-jest", {
+      diagnostics: { ignoreCodes: ['TS151001'] }
+    }],
   },
 };

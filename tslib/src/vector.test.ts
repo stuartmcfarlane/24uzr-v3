@@ -1,5 +1,5 @@
 import {describe, expect, it, test} from '@jest/globals';
-import { makeVector, vectorAngle, vectorMagnitude } from './vector';
+import { makeVector, vectorAngle, vectorMagnitude } from '../dist';
 
 describe("makeVector", () => {
     it("makes a vector", () => {

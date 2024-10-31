@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals'
-import { reduce, map, MapFunctor, SetFunctor, ArrayFunctor } from './functor';
+import { reduce, map, MapFunctor, SetFunctor, ArrayFunctor } from '../dist';
 
 describe('Functor', () => {
     describe(`array is already functor`, () => {

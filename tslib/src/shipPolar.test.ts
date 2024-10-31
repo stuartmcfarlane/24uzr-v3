@@ -1,7 +1,7 @@
-import { calcTwa, fieldName, getTwaRow, getTwsCol, parseShipPolar, shipPolarOrc2csv } from "./shipPolar";
+import { calcTwa, fieldName, getTwaRow, getTwsCol, parseShipPolar, shipPolarOrc2csv } from "../dist";
 import { describe, expect, it } from '@jest/globals';
-import { makeVector, vectorAngle } from "./vector";
-import { radians2degrees } from './conversions';
+import { makeVector, vectorAngle } from "../dist";
+import { radians2degrees } from '../dist';
 
 const csv = [
     "twa/tws;6;8;10;12;14;16;20;24",
