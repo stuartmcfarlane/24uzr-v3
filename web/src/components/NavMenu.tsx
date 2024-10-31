@@ -7,9 +7,14 @@ const NavMenu = async () => {
     if (!session.isLoggedIn) {
         return <></>
     }
-    return (
+    if (session.isAdmin) return (
         <>
             <Link href="/dashboard">Dashboard</Link>
+        </>
+    )
+    return (
+        <>
+            <Link href="/race">Race planner</Link>
         </>
     )
 }
