@@ -7,6 +7,7 @@ import { redirect } from "next/navigation"
 import { hours2seconds, now, timestamp2string } from "tslib"
 
 export const createPlanWithForm = async (formData: FormData): Promise<ActionError> => {
+    console.log(`createPlanWithForm`, formData)
     const session = await getSession()
 
     const name = formData.get("name") as string
@@ -15,7 +16,6 @@ export const createPlanWithForm = async (formData: FormData): Promise<ActionErro
     const shipId = parseInt(formData.get("shipId") as string)
     const startBuoyId = parseInt(formData.get("startBuoyId") as string)
     const endBuoyId = parseInt(formData.get("endBuoyId") as string)
-    const raceSecondsRemaining = parseInt(formData.get("raceSecondsRemaining") as string)
     const raceHoursRemaining = parseInt(formData.get("raceHoursRemaining") as string)
     const startTime = formData.get("startTime") as string
     const rootPage = formData.get("rootPage") as string
@@ -40,7 +40,7 @@ export const createPlanWithForm = async (formData: FormData): Promise<ActionErro
         startBuoyId,
         endBuoyId,
         startTime: startTime || timestamp2string(now()),
-        raceSecondsRemaining: raceSecondsRemaining ? raceHoursRemaining * 60 * 60 : hours2seconds(8),
+        raceSecondsRemaining: raceHoursRemaining ? raceHoursRemaining * 60 * 60 : hours2seconds(8),
     })
     if (!createdPlan) return { error: "Failed to create plan" }
 
