@@ -1,11 +1,9 @@
 "use client"
 
-import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiPlanOutput, IApiShipOutput, IApiUserOutput, IApiWindOutput } from "@/types/api"
+import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiPlanOutput, IApiShipOutput, IApiUserOutput } from "@/types/api"
 import MapCanvas from "./ MapCanvas"
 import { useState } from "react"
-import { updateMap } from "@/actions/map"
-import { fieldIs, maybeFinishBuoy, Timestamp } from "tslib"
-import PadlockIcon from "./Icons/PadlockIcon"
+import { maybeFinishBuoy, Timestamp } from "tslib"
 import { useChange } from "@/hooks/useChange"
 import PlanOptions from "./PlanOptions"
 import { isActive } from "@/lib/ships"

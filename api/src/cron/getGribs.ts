@@ -44,10 +44,10 @@ export const getGribs = async (server: FastifyInstance) => {
 const fetchGribsFile = async (server: FastifyInstance) => {
     const response = await fetch(SOURCE_URL)
     if (!response.ok) {
-        throw new Error(`Failed to fetch GRBS data, ${response.status}`)
+        throw new Error(`Failed to fetch GRIBS data, ${response.status}`)
     }
     if (response.body === null) {
-        throw new Error('Failed to fetch GRBS data: no data')
+        throw new Error('Failed to fetch GRIBS data: no data')
     }
     const stream = Readable.fromWeb(response.body as ReadableStream<any>)
     await writeFile(TMP_GRB_FILE, stream)   

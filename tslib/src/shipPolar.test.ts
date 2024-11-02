@@ -142,16 +142,16 @@ describe('getTwaRow', () => {
 
 describe('calcTwa', () => {
     it('into the wind is 0', () => {
-        expect(calcTwa(makeVector(1, 1), radians2degrees(vectorAngle(makeVector(-1, -1))))).toBe(0)
+        expect(calcTwa(makeVector(1, 1), 180 + 45)).toBe(0)
     })
     it('downwind is 180', () => {
-        expect(calcTwa(makeVector(1, 1), radians2degrees(vectorAngle(makeVector(1, 1))))).toBe(180)
+        expect(calcTwa(makeVector(1, 1), 45)).toBe(180)
     })
     it('port reach is -90', () => {
-        expect(calcTwa(makeVector(1, 1), radians2degrees(vectorAngle(makeVector(-1, 1))))).toBe(-90)
+        expect(calcTwa(makeVector(1, 1), - 45)).toBe(-90)
     })
     it('starboard reach is 90', () => {
-        expect(calcTwa(makeVector(1, 1), radians2degrees(vectorAngle(makeVector(1, -1))))).toBe(90)
+        expect(calcTwa(makeVector(1, 1), 180 - 45)).toBe(90)
     })
 })
 

@@ -14,6 +14,7 @@ export const BUOY_FONT_SIZE = 10
 export const ARROW_MARKER_SIZE = 10
 
 export const COLOR_BLUE = 'rgb(14 165 233)'
+export const COLOR_LIGHT_GREEN = '#7FFF00'
 export const COLOR_GREEN = 'rgb(0, 158, 96)'
 export const COLOR_YELLOW = 'yellow'
 export const COLOR_RED = 'red'

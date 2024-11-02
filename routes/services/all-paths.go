@@ -100,49 +100,49 @@ func getChildren(n int, m *adjacencyMatrix) []int {
 
 func makeAdjacencyMatrix(g transport.Graph) adjacencyMatrix {
 
-	nn := make(map[int]string)
-	ni := make(map[string]int)
+	nodeNames := make(map[int]string)
+	nodeIndices := make(map[string]int)
 	i := int(0)
 	// put the nodes in nodeName (nn) and nodeIndex (ni) maps
-	for _, e := range g.Edges {
-		for _, n := range []string{e.Start, e.End} {
-			_, prs := ni[n]
-			if !prs {
-				ni[n] = i
-				nn[i] = n
+	for _, edge := range g.Edges {
+		for _, nodeName := range []string{edge.Start, edge.End} {
+			_, found := nodeIndices[nodeName]
+			if !found {
+				nodeIndices[nodeName] = i
+				nodeNames[i] = nodeName
 				i = i + 1
 			}
 		}
 	}
-	nc := len(nn)
-	link := make([][]int, nc)
-	for i = 0; i < nc; i++ {
-		link[i] = make([]int, nc)
+	nodeCount := len(nodeNames)
+	link := make([][]int, nodeCount)
+	for i = 0; i < nodeCount; i++ {
+		link[i] = make([]int, nodeCount)
 	}
-	for _, e := range g.Edges {
-		si := ni[e.Start]
-		ei := ni[e.End]
-		link[si][ei] = 1
-		link[ei][si] = 1
+	for _, edge := range g.Edges {
+		si := nodeIndices[edge.Start]
+		ei := nodeIndices[edge.End]
+		link[si][ei] = link[si][ei] + 1
+		link[ei][si] = link[ei][si] + 1
 	}
-	metres := make([][]float32, nc)
-	metresPerSecond := make([][][]float32, nc)
-	for i = 0; i < nc; i++ {
-		metres[i] = make([]float32, nc)
-		metresPerSecond[i] = make([][]float32, nc)
+	metres := make([][]float32, nodeCount)
+	metresPerSecond := make([][][]float32, nodeCount)
+	for i = 0; i < nodeCount; i++ {
+		metres[i] = make([]float32, nodeCount)
+		metresPerSecond[i] = make([][]float32, nodeCount)
 	}
-	for _, e := range g.Edges {
-		si := ni[e.Start]
-		ei := ni[e.End]
-		metres[si][ei] = e.Metres
-		metres[ei][si] = e.Metres
-		metresPerSecond[si][ei] = make([]float32, len(e.MetresPerSecondSE))
-		metresPerSecond[ei][si] = make([]float32, len(e.MetresPerSecondES))
-		copy(metresPerSecond[si][ei], e.MetresPerSecondSE)
-		copy(metresPerSecond[ei][si], e.MetresPerSecondES)
+	for _, edge := range g.Edges {
+		si := nodeIndices[edge.Start]
+		ei := nodeIndices[edge.End]
+		metres[si][ei] = edge.Metres
+		metres[ei][si] = edge.Metres
+		metresPerSecond[si][ei] = make([]float32, len(edge.MetresPerSecondSE))
+		metresPerSecond[ei][si] = make([]float32, len(edge.MetresPerSecondES))
+		copy(metresPerSecond[si][ei], edge.MetresPerSecondSE)
+		copy(metresPerSecond[ei][si], edge.MetresPerSecondES)
 	}
 
-	return adjacencyMatrix{nodeNames: nn, nodeIdx: ni, link: link, metres: metres, metresPerSecond: metresPerSecond}
+	return adjacencyMatrix{nodeNames: nodeNames, nodeIdx: nodeIndices, link: link, metres: metres, metresPerSecond: metresPerSecond}
 }
 
 func edgeTime(m *adjacencyMatrix, si int, ei int, ti int) float32 {

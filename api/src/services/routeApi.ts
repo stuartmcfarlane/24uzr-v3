@@ -266,8 +266,8 @@ const getMetresPerSecondVMG = (
     end: LatLng
 ) => {
     const windAtStart = windAtLocation(wind, start)
-    const shipDegrees = bearingLatLan(start, end)
-    const knotsVMG = shipSpeed(shipPolar)(shipDegrees, windAtStart)
+    const bearing = bearingLatLan(start, end)
+    const knotsVMG = shipSpeed(shipPolar)(bearing, windAtStart)
 
     return knots2metersPerSecond(knotsVMG)
 }

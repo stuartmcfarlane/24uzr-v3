@@ -1,4 +1,3 @@
-import { LatLng } from "./geo"
 import { realEq } from "./math"
 import { Vector, vectorAdd, vectorScale } from "./vector"
 

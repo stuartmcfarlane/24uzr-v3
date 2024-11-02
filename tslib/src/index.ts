@@ -1,3 +1,4 @@
+export * from './angles'
 export * from './conversions'
 export * from './fmt'
 export * from './fp'

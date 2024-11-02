@@ -1,7 +1,7 @@
 import { WIND_ARROW_LENGTH, WIND_ARROW_WIDTH } from "@/lib/constants"
 import { latLng2canvas, line2SvgLine, screenUnits2canvasUnits } from "@/lib/graph"
 import { metersPerSecond2RGBA, rgba2string } from "@/lib/knotsColorScale"
-import { makeVector, vectorAdd, vectorScale, unitVector, vectorMagnitude, makeLine, vectorRotate } from "tslib"
+import { makeVector, vectorAdd, vectorScale, unitVector, vectorMagnitude, makeLine, vectorRotate, wind2vector, fmtReal, wind2degrees } from "tslib"
 import { IApiWind } from "@/types/api"
 
 type MapWindArrowProps = {
@@ -10,22 +10,22 @@ type MapWindArrowProps = {
 }
 const MapWindArrow = (props: MapWindArrowProps) => {
     const {
-        wind, screen2svgFactor
+        wind,
+        screen2svgFactor,
     } = props
 
     const p = latLng2canvas(wind)
-    const V = vectorRotate(Math.PI/2)(makeVector(wind.u, wind.v))
-    const magnitude = vectorMagnitude(V)
-    const color = metersPerSecond2RGBA(magnitude)
-    const v = vectorScale(screenUnits2canvasUnits(screen2svgFactor, WIND_ARROW_LENGTH))(unitVector(V))
-    const line = makeLine(p, vectorAdd(p, v))
-
-    if (!color) return <></>
+    const vWind = wind2vector(wind)
+    const magnitude = vectorMagnitude(vWind)
+    const rgba = metersPerSecond2RGBA(magnitude)
+    const color = rgba ? rgba2string(rgba) : 'black'
+    const unitV = vectorScale(screenUnits2canvasUnits(screen2svgFactor, WIND_ARROW_LENGTH))(unitVector(vWind))
+    const line = makeLine(p, vectorAdd(p, unitV))
 
     return (<>
         <line
             {...line2SvgLine(line)}
-            stroke={rgba2string(color)}
+            stroke={color}
             strokeWidth={WIND_ARROW_WIDTH}
             vectorEffect="non-scaling-stroke"
             markerEnd="url(#windArrow)"

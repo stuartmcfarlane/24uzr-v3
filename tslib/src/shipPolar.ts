@@ -1,3 +1,4 @@
+import { Degrees, simplifyDegrees } from './angles';
 import { cmpNumber, equal, head, int2string, not, sort, string2float, truthy } from "./fp"
 import { absDiff, } from "./math"
 import { Vector } from './vector';
@@ -261,9 +262,9 @@ export const getTwaRow = (shipPolar: ShipPolar) => (angle: number) => {
     return shipPolar[twa]
 }
 
-export const calcTwa = (vWind: Vector, bearing: number) => {
+export const calcTwa = (vWind: Vector, bearing: Degrees) => {
     const windAngle = wind2degrees(vWind)
-    const twa = 360 + bearing - windAngle
+    const twa = simplifyDegrees(windAngle - bearing)
     if (twa <= 180) return twa
     return twa - 360
 }

@@ -1,12 +1,12 @@
-import { radians2degrees, metersPerSecond2knots } from './conversions';
+import { Degrees } from './angles';
+import { metersPerSecond2knots } from './conversions';
 import { calcTwa, getTwaRow, getTwsCol, ShipPolar } from "./shipPolar";
 import { Vector, vectorMagnitude } from "./vector";
-import { wind2degrees } from './wind';
 
-export const shipSpeed = (shipPolar: ShipPolar) => (bearing: number, vWind: Vector): number => {
+export const shipSpeed = (shipPolar: ShipPolar) => (bearing: Degrees, vWind: Vector): number => {
     const windKnots = metersPerSecond2knots(vectorMagnitude(vWind))
 
-    const twa = calcTwa(vWind, bearing)
+    const twa = Math.abs(calcTwa(vWind, bearing))
 
     const twsCol = getTwsCol(shipPolar)(windKnots)
 

@@ -1,11 +1,14 @@
 import { IApiBuoyOutput, IApiPlanOutput, IApiRouteOutput } from "@/types/api"
 import Link from "next/link"
 import { cmpRouteLegOrder, FleshedRoute, FleshedRouteBuoy, FleshedRouteLeg, fmtNM, route2LengthNm } from "@/lib/route"
-import { bearingLatLan, calcTwa, distanceLatLng, fmtDegrees, fmtHoursMinutes, fmtHumanTime, fmtWindSpeed, meters2nM, metersPerSecond2knots, ShipPolar, sort, Timestamp, Vector, vectorMagnitude, wind2degrees, WindIndicatorMode } from "tslib"
+import { calcTwa, distanceLatLng, fmtDegrees, fmtHoursMinutes, fmtHumanTime, fmtWindSpeed, meters2nM, metersPerSecond2knots, ShipPolar, sort, Timestamp, Vector, vectorMagnitude, wind2degrees } from "tslib"
 import { IndexedWind, windAtTimeAndLocation } from 'tslib';
 import { fmtTwa } from 'tslib';
-import { useChange } from "@/hooks/useChange";
+import LegIcon from "./Icons/LegIcon";
+import WindIcon from "./Icons/WindIcon";
+import ShipTwaIcon from "./Icons/ShipTwaIcon";
 
+export type WindIndicatorMode = 'text' | 'graphic'
 
 type RouteOptionProps = {
     pageRoot: string
@@ -293,7 +296,6 @@ const RouteBuoy = (props:
                         />
                     )}
                     <WindIndicator
-                        timestamp={buoy.timestamp}
                         vWind={vWind}
                     />
                     <BoatIndicator
@@ -320,7 +322,12 @@ const LegIndicator = (props: {
     } = props
     if (mode === 'text') return (
         <>
-            <div>{fmtDegrees(bearingLatLan(startBuoy, endBuoy))}</div>
+            <span className="w-4">
+                <LegIcon
+                    startBuoy={startBuoy}
+                    endBuoy={endBuoy}
+                />
+            </span>    
             <div>{fmtNM(meters2nM(distanceLatLng(startBuoy, endBuoy)))}</div>
         </>
     )
@@ -329,16 +336,19 @@ const LegIndicator = (props: {
 
 const WindIndicator = (props: {
     vWind: Vector
-    timestamp: Timestamp
     mode?: WindIndicatorMode
 }) => {
     const {
-        timestamp,
         vWind,
         mode = 'text',
     } = props
     if (mode === 'text') return (
         <>
+            <span className="w-4">
+                <WindIcon
+                    vWind={vWind}
+                />
+            </span>
             <div>{fmtDegrees(wind2degrees(vWind))}</div>
             <div>{fmtWindSpeed(metersPerSecond2knots(vectorMagnitude(vWind)))}</div>
         </>
@@ -380,6 +390,11 @@ const BoatIndicator = (props: {
     const twa = calcTwa(vWind, bearing)
     if (mode === 'text') return (
         <>
+            <span className="w-4">
+                <ShipTwaIcon
+                    twa={twa}
+                />
+            </span>
             <div>{fmtTwa(twa)}</div>
             <div>{fmtWindSpeed(boatSpeed)}</div>
         </>

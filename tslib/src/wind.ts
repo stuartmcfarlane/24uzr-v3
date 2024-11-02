@@ -1,8 +1,10 @@
 import { indexByHash, project, toFixed, unique, cmpNumber, sort, cmpString, head } from './fp';
 import { distanceLatLng, LatLng } from './geo'
-import { makeVector, Vector, vectorAngle } from './vector'
+import { makeVector, Vector, vectorAngle, vectorMagnitude, vectorScale } from './vector'
 import { seconds2hours, Timestamp, timestamp2epoch, timestamp2string, Timestamped } from './time';
-import { radians2degrees } from './conversions';
+import { radians2degrees, simplifyDegrees } from './angles';
+import { metersPerSecond2knots } from './conversions';
+import { roundTo } from './math';
 
 export type Wind = {
   lat: number
@@ -27,9 +29,7 @@ export type IndexedWind = {
   data: Wind[],
 }
 
-export type WindIndicatorMode = 'text' | 'graphic'
-
-const wind2vector = ({ u, v }: Wind): Vector => makeVector(u, v)
+export const wind2vector = ({ u, v }: {u: number, v: number}): Vector => makeVector(u, v)
 const latLngHash = ({ lat, lng }: LatLng): string => `${toFixed(3)(lng)}:${toFixed(3)(lat)}`
 
 export const wind2resolution = (wind: SingleWind[]) => {
@@ -151,6 +151,8 @@ export const windAtTimeAndLocation = (winds: IndexedWind[], timestamp: Timestamp
 }
 
 export const wind2degrees = (vWind: Vector) => {
-  const vDegrees = radians2degrees(vectorAngle(vWind))
-  return (360 - vDegrees - 90) % 360
+  return roundTo(4)(radians2degrees(vectorAngle(vectorScale(-1)(vWind))))
+}
+export const wind2knots = (vWind: Vector) => {
+  return roundTo(4)(metersPerSecond2knots(vectorMagnitude(vWind)))
 }

@@ -5,6 +5,7 @@ import MapPlanRoutePageClientFunctions from "@/components/MapPlanRoutePageFuncti
 import { apiGetBuoys, apiGetGeometry, apiGetMap, apiGetPlan, apiGetRoute, apiGetShip, apiGetWind } from "@/services/api"
 import { redirect } from "next/navigation"
 import { addSeconds, hours2seconds } from "tslib"
+import { timestamp2string } from '../../../../../../../../../tslib/src/time';
 
 const MapPlanRoutePage = async ({
     params

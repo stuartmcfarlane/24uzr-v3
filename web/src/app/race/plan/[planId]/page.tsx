@@ -35,7 +35,7 @@ const MapPlanPage = async ({
         redirect(`/race`)
     }
     const from = addSeconds(hours2seconds(-1))(plan.startTime)
-    const until = addSeconds(plan.raceSecondsRemaining)(plan.startTime)
+    const until = addSeconds(plan.raceSecondsRemaining + hours2seconds(12))(plan.startTime)
     const [
         ship,
         wind,
