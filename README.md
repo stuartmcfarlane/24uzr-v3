@@ -112,6 +112,9 @@ The wind data is produced by the Harmonie model.
 
 https://hirlam.github.io/HarmonieSystemDocumentation/dev/ForecastModel/Outputlist/
 
+Wind vectors [u, v] in the data are meters per second East and North components. For example [1, 0] is
+blowing 1 m/s to the east. [0, 2] is blowing 2m/s to the north.
+
 ## Ships
 
 Polar diagrams for many boats are available at https://jieter.github.io/orc-data/site/

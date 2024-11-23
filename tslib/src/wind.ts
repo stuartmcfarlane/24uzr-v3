@@ -1,17 +1,19 @@
-import { indexByHash, project, toFixed, unique, cmpNumber, sort, cmpString, head } from './fp';
+import { indexByHash, project, toFixed, unique, cmpNumber, sort, cmpString, head, findNearest } from './fp'
 import { distanceLatLng, LatLng } from './geo'
 import { makeVector, Vector, vectorAngle, vectorMagnitude, vectorScale } from './vector'
-import { seconds2hours, Timestamp, timestamp2epoch, timestamp2string, Timestamped } from './time';
-import { radians2degrees, simplifyDegrees } from './angles';
-import { metersPerSecond2knots } from './conversions';
-import { roundTo } from './math';
+import { seconds2hours, Timestamp, timestamp2epoch, timestamp2string, Timestamped } from './time'
+import { radians2degrees } from './angles'
+import { metersPerSecond2knots } from './conversions'
+import { roundTo } from './math'
+import { fmtVector } from './fmt'
 
-export type Wind = {
-  lat: number
-  lng: number
+export type UV = {
   u: number
   v: number
 }
+
+export type Wind = UV & LatLng
+
 export type SingleWind = Wind & {
   timestamp: Timestamp
 }
@@ -29,8 +31,18 @@ export type IndexedWind = {
   data: Wind[],
 }
 
-export const wind2vector = ({ u, v }: {u: number, v: number}): Vector => makeVector(u, v)
+export const wind2vector = ({ u, v }: UV): Vector => makeVector(roundTo(8)(u), roundTo(8)(v))
+export const vector2wind = ({ x, y }: Vector): UV => ({ u: roundTo(8)(x), v: roundTo(8)(y) })
+
 const latLngHash = ({ lat, lng }: LatLng): string => `${toFixed(3)(lng)}:${toFixed(3)(lat)}`
+
+export const wind2degrees = ({x, y}: Vector) => {
+  console.log(`wind2degrees ${fmtVector({x, y})} ${vectorAngle({x, y})} rad`)
+  return roundTo(4)(radians2degrees(vectorAngle({x: -x, y: -y})))
+}
+export const wind2knots = (vWind: Vector) => {
+  return roundTo(4)(metersPerSecond2knots(vectorMagnitude(vWind)))
+}
 
 export const wind2resolution = (wind: SingleWind[]) => {
     const [head, ...tail] = wind
@@ -113,14 +125,16 @@ export const windAtLocation = (wind: IndexedWind, { lat, lng }: LatLng): Vector 
   }
 
   const latLng = {
-    lat: binarySearch(wind.lats, lat),
-    lng: binarySearch(wind.lngs, lng),
+    lat: findNearest(wind.lats, lat),
+    lng: findNearest(wind.lngs, lng),
   }
 
-  if (!wind.indexedByLatLng[latLngHash(latLng)]) {
+  const uv = wind.indexedByLatLng[latLngHash(latLng)]
+  if (!uv) {
     return makeVector(0, 0)
   }
-  return wind2vector(wind.indexedByLatLng[latLngHash(latLng)])
+  // console.log(`windAtLocation`, uv)
+  return wind2vector(uv)
   
 }
 export const windIndexAtTime = (winds: Timestamped[], timestamp: Timestamp) => {
@@ -150,9 +164,3 @@ export const windAtTimeAndLocation = (winds: IndexedWind[], timestamp: Timestamp
   return windAtLocation(wind, location)
 }
 
-export const wind2degrees = (vWind: Vector) => {
-  return roundTo(4)(radians2degrees(vectorAngle(vectorScale(-1)(vWind))))
-}
-export const wind2knots = (vWind: Vector) => {
-  return roundTo(4)(metersPerSecond2knots(vectorMagnitude(vWind)))
-}

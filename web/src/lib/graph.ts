@@ -4,7 +4,7 @@ import { LatLng, Line, makePoint, makeRectSafe, makeVector, Point, points2vector
 import { vectorScale } from 'tslib';
 import { makeRegion, regionUnion } from 'tslib';
 
-const LNG_FACTOR = 100
+const LNG_FACTOR = 60
 const LAT_FACTOR = -100
 export const latLng2canvasA = ([lng, lat]: [number, number]): [number, number] => {
     return [ lng * LNG_FACTOR, lat * LAT_FACTOR]

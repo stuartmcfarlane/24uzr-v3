@@ -2,7 +2,7 @@
 
 import { getSession } from "@/actions/session"
 import MapPlanRoutePageClientFunctions from "@/components/MapPlanRoutePageFunctions"
-import { apiGetActiveMap, apiGetBuoys, apiGetGeometry, apiGetPlan, apiGetRoute, apiGetShip, apiGetWind } from "@/services/api"
+import { apiGetActiveMap, apiGetBuoys, apiGetGeometry, apiGetPlan, apiGetRoute, apiGetShip, apiGetIndexedWind } from "@/services/api"
 import { redirect } from "next/navigation"
 import { addSeconds, hours2seconds } from "tslib"
 
@@ -46,7 +46,7 @@ const MapPlanRoutePage = async ({
         wind,
         ship,
     ] = await Promise.all([
-        apiGetWind(session.apiToken!, from, until, map),
+        apiGetIndexedWind(session.apiToken!, from, until, map),
         apiGetShip(session.apiToken!, plan.shipId),
     ])
     if (!ship) {

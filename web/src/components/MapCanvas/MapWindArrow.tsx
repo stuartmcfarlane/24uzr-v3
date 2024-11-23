@@ -1,13 +1,25 @@
 import { WIND_ARROW_LENGTH, WIND_ARROW_WIDTH } from "@/lib/constants"
 import { latLng2canvas, line2SvgLine, screenUnits2canvasUnits } from "@/lib/graph"
 import { metersPerSecond2RGBA, rgba2string } from "@/lib/knotsColorScale"
-import { makeVector, vectorAdd, vectorScale, unitVector, vectorMagnitude, makeLine, vectorRotate, wind2vector, fmtReal, wind2degrees } from "tslib"
+import {
+    Vector,
+    vectorAdd,
+    vectorScale,
+    unitVector,
+    vectorMagnitude,
+    makeLine,
+    wind2vector,
+    fmtUV,
+    fmtVector,
+    fmtLine,
+} from "tslib"
 import { IApiWind } from "@/types/api"
 
 type MapWindArrowProps = {
     wind: IApiWind
     screen2svgFactor: number
 }
+const flipY = ({ x, y }: Vector) => ({x, y: -y})
 const MapWindArrow = (props: MapWindArrowProps) => {
     const {
         wind,
@@ -19,8 +31,9 @@ const MapWindArrow = (props: MapWindArrowProps) => {
     const magnitude = vectorMagnitude(vWind)
     const rgba = metersPerSecond2RGBA(magnitude)
     const color = rgba ? rgba2string(rgba) : 'black'
-    const unitV = vectorScale(screenUnits2canvasUnits(screen2svgFactor, WIND_ARROW_LENGTH))(unitVector(vWind))
+    const unitV = flipY(vectorScale(screenUnits2canvasUnits(screen2svgFactor, WIND_ARROW_LENGTH))(unitVector(vWind)))
     const line = makeLine(p, vectorAdd(p, unitV))
+    console.log(`MapWindArrow ${fmtUV(wind)} ${fmtVector(vWind)} ${fmtVector(unitV)} ${fmtLine(line)}`)
 
     return (<>
         <line

@@ -20,8 +20,8 @@ export const vectorRotate = (θ: Radians) => ({ x, y }: Vector) => {
     const sin = Math.sin(θ)
     const cos = Math.cos(θ)
     return {
-        x: x * cos - y * sin,
-        y: x * sin + y * cos,
+        x: roundTo(8)(x * cos - y * sin),
+        y: roundTo(8)(x * sin + y * cos),
     }
 }
 export const angle2unitVector = (θ: Radians) => makeVector(roundTo(8)(Math.cos(θ)), roundTo(8)(Math.sin(θ)))

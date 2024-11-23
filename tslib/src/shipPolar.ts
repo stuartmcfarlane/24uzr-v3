@@ -1,6 +1,5 @@
 import { Degrees, simplifyDegrees } from './angles';
-import { cmpNumber, equal, head, int2string, not, sort, string2float, truthy } from "./fp"
-import { absDiff, } from "./math"
+import { cmpNumber, equal, findNearestIndex, head, int2string, not, sort, string2float, truthy } from "./fp"
 import { Vector } from './vector';
 import { wind2degrees } from './wind';
 
@@ -248,16 +247,12 @@ export const formData2polarCsv = (formData: FormData): string => {
 }
 
 export const getTwsCol = (shipPolar: ShipPolar) => (knots: number) => {
-    const diffs = shipPolar.tws.map(absDiff(knots))
-    const minDiff = Math.min(...diffs)
-    return diffs.findIndex(equal(minDiff))
+    return findNearestIndex(shipPolar.tws, knots)
 }
 export const getTwaRow = (shipPolar: ShipPolar) => (angle: number) => {
     if (angle < Math.min(...shipPolar.twa)) return shipPolar.beatVMG
     if (Math.max(...shipPolar.twa) < angle) return shipPolar.runVMG
-    const diffs = shipPolar.twa.map(absDiff(angle))
-    const minDiff = Math.min(...diffs)
-    const twaCol = diffs.findIndex(equal(minDiff))
+    const twaCol = findNearestIndex(shipPolar.twa, angle)
     const twa = shipPolar.twa[twaCol]
     return shipPolar[twa]
 }

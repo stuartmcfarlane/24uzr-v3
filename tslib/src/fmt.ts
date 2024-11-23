@@ -1,5 +1,8 @@
+import { radians2degrees } from "./angles";
 import { Line, Point, Rect, rectHeight, rectPoint, rectWidth } from "./graph"
 import { Timestamp, timestamp2date } from './time';
+import { Vector } from "./vector";
+import { wind2knots, wind2degrees, UV } from "./wind";
 
 export const fmtNM = (n: number) => `${fmtReal(n, 1)} nM`
 export const fmtUndefined = () => '<undefined>'
@@ -9,9 +12,14 @@ export const fmtPoint = (point?: Point) => (
     ? `(${fmtReal(point.x)}, ${fmtReal(point.y)})`
     : fmtUndefined()
 )
-export const fmtVector = (point?: Point) => (
-    point
-    ? `[${fmtReal(point.x)}, ${fmtReal(point.y)}]`
+export const fmtVector = (vector?: Vector) => (
+    vector
+    ? `[${fmtReal(vector.x)}, ${fmtReal(vector.y)}]`
+    : fmtUndefined()
+)
+export const fmtUV = (uv?: UV) => (
+    uv
+    ? `[${fmtReal(uv.u)}, ${fmtReal(uv.v)}]`
     : fmtUndefined()
 )
 export const fmtRect = (rect?: Rect) => (
@@ -24,13 +32,15 @@ export const fmtLine = (line?: Line) => (
     ? `<Line ${fmtPoint(line[0])} -> ${fmtPoint(line[1])}>`
     : fmtUndefined()
 )
-export const fmtTimestamp = (timestamp: string) => {
+export const fmtTimestamp = (timestamp: Timestamp) => {
     const formatter = new Intl.DateTimeFormat('nl-NL', { dateStyle: 'short', timeStyle: 'medium' });
-    return formatter.format(new Date(timestamp))
+    return formatter.format(timestamp2date(timestamp))
 }
 export const fmtDegrees = (θ: number) => `${fmtReal(θ, 0)}°`
 export const fmtKnots = (kts: number, precision: number = 1) => `${fmtReal(kts, precision)}kts`
 export const fmtWindSpeed = (kts: number) => fmtKnots(kts, 0)
+export const fmtWindDirection = (degrees: number) => fmtDegrees(degrees)
+export const fmtWind = (vWind: Vector) => `${fmtWindDirection(wind2degrees(vWind))} ${fmtWindSpeed(wind2knots(vWind))}`
 export const fmtBoatSpeed = (kts: number) => fmtKnots(kts, 1)
 export const fmtHoursMinutes = (timestamp: Timestamp) => {
     const date = timestamp2date(timestamp)

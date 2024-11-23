@@ -1,3 +1,5 @@
+import { absDiff } from "./math";
+
 // Drop N entries from array T
 type Drop<N extends number, T extends any[], I extends any[] = []> =
     Length<I> extends N
@@ -102,4 +104,15 @@ export const string2int = (s: string) => parseInt(s)
 export const string2float = (s: string) => parseFloat(s)
 export const int2string = (i: number) => `${i}`
 export const toFixed = (decimals: number) => (x: number) => x.toFixed(decimals)
-export const seq = (a: number, b: number) => [...Array(b-a+1)].map((_,i) => i+a)
+export const seq = (a: number, b: number) => [...Array(b - a + 1)].map((_, i) => i + a)
+export const findNearestIndex = (haystack: number[], needle: number) => {
+  const diffs = haystack.map(absDiff(needle))
+  const minDiff = Math.min(...diffs)
+  const idx = diffs.findIndex(equal(minDiff))
+  return idx
+}
+
+export const findNearest = (haystack: number[], needle: number) => {
+  return haystack[findNearestIndex(haystack, needle)]
+}
+

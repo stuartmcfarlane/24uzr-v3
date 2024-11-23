@@ -1,5 +1,5 @@
 import { geo2decimal } from "@/lib/geo"
-import { indexWindByTimestamp, LatLng, Timestamp, timestamp2epoch, timestamp2string, wind2resolution } from "tslib"
+import { bulkWind2indexedWind, IndexedWind, indexWindByTimestamp, LatLng, singleWind2indexedWind, Timestamp, timestamp2epoch, timestamp2string, wind2resolution } from "tslib"
 import { IApiBulkWind, IApiBuoyInput, IApiBuoyOutput, IApiGeometryInput, IApiGeometryOutput, IApiLegInput, IApiLegOutput, IApiMapInput, IApiMapOutput, IApiMapUpdateInput, IApiPlanInput, IApiPlanOutput, IApiRouteInput, IApiRouteLegOutput, IApiRouteOutput, IApiShipInput, IApiShipOutput, IApiShipUpdateInput, IApiSingleWind, IApiUser, IApiUserOutput, IApiWind, IApiWindInput, IApiWindOutput } from "@/types/api"
 
 const makeApiUrl = (uri: string) => `${process.env.NEXT_PUBLIC_API_URL || process.env.API_URL}${uri}`
@@ -409,6 +409,16 @@ export const apiDeletePlan = async (
     await del(accessToken, `/api/plan/${planId}`)
 }
 
+export const apiGetIndexedWind = async (
+    accessToken: string,
+    from: Timestamp,
+    until: Timestamp,
+    map: IApiMapOutput,
+): Promise<IndexedWind[]> => {
+    const wind = await apiGetWind(accessToken, from, until, map)
+    const indexedWind = bulkWind2indexedWind(wind)
+    return indexedWind
+}
 export const apiGetWind = async (
     accessToken: string,
     from: Timestamp,
@@ -445,6 +455,7 @@ export const apiGetWind = async (
             data: windByTimestamp[timestamp]
         })
     )
+    winds.forEach(wind => console.log(wind))
 
     return winds
 }

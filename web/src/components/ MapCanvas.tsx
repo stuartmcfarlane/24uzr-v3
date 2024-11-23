@@ -3,13 +3,13 @@
 import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput, IApiShipOutput, Region } from "@/types/api"
 import MapSvg from "./MapCanvas/MapSvg"
 import WindLegend from "./WindLegend"
-import { LatLng, Timestamp } from "tslib"
+import { IndexedWind, LatLng, Timestamp } from "tslib"
 import { region2rect } from "@/lib/graph"
 import { FleshedRouteLeg } from "@/lib/route"
 
 type MapCanvasProps = {
     initialBoundingRegion?: Region
-    wind?: IApiBulkWind[]
+    wind?: IndexedWind[]
     map?: IApiMapOutput
     buoys?: IApiBuoyOutput[]
     routeLegs?: IApiRouteLegOutput[]

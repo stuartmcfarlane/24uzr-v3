@@ -1,12 +1,13 @@
 import { IApiBuoyOutput, IApiPlanOutput, IApiRouteOutput } from "@/types/api"
 import Link from "next/link"
 import { cmpRouteLegOrder, FleshedRoute, FleshedRouteBuoy, FleshedRouteLeg, fmtNM, route2LengthNm } from "@/lib/route"
-import { calcTwa, distanceLatLng, fmtDegrees, fmtHoursMinutes, fmtHumanTime, fmtWindSpeed, meters2nM, metersPerSecond2knots, ShipPolar, sort, Timestamp, Vector, vectorMagnitude, wind2degrees } from "tslib"
+import { calcTwa, distanceLatLng, fmtDegrees, fmtHoursMinutes, fmtHumanTime, fmtTimestamp, fmtVector, fmtWindSpeed, meters2nM, metersPerSecond2knots, ShipPolar, sort, Timestamp, Vector, vectorMagnitude, wind2degrees } from "tslib"
 import { IndexedWind, windAtTimeAndLocation } from 'tslib';
 import { fmtTwa } from 'tslib';
 import LegIcon from "./Icons/LegIcon";
 import WindIcon from "./Icons/WindIcon";
 import ShipTwaIcon from "./Icons/ShipTwaIcon";
+import { fmtLatLng } from "@/lib/geo";
 
 export type WindIndicatorMode = 'text' | 'graphic'
 
@@ -247,8 +248,8 @@ const RouteBuoy = (props:
 
     const boatSpeed = routeLeg?.boatSpeed
     const bearing = routeLeg?.bearing
-    const vWind=windAtTimeAndLocation(wind, buoy.timestamp, buoy)
-    
+    const vWind = windAtTimeAndLocation(wind, buoy.timestamp, buoy)
+    console.log(`${buoy.name} windAtTimeAndLocation(wind, ${fmtTimestamp(buoy.timestamp)}, ${fmtLatLng(buoy)}) = ${fmtVector(vWind)}`)
     const onMouseEnter = () => onHoverRouteLeg && onHoverRouteLeg(routeLeg)
     const onMouseLeave = () => onHoverRouteLeg && onHoverRouteLeg()
     const onClick = () => {
@@ -342,6 +343,7 @@ const WindIndicator = (props: {
         vWind,
         mode = 'text',
     } = props
+    console.log(`WindIndicator ${fmtVector(vWind)} ${fmtDegrees(wind2degrees(vWind))}`)
     if (mode === 'text') return (
         <>
             <span className="w-4">

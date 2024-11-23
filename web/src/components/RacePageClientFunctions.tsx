@@ -3,7 +3,7 @@
 import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiPlanOutput, IApiShipOutput, IApiUserOutput } from "@/types/api"
 import MapCanvas from "./ MapCanvas"
 import { useState } from "react"
-import { maybeFinishBuoy, Timestamp } from "tslib"
+import { IndexedWind, maybeFinishBuoy, Timestamp } from "tslib"
 import { useChange } from "@/hooks/useChange"
 import PlanOptions from "./PlanOptions"
 import { isActive } from "@/lib/ships"
@@ -14,7 +14,7 @@ type RacePageClientFunctionsProps = {
     user: IApiUserOutput
     map: IApiMapOutput
     ships: IApiShipOutput[]
-    wind: IApiBulkWind[]
+    wind: IndexedWind[]
     buoys: IApiBuoyOutput[]
     legs: IApiLegOutput[]
     plans: IApiPlanOutput[]

@@ -1,9 +1,8 @@
-import { IApiBulkWind } from "@/types/api"
 import MapWindArrow from "./MapWindArrow"
-import { Rect, Timestamp, timestampIs } from "tslib"
+import { IndexedWind, Rect, Timestamp, timestampIs } from "tslib"
 
 type MapWindProps = {
-    wind: IApiBulkWind[]
+    wind: IndexedWind[]
     screen2svgFactor: number
     selectedWindTimestamp?: Timestamp
     boundingRect?: Rect

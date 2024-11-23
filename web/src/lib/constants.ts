@@ -2,9 +2,11 @@ import { makePoint } from "tslib"
 
 export const ZOOM_SPEED_FACTOR = 5
 
+export const SHOW_CURSOR = true
 export const CURSOR_SIZE = 10
 export const CURSOR_TEXT_OFFSET = makePoint(10, 10)
 export const CURSOR_FONT_SIZE = 10
+export const CURSOR_SHOW_WIND = true
 export const MIN_MARGIN = 50
 export const MAX_MARGIN = 50
 export const BUOY_CLICK_RADIUS = 8

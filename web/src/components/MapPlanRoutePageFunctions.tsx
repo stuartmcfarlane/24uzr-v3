@@ -5,7 +5,7 @@ import MapCanvas from "./ MapCanvas"
 import { useCallback, useState } from "react"
 import RouteOptions from "./RouteOptions"
 import { plan2region } from "@/lib/graph"
-import { bulkWind2indexedWind, last, parseShipPolar, Timestamp, timestamp2epoch, windAtTime } from "tslib"
+import { bulkWind2indexedWind, IndexedWind, last, parseShipPolar, Timestamp, timestamp2epoch, windAtTime } from "tslib"
 import { findRouteLegAtTime, FleshedRouteLeg, fleshenRoute, isFleshedRoute, plan2longestRoute } from "@/lib/route"
 import { useChange } from "@/hooks/useChange"
 import { getPlan } from "@/actions/plan"
@@ -15,7 +15,7 @@ type MapPlanRoutePageClientFunctionsProps = {
     pageRoot: string
     ship: IApiShipOutput
     map: IApiMapOutput
-    wind: IApiBulkWind[]
+    wind: IndexedWind[]
     plan: IApiPlanOutput
     route?: IApiRouteOutput
     buoys: IApiBuoyOutput[]

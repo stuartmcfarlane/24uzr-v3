@@ -21,7 +21,8 @@ import {
     Rect,
     Point,
     Timestamp,
-    rectArea
+    rectArea,
+    IndexedWind
 } from 'tslib'
 import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMapOutput, IApiRouteLegOutput, IApiShipOutput, Region } from "@/types/api"
 import MapBuoy from "./MapBuoy"
@@ -47,13 +48,14 @@ import MouseRegion from "./MouseRegion"
 import MapRegion from "./MapRegion"
 import MapRoute from "./MapRoute"
 import { FleshedRouteLeg } from "@/lib/route"
+import { windAtTime } from '../../../../tslib/src/wind';
 
 const DEBUG = false
 
 type MapSvgProps = {
     initialBoundingRect?: Rect
     map?: IApiMapOutput
-    wind?: IApiBulkWind[]
+    wind?: IndexedWind[]
     buoys?: IApiBuoyOutput[]
     legs?: IApiLegOutput[]
     routeLegs?: IApiRouteLegOutput[]
@@ -320,10 +322,11 @@ const MapSvg = (props: MapSvgProps) => {
                         boundingRect={boundingRect}
                     />
                 )}
-                {false && mouseSvgPoint && pointInRect(actualViewBoxRect)(mouseSvgPoint) && (
+                {mouseSvgPoint && pointInRect(actualViewBoxRect)(mouseSvgPoint) && (
                     <MouseCursor
                         point={mouseSvgPoint}
                         screen2svgFactor={screen2svgFactor}
+                        wind={selectedWindTimestamp && wind ? windAtTime(wind, selectedWindTimestamp) : undefined}
                     />
                 )}
                 {(actualLegs(legs)).map(([leg, returnLeg]) => (

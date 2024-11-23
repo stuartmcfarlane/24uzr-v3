@@ -5,12 +5,12 @@ import MapCanvas from "./ MapCanvas"
 import { useState } from "react"
 import RouteOptions from "./RouteOptions"
 import { plan2region } from "@/lib/graph"
-import { bulkWind2indexedWind, parseShipPolar, Timestamp } from "tslib"
+import { bulkWind2indexedWind, IndexedWind, parseShipPolar, Timestamp } from "tslib"
 
 type MapPlanPageClientFunctionsProps = {
     pageRoot: string
     map: IApiMapOutput
-    wind: IApiBulkWind[]
+    wind: IndexedWind[]
     plan: IApiPlanOutput
     ship: IApiShipOutput
     buoys: IApiBuoyOutput[]

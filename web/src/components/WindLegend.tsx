@@ -1,11 +1,11 @@
-import { fmtTimestamp, Timestamp } from "tslib"
+import { fmtTimestamp, IndexedWind, Timestamp } from "tslib"
 import { IApiBulkWind } from "@/types/api"
 import { ChangeEvent, useState } from "react"
 import { windIndexAtTime } from 'tslib';
 import { useChange } from "@/hooks/useChange";
 
 type WindLegendProps = {
-    wind: IApiBulkWind[]
+    wind: IndexedWind[]
     showWind?: boolean
     onShowWind?: (showWind: boolean) => void
     selectedWindTimestamp?: Timestamp

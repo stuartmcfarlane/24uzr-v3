@@ -2,7 +2,7 @@
 
 import { getSession } from "@/actions/session"
 import RacePageClientFunctions from "@/components/RacePageClientFunctions"
-import { apiGetActiveMap, apiGetBuoys, apiGetGeometry, apiGetLegs, apiGetPlans, apiGetPlansByOwner, apiGetShipsByOwner, apiGetUser, apiGetWind } from "@/services/api"
+import { apiGetActiveMap, apiGetBuoys, apiGetGeometry, apiGetIndexedWind, apiGetLegs, apiGetPlansByOwner, apiGetShipsByOwner, apiGetUser } from "@/services/api"
 import { redirect } from "next/navigation"
 import { now } from "tslib"
 import { addSeconds, hours2seconds } from 'tslib';
@@ -34,7 +34,7 @@ const Race = async () => {
 
     const from = addSeconds(hours2seconds(-1))(now())
     const until = addSeconds(hours2seconds(25))(from)
-    const wind = await apiGetWind(session.apiToken!, from, until, map)
+    const wind = await apiGetIndexedWind(session.apiToken!, from, until, map)
 
     return <RacePageClientFunctions
         user={user!}

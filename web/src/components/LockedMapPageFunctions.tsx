@@ -4,7 +4,7 @@ import { IApiBulkWind, IApiBuoyOutput, IApiGeometryOutput, IApiLegOutput, IApiMa
 import MapCanvas from "./ MapCanvas"
 import { useState } from "react"
 import { updateMap } from "@/actions/map"
-import { maybeFinishBuoy, Timestamp } from "tslib"
+import { IndexedWind, maybeFinishBuoy, Timestamp } from "tslib"
 import PadlockIcon from "./Icons/PadlockIcon"
 import { useChange } from "@/hooks/useChange"
 import PlanOptions from "./PlanOptions"
@@ -13,7 +13,7 @@ type LockedMapPageClientFunctionsProps = {
     rootPage: string
     map: IApiMapOutput
     ships: IApiShipOutput[]
-    wind: IApiBulkWind[]
+    wind: IndexedWind[]
     buoys: IApiBuoyOutput[]
     legs: IApiLegOutput[]
     plans: IApiPlanOutput[]
