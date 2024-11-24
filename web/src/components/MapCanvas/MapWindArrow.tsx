@@ -33,7 +33,6 @@ const MapWindArrow = (props: MapWindArrowProps) => {
     const color = rgba ? rgba2string(rgba) : 'black'
     const unitV = flipY(vectorScale(screenUnits2canvasUnits(screen2svgFactor, WIND_ARROW_LENGTH))(unitVector(vWind)))
     const line = makeLine(p, vectorAdd(p, unitV))
-    console.log(`MapWindArrow ${fmtUV(wind)} ${fmtVector(vWind)} ${fmtVector(unitV)} ${fmtLine(line)}`)
 
     return (<>
         <line

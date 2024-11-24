@@ -37,7 +37,6 @@ export const vector2wind = ({ x, y }: Vector): UV => ({ u: roundTo(8)(x), v: rou
 const latLngHash = ({ lat, lng }: LatLng): string => `${toFixed(3)(lng)}:${toFixed(3)(lat)}`
 
 export const wind2degrees = ({x, y}: Vector) => {
-  console.log(`wind2degrees ${fmtVector({x, y})} ${vectorAngle({x, y})} rad`)
   return roundTo(4)(radians2degrees(vectorAngle({x: -x, y: -y})))
 }
 export const wind2knots = (vWind: Vector) => {
@@ -133,7 +132,6 @@ export const windAtLocation = (wind: IndexedWind, { lat, lng }: LatLng): Vector 
   if (!uv) {
     return makeVector(0, 0)
   }
-  // console.log(`windAtLocation`, uv)
   return wind2vector(uv)
   
 }

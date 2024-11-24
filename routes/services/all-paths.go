@@ -40,7 +40,8 @@ func FindAllPaths(
 		return paths[i].metres > paths[j].metres
 	})
 
-	page := paths[:count]
+	take := min(count, len(paths))
+	page := paths[:take]
 	pathsOut := make([]transport.Path, len(page))
 	for i, path := range page {
 		p := make([]string, len(path.path))
@@ -66,25 +67,25 @@ func findPaths(timeStart float32, timeLeft float32, path *traveledPath, start in
 	children := getChildren(start, matrix)
 
 	paths := make([]traveledPath, 0)
-	for _, c := range children {
-		m := removeEdge(matrix, start, c)
-		ti := int(timeStart / (60 * 60))
-		np := copyAndAppend(m, path, ti, start, c)
-		et := edgeTime(m, start, c, ti)
-		pp := findPaths(timeStart+et, timeLeft-et, np, c, end, m)
-		paths = append(paths, pp...)
-		matrix = putEdge(m, start, c)
+	for _, child := range children {
+		m := removeEdge(matrix, start, child)
+		timeIndex := int(timeStart / (60 * 60))
+		newPath := copyAndAppend(m, path, timeIndex, start, child)
+		elapsedTime := edgeTime(m, start, child, timeIndex)
+		childPaths := findPaths(timeStart+elapsedTime, timeLeft-elapsedTime, newPath, child, end, m)
+		paths = append(paths, childPaths...)
+		matrix = putEdge(m, start, child)
 	}
 	return paths
 }
 
-func copyAndAppend(matrix *adjacencyMatrix, path *traveledPath, ti int, start int, c int) *traveledPath {
-	np := traveledPath{metres: path.metres, seconds: path.seconds, path: make([]int, len(path.path))}
-	copy(np.path, path.path)
-	np.path = append(np.path, c)
-	np.metres = np.metres + matrix.metres[start][c]
-	np.seconds = np.seconds + (matrix.metres[start][c] / matrix.metresPerSecond[start][c][ti])
-	return &np
+func copyAndAppend(matrix *adjacencyMatrix, path *traveledPath, ti int, start int, end int) *traveledPath {
+	newPath := traveledPath{metres: path.metres, seconds: path.seconds, path: make([]int, len(path.path))}
+	copy(newPath.path, path.path)
+	newPath.path = append(newPath.path, end)
+	newPath.metres = newPath.metres + matrix.metres[start][end]
+	newPath.seconds = newPath.seconds + (matrix.metres[start][end] / matrix.metresPerSecond[start][end][ti])
+	return &newPath
 }
 func getChildren(n int, m *adjacencyMatrix) []int {
 	row := m.link[n]

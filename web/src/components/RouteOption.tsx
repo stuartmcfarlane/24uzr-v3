@@ -249,7 +249,6 @@ const RouteBuoy = (props:
     const boatSpeed = routeLeg?.boatSpeed
     const bearing = routeLeg?.bearing
     const vWind = windAtTimeAndLocation(wind, buoy.timestamp, buoy)
-    console.log(`${buoy.name} windAtTimeAndLocation(wind, ${fmtTimestamp(buoy.timestamp)}, ${fmtLatLng(buoy)}) = ${fmtVector(vWind)}`)
     const onMouseEnter = () => onHoverRouteLeg && onHoverRouteLeg(routeLeg)
     const onMouseLeave = () => onHoverRouteLeg && onHoverRouteLeg()
     const onClick = () => {
@@ -343,7 +342,6 @@ const WindIndicator = (props: {
         vWind,
         mode = 'text',
     } = props
-    console.log(`WindIndicator ${fmtVector(vWind)} ${fmtDegrees(wind2degrees(vWind))}`)
     if (mode === 'text') return (
         <>
             <span className="w-4">

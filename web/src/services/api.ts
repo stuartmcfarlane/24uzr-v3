@@ -455,7 +455,6 @@ export const apiGetWind = async (
             data: windByTimestamp[timestamp]
         })
     )
-    winds.forEach(wind => console.log(wind))
 
     return winds
 }

@@ -35,8 +35,6 @@ const southwestWind16vector = vectorRotate(3*π/4)(northWind16vector)
 const southWind16vector = vectorRotate(π)(northWind16vector)
 const eastWind16vector = vectorRotate(3*π/2)(northWind16vector)
 
-console.log(`southwestWind16vector`, southwestWind16vector)
-console.log(`southwestWind16`, southwestWind16)
 const singleWinds: SingleWind[] = [
   {
     timestamp: '2024-11-02T10:00:00.000Z',
