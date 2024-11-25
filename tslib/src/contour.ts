@@ -1,15 +1,22 @@
-import { Raster, Scalar, ScalarField } from "./field"
+import { fmtScalarField, Raster, removePolygonFromScalarField, Scalar, ScalarField } from "./field"
 import { reverse } from "./fp"
 import { makePoint, Point } from "./graph"
+import { Polygon } from "./polygon"
 
+export {Polygon}
 export type Contours = Scalar[]
-export type Polygon = Point[]
-export type Contour = [Scalar, Polygon]
+export type Contour = [Scalar, Polygon[]]
 export type ContourPolygons = Contour[]
 
 export const makePolygon = (...ps: number[][]) => ps.map(([x, y]) => makePoint(x, y))
 
-const scalarField2contourPolygon = (contour: Scalar) => (r: Raster) => (sf: ScalarField): Polygon => {
+const REMOVED_POLYGON_VALUE = -666
+
+const scalarField2contourPolygon = (contour: Scalar) => (r: Raster) => (sf: ScalarField): Polygon[] => {
+    console.log(`>scalarField2contourPolygon`)
+    console.log(` scalarField2contourPolygon sf`, fmtScalarField(r)(sf))
+    let gettingPolygon = false
+    let gotPolygon = false
     let inside = false
     let starts = new Array<number|undefined>(r.ys.length)
     let ends = new Array<number | undefined>(r.ys.length)
@@ -18,10 +25,14 @@ const scalarField2contourPolygon = (contour: Scalar) => (r: Raster) => (sf: Scal
         (y, j) => {
             r.xs.forEach(
                 (x) => {
-                    if (sf(makePoint(x, y)) <= contour) {
+                    const scalar = sf(makePoint(x, y))
+                    if (gotPolygon) return
+                    if (REMOVED_POLYGON_VALUE === scalar) return
+                    if (scalar <= contour) {
                         // contour === 2 && console.log(`(${x}, ${y}): ${sf(makePoint(x, y))} <= ${contour}`)
                         if (!inside) {
                             inside = true
+                            gettingPolygon = true
                             starts[j] = x
                         }
                         if (inside) {
@@ -35,6 +46,9 @@ const scalarField2contourPolygon = (contour: Scalar) => (r: Raster) => (sf: Scal
                     }
                 }
             )
+            if (gettingPolygon && !starts[j] && !ends[j]) {
+                gotPolygon = true
+            }
             if (!starts[j] && ends[j]) {
                 // console.log(`fix start ${j}`, starts, ends)
                 starts[j] = r.xs[0]
@@ -64,7 +78,18 @@ const scalarField2contourPolygon = (contour: Scalar) => (r: Raster) => (sf: Scal
             }
         }
     )
-    return points
+    console.log(` scalarField2contourPolygon points`, points)
+    if (!points.length) {
+        console.log(`<scalarField2contourPolygon done`)
+        return []
+    }
+    console.log(` scalarField2contourPolygon going again`)
+    const polygons = [
+        points,
+        ...scalarField2contourPolygon(contour)(r)(removePolygonFromScalarField(REMOVED_POLYGON_VALUE)(r)(sf)(points))
+    ]
+    console.log(`<scalarField2contourPolygon`, polygons)
+    return polygons
 }
 
 export const scalarField2contourPolygons = (contours: Scalar[]) => (r: Raster) => (sf: ScalarField): ContourPolygons => {

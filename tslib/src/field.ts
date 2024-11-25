@@ -1,4 +1,7 @@
+import { Polygon } from './contour';
+import { fmtReal } from './fmt';
 import { makePoint, Point } from './graph';
+import { isPointInPolygon } from './polygon';
 import { Vector } from './vector';
 
 export type Matrix2x2<T> = T[][]
@@ -64,4 +67,17 @@ export const vectorField2scalarField = (vf: VectorField) => (v2s: Vector2ScalarF
         )
     )
     return makeScalarField(r)(sMatrix)
+}
+
+export const removePolygonFromScalarField = (sentinelValue: Scalar) => (r: Raster) => (sf: ScalarField) => (polygon: Polygon): ScalarField => {
+    const sMatrix = r.ys.map(
+        (y: number) => r.xs.map(
+            (x: number) => isPointInPolygon(polygon)(makePoint(x, y)) ? sentinelValue : sf(makePoint(x, y))
+        )
+    )
+    return makeScalarField(r)(sMatrix)
+}
+
+export const fmtScalarField = (r: Raster) => (sf: ScalarField) => {
+    return r.ys.map(y => r.xs.map(x => sf(makePoint(x, y))))
 }

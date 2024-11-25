@@ -279,3 +279,6 @@ export const pointInRect = (rect?: Rect) => (point: Point) => {
     return rect[0].x <= point.x && point.x <= rect[1].x
         && rect[0].y <= point.y && point.y <= rect[1].y
 }
+
+export const lineSlope = ({x: x1, y: y1}: Point, {x: x2, y: y2}: Point) => (y2 - y1) / (x2 - x1)
+
