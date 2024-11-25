@@ -19,22 +19,30 @@ const scalarField2contourPolygon = (contour: Scalar) => (r: Raster) => (sf: Scal
             r.xs.forEach(
                 (x) => {
                     if (sf(makePoint(x, y)) <= contour) {
-                        // contour === 2 && console.log(`(${x}, ${y}): ${sf(makePoint(x, y))} inside ${contour}`)
+                        // contour === 2 && console.log(`(${x}, ${y}): ${sf(makePoint(x, y))} <= ${contour}`)
                         if (!inside) {
                             inside = true
                             starts[j] = x
+                        }
+                        if (inside) {
+                            ends[j] = x
                         }
                     }
                     else {
                         if (inside) {
                             inside = false
-                            ends[j] = x
                         }
                     }
                 }
             )
-            if (!starts[j] && ends[j]) starts[j] = r.xs[0]
-            if (starts[j] && !ends[j]) ends[j] = r.xs[r.xs.length - 1]
+            if (!starts[j] && ends[j]) {
+                // console.log(`fix start ${j}`, starts, ends)
+                starts[j] = r.xs[0]
+            }
+            if (starts[j] && !ends[j]) {
+                // console.log(`fix end ${j}`, starts, ends)
+                ends[j] = r.xs[r.xs.length - 1]
+            }
             inside = false
         }
     )
