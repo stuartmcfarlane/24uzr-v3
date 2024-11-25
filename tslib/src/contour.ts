@@ -1,11 +1,66 @@
-import { Scalar, ScalarField } from "./field"
-import { Point } from "./graph"
+import { Raster, Scalar, ScalarField } from "./field"
+import { reverse } from "./fp"
+import { makePoint, Point } from "./graph"
 
 export type Contours = Scalar[]
 export type Polygon = Point[]
 export type Contour = [Scalar, Polygon]
 export type ContourPolygons = Contour[]
 
-export const scalarField2contourPolygons = (contours: Scalar[]) => (sf: ScalarField): ContourPolygons => {
-    return []
+export const makePolygon = (...ps: number[][]) => ps.map(([x, y]) => makePoint(x, y))
+
+const scalarField2contourPolygon = (contour: Scalar) => (r: Raster) => (sf: ScalarField): Polygon => {
+    let inside = false
+    let starts = new Array<number|undefined>(r.ys.length)
+    let ends = new Array<number | undefined>(r.ys.length)
+    let points: Point[] = []
+    r.ys.forEach(
+        (y, j) => {
+            r.xs.forEach(
+                (x) => {
+                    if (sf(makePoint(x, y)) <= contour) {
+                        // contour === 2 && console.log(`(${x}, ${y}): ${sf(makePoint(x, y))} inside ${contour}`)
+                        if (!inside) {
+                            inside = true
+                            starts[j] = x
+                        }
+                    }
+                    else {
+                        if (inside) {
+                            inside = false
+                            ends[j] = x
+                        }
+                    }
+                }
+            )
+            if (!starts[j] && ends[j]) starts[j] = r.xs[0]
+            if (starts[j] && !ends[j]) ends[j] = r.xs[r.xs.length - 1]
+            inside = false
+        }
+    )
+    r.ys.forEach(
+        (y, j) => {
+            if (points.length == 0 && starts[j]) {
+                points.push(makePoint(starts[j], y))
+            }
+            if (ends[j]) {
+                points.push(makePoint(ends[j], y))
+            }
+        }
+    )
+    reverse(r.ys).forEach(
+        (y, j_) => {
+            const j = r.ys.length - j_ - 1
+            if (starts[j]) {
+                points.push(makePoint(starts[j], y))
+            }
+        }
+    )
+    return points
+}
+
+export const scalarField2contourPolygons = (contours: Scalar[]) => (r: Raster) => (sf: ScalarField): ContourPolygons => {
+    return contours.map(
+        (c: Scalar) => ([c, scalarField2contourPolygon(c)(r)(sf)])
+    )
 }
