@@ -24,7 +24,7 @@ ROUTE_API_URL=localhost
 ROUTE_API_PORT=3002
 NEXT_PUBLIC_API_URL=http://localhost:3000
 GRIB_LOCATION=/Users/stuart/dev/24uzr-2024/24uzr-v3/grib-cache
-PARSE_GRIB_CMD=/Users/stuart/dev/24uzr-2024/24uzr-v3/knmi/harmony2vectors.py
+PARSE_GRIB_VECTORS_CMD=/Users/stuart/dev/24uzr-2024/24uzr-v3/knmi/harmony2vectors.py
 PARSE_GRIB_CONTOURS_CMD=/Users/stuart/dev/24uzr-2024/24uzr-v3/knmi/harmony2contours.py```
 
 The api and web servers also need a bit of environment to work properly. Make sure you

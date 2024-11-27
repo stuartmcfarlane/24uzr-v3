@@ -78,6 +78,8 @@ export const GeometryScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt
 
 export const ShipScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','name','isActive','sailNumber','ownerId','polar','lastFetchOfPolarData']);
 
+export const WindContoursScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','timestamp','lat1','lng1','lat2','lng2','levels','contours']);
+
 export const SortOrderSchema = z.enum(['asc','desc']);
 
 export const JsonNullValueInputSchema = z.enum(['JsonNull',]).transform((value) => (value === 'JsonNull' ? Prisma.JsonNull : value));
@@ -258,6 +260,25 @@ export const ShipSchema = z.object({
 })
 
 export type Ship = z.infer<typeof ShipSchema>
+
+/////////////////////////////////////////
+// WIND CONTOURS SCHEMA
+/////////////////////////////////////////
+
+export const WindContoursSchema = z.object({
+  id: z.number().int(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  timestamp: z.coerce.date(),
+  lat1: z.number(),
+  lng1: z.number(),
+  lat2: z.number(),
+  lng2: z.number(),
+  levels: JsonValueSchema,
+  contours: JsonValueSchema,
+})
+
+export type WindContours = z.infer<typeof WindContoursSchema>
 
 /////////////////////////////////////////
 // SELECT & INCLUDE
@@ -617,6 +638,22 @@ export const ShipSelectSchema: z.ZodType<Prisma.ShipSelect> = z.object({
   owner: z.union([z.boolean(),z.lazy(() => UserArgsSchema)]).optional(),
   plans: z.union([z.boolean(),z.lazy(() => PlanFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => ShipCountOutputTypeArgsSchema)]).optional(),
+}).strict()
+
+// WIND CONTOURS
+//------------------------------------------------------
+
+export const WindContoursSelectSchema: z.ZodType<Prisma.WindContoursSelect> = z.object({
+  id: z.boolean().optional(),
+  createdAt: z.boolean().optional(),
+  updatedAt: z.boolean().optional(),
+  timestamp: z.boolean().optional(),
+  lat1: z.boolean().optional(),
+  lng1: z.boolean().optional(),
+  lat2: z.boolean().optional(),
+  lng2: z.boolean().optional(),
+  levels: z.boolean().optional(),
+  contours: z.boolean().optional(),
 }).strict()
 
 
@@ -1418,6 +1455,88 @@ export const ShipScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.ShipScal
   lastFetchOfPolarData: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
 }).strict();
 
+export const WindContoursWhereInputSchema: z.ZodType<Prisma.WindContoursWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => WindContoursWhereInputSchema),z.lazy(() => WindContoursWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => WindContoursWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => WindContoursWhereInputSchema),z.lazy(() => WindContoursWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  timestamp: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  lat1: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+  lng1: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+  lat2: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+  lng2: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+  levels: z.lazy(() => JsonFilterSchema).optional(),
+  contours: z.lazy(() => JsonFilterSchema).optional()
+}).strict();
+
+export const WindContoursOrderByWithRelationInputSchema: z.ZodType<Prisma.WindContoursOrderByWithRelationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  timestamp: z.lazy(() => SortOrderSchema).optional(),
+  lat1: z.lazy(() => SortOrderSchema).optional(),
+  lng1: z.lazy(() => SortOrderSchema).optional(),
+  lat2: z.lazy(() => SortOrderSchema).optional(),
+  lng2: z.lazy(() => SortOrderSchema).optional(),
+  levels: z.lazy(() => SortOrderSchema).optional(),
+  contours: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const WindContoursWhereUniqueInputSchema: z.ZodType<Prisma.WindContoursWhereUniqueInput> = z.object({
+  id: z.number().int()
+})
+.and(z.object({
+  id: z.number().int().optional(),
+  AND: z.union([ z.lazy(() => WindContoursWhereInputSchema),z.lazy(() => WindContoursWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => WindContoursWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => WindContoursWhereInputSchema),z.lazy(() => WindContoursWhereInputSchema).array() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  timestamp: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  lat1: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+  lng1: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+  lat2: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+  lng2: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+  levels: z.lazy(() => JsonFilterSchema).optional(),
+  contours: z.lazy(() => JsonFilterSchema).optional()
+}).strict());
+
+export const WindContoursOrderByWithAggregationInputSchema: z.ZodType<Prisma.WindContoursOrderByWithAggregationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  timestamp: z.lazy(() => SortOrderSchema).optional(),
+  lat1: z.lazy(() => SortOrderSchema).optional(),
+  lng1: z.lazy(() => SortOrderSchema).optional(),
+  lat2: z.lazy(() => SortOrderSchema).optional(),
+  lng2: z.lazy(() => SortOrderSchema).optional(),
+  levels: z.lazy(() => SortOrderSchema).optional(),
+  contours: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => WindContoursCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => WindContoursAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => WindContoursMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => WindContoursMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => WindContoursSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const WindContoursScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.WindContoursScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => WindContoursScalarWhereWithAggregatesInputSchema),z.lazy(() => WindContoursScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => WindContoursScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => WindContoursScalarWhereWithAggregatesInputSchema),z.lazy(() => WindContoursScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  timestamp: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  lat1: z.union([ z.lazy(() => FloatWithAggregatesFilterSchema),z.number() ]).optional(),
+  lng1: z.union([ z.lazy(() => FloatWithAggregatesFilterSchema),z.number() ]).optional(),
+  lat2: z.union([ z.lazy(() => FloatWithAggregatesFilterSchema),z.number() ]).optional(),
+  lng2: z.union([ z.lazy(() => FloatWithAggregatesFilterSchema),z.number() ]).optional(),
+  levels: z.lazy(() => JsonWithAggregatesFilterSchema).optional(),
+  contours: z.lazy(() => JsonWithAggregatesFilterSchema).optional()
+}).strict();
+
 export const UserCreateInputSchema: z.ZodType<Prisma.UserCreateInput> = z.object({
   email: z.string(),
   name: z.string().optional().nullable(),
@@ -2153,6 +2272,94 @@ export const ShipUncheckedUpdateManyInputSchema: z.ZodType<Prisma.ShipUncheckedU
   ownerId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   polar: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   lastFetchOfPolarData: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const WindContoursCreateInputSchema: z.ZodType<Prisma.WindContoursCreateInput> = z.object({
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  timestamp: z.coerce.date(),
+  lat1: z.number(),
+  lng1: z.number(),
+  lat2: z.number(),
+  lng2: z.number(),
+  levels: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
+  contours: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
+}).strict();
+
+export const WindContoursUncheckedCreateInputSchema: z.ZodType<Prisma.WindContoursUncheckedCreateInput> = z.object({
+  id: z.number().int().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  timestamp: z.coerce.date(),
+  lat1: z.number(),
+  lng1: z.number(),
+  lat2: z.number(),
+  lng2: z.number(),
+  levels: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
+  contours: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
+}).strict();
+
+export const WindContoursUpdateInputSchema: z.ZodType<Prisma.WindContoursUpdateInput> = z.object({
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  timestamp: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  lat1: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  lng1: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  lat2: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  lng2: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  levels: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  contours: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+}).strict();
+
+export const WindContoursUncheckedUpdateInputSchema: z.ZodType<Prisma.WindContoursUncheckedUpdateInput> = z.object({
+  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  timestamp: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  lat1: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  lng1: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  lat2: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  lng2: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  levels: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  contours: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+}).strict();
+
+export const WindContoursCreateManyInputSchema: z.ZodType<Prisma.WindContoursCreateManyInput> = z.object({
+  id: z.number().int().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  timestamp: z.coerce.date(),
+  lat1: z.number(),
+  lng1: z.number(),
+  lat2: z.number(),
+  lng2: z.number(),
+  levels: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
+  contours: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
+}).strict();
+
+export const WindContoursUpdateManyMutationInputSchema: z.ZodType<Prisma.WindContoursUpdateManyMutationInput> = z.object({
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  timestamp: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  lat1: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  lng1: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  lat2: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  lng2: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  levels: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  contours: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+}).strict();
+
+export const WindContoursUncheckedUpdateManyInputSchema: z.ZodType<Prisma.WindContoursUncheckedUpdateManyInput> = z.object({
+  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  timestamp: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  lat1: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  lng1: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  lat2: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  lng2: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  levels: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  contours: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
 }).strict();
 
 export const IntFilterSchema: z.ZodType<Prisma.IntFilter> = z.object({
@@ -2934,6 +3141,57 @@ export const ShipMinOrderByAggregateInputSchema: z.ZodType<Prisma.ShipMinOrderBy
 export const ShipSumOrderByAggregateInputSchema: z.ZodType<Prisma.ShipSumOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   ownerId: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const WindContoursCountOrderByAggregateInputSchema: z.ZodType<Prisma.WindContoursCountOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  timestamp: z.lazy(() => SortOrderSchema).optional(),
+  lat1: z.lazy(() => SortOrderSchema).optional(),
+  lng1: z.lazy(() => SortOrderSchema).optional(),
+  lat2: z.lazy(() => SortOrderSchema).optional(),
+  lng2: z.lazy(() => SortOrderSchema).optional(),
+  levels: z.lazy(() => SortOrderSchema).optional(),
+  contours: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const WindContoursAvgOrderByAggregateInputSchema: z.ZodType<Prisma.WindContoursAvgOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  lat1: z.lazy(() => SortOrderSchema).optional(),
+  lng1: z.lazy(() => SortOrderSchema).optional(),
+  lat2: z.lazy(() => SortOrderSchema).optional(),
+  lng2: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const WindContoursMaxOrderByAggregateInputSchema: z.ZodType<Prisma.WindContoursMaxOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  timestamp: z.lazy(() => SortOrderSchema).optional(),
+  lat1: z.lazy(() => SortOrderSchema).optional(),
+  lng1: z.lazy(() => SortOrderSchema).optional(),
+  lat2: z.lazy(() => SortOrderSchema).optional(),
+  lng2: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const WindContoursMinOrderByAggregateInputSchema: z.ZodType<Prisma.WindContoursMinOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  timestamp: z.lazy(() => SortOrderSchema).optional(),
+  lat1: z.lazy(() => SortOrderSchema).optional(),
+  lng1: z.lazy(() => SortOrderSchema).optional(),
+  lat2: z.lazy(() => SortOrderSchema).optional(),
+  lng2: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const WindContoursSumOrderByAggregateInputSchema: z.ZodType<Prisma.WindContoursSumOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  lat1: z.lazy(() => SortOrderSchema).optional(),
+  lng1: z.lazy(() => SortOrderSchema).optional(),
+  lat2: z.lazy(() => SortOrderSchema).optional(),
+  lng2: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const ShipCreateNestedManyWithoutOwnerInputSchema: z.ZodType<Prisma.ShipCreateNestedManyWithoutOwnerInput> = z.object({
@@ -7838,6 +8096,68 @@ export const ShipFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.ShipFindUniqueOrT
   relationLoadStrategy: RelationLoadStrategySchema.optional(),
 }).strict() ;
 
+export const WindContoursFindFirstArgsSchema: z.ZodType<Prisma.WindContoursFindFirstArgs> = z.object({
+  select: WindContoursSelectSchema.optional(),
+  where: WindContoursWhereInputSchema.optional(),
+  orderBy: z.union([ WindContoursOrderByWithRelationInputSchema.array(),WindContoursOrderByWithRelationInputSchema ]).optional(),
+  cursor: WindContoursWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ WindContoursScalarFieldEnumSchema,WindContoursScalarFieldEnumSchema.array() ]).optional(),
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const WindContoursFindFirstOrThrowArgsSchema: z.ZodType<Prisma.WindContoursFindFirstOrThrowArgs> = z.object({
+  select: WindContoursSelectSchema.optional(),
+  where: WindContoursWhereInputSchema.optional(),
+  orderBy: z.union([ WindContoursOrderByWithRelationInputSchema.array(),WindContoursOrderByWithRelationInputSchema ]).optional(),
+  cursor: WindContoursWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ WindContoursScalarFieldEnumSchema,WindContoursScalarFieldEnumSchema.array() ]).optional(),
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const WindContoursFindManyArgsSchema: z.ZodType<Prisma.WindContoursFindManyArgs> = z.object({
+  select: WindContoursSelectSchema.optional(),
+  where: WindContoursWhereInputSchema.optional(),
+  orderBy: z.union([ WindContoursOrderByWithRelationInputSchema.array(),WindContoursOrderByWithRelationInputSchema ]).optional(),
+  cursor: WindContoursWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ WindContoursScalarFieldEnumSchema,WindContoursScalarFieldEnumSchema.array() ]).optional(),
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const WindContoursAggregateArgsSchema: z.ZodType<Prisma.WindContoursAggregateArgs> = z.object({
+  where: WindContoursWhereInputSchema.optional(),
+  orderBy: z.union([ WindContoursOrderByWithRelationInputSchema.array(),WindContoursOrderByWithRelationInputSchema ]).optional(),
+  cursor: WindContoursWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const WindContoursGroupByArgsSchema: z.ZodType<Prisma.WindContoursGroupByArgs> = z.object({
+  where: WindContoursWhereInputSchema.optional(),
+  orderBy: z.union([ WindContoursOrderByWithAggregationInputSchema.array(),WindContoursOrderByWithAggregationInputSchema ]).optional(),
+  by: WindContoursScalarFieldEnumSchema.array(),
+  having: WindContoursScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const WindContoursFindUniqueArgsSchema: z.ZodType<Prisma.WindContoursFindUniqueArgs> = z.object({
+  select: WindContoursSelectSchema.optional(),
+  where: WindContoursWhereUniqueInputSchema,
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const WindContoursFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.WindContoursFindUniqueOrThrowArgs> = z.object({
+  select: WindContoursSelectSchema.optional(),
+  where: WindContoursWhereUniqueInputSchema,
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
 export const UserCreateArgsSchema: z.ZodType<Prisma.UserCreateArgs> = z.object({
   select: UserSelectSchema.optional(),
   include: UserIncludeSchema.optional(),
@@ -8282,4 +8602,45 @@ export const ShipUpdateManyArgsSchema: z.ZodType<Prisma.ShipUpdateManyArgs> = z.
 
 export const ShipDeleteManyArgsSchema: z.ZodType<Prisma.ShipDeleteManyArgs> = z.object({
   where: ShipWhereInputSchema.optional(),
+}).strict() ;
+
+export const WindContoursCreateArgsSchema: z.ZodType<Prisma.WindContoursCreateArgs> = z.object({
+  select: WindContoursSelectSchema.optional(),
+  data: z.union([ WindContoursCreateInputSchema,WindContoursUncheckedCreateInputSchema ]),
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const WindContoursUpsertArgsSchema: z.ZodType<Prisma.WindContoursUpsertArgs> = z.object({
+  select: WindContoursSelectSchema.optional(),
+  where: WindContoursWhereUniqueInputSchema,
+  create: z.union([ WindContoursCreateInputSchema,WindContoursUncheckedCreateInputSchema ]),
+  update: z.union([ WindContoursUpdateInputSchema,WindContoursUncheckedUpdateInputSchema ]),
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const WindContoursCreateManyArgsSchema: z.ZodType<Prisma.WindContoursCreateManyArgs> = z.object({
+  data: z.union([ WindContoursCreateManyInputSchema,WindContoursCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const WindContoursDeleteArgsSchema: z.ZodType<Prisma.WindContoursDeleteArgs> = z.object({
+  select: WindContoursSelectSchema.optional(),
+  where: WindContoursWhereUniqueInputSchema,
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const WindContoursUpdateArgsSchema: z.ZodType<Prisma.WindContoursUpdateArgs> = z.object({
+  select: WindContoursSelectSchema.optional(),
+  data: z.union([ WindContoursUpdateInputSchema,WindContoursUncheckedUpdateInputSchema ]),
+  where: WindContoursWhereUniqueInputSchema,
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const WindContoursUpdateManyArgsSchema: z.ZodType<Prisma.WindContoursUpdateManyArgs> = z.object({
+  data: z.union([ WindContoursUpdateManyMutationInputSchema,WindContoursUncheckedUpdateManyInputSchema ]),
+  where: WindContoursWhereInputSchema.optional(),
+}).strict() ;
+
+export const WindContoursDeleteManyArgsSchema: z.ZodType<Prisma.WindContoursDeleteManyArgs> = z.object({
+  where: WindContoursWhereInputSchema.optional(),
 }).strict() ;

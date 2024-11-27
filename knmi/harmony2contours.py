@@ -13,8 +13,7 @@ from contourpy import contour_generator, LineType
 
 bft = [0.2, 1.5, 3.3, 5.4, 7.9, 10.7, 13.8, 17.1, 20.7, 24.2, 28.4, 32.6]
 
-inputFilename = '../data/harmony.grb'
-# inputFilename = sys.argv[1]
+inputFilename = sys.argv[1]
 
 gribs = pygrib.open(inputFilename)
 
@@ -32,18 +31,18 @@ def makeTimestamp(u):
 
 timeSlices = [
     {
-        "timestamp": makeTimestamp(u[iTime]),
-        "x" : [
+        'timestamp': makeTimestamp(u[iTime]),
+        'x' : [
             uData[iTime][1][iLat][iLon]
             for iLat in range(len(uData[iTime][0]))
             for iLon in range(len(uData[iTime][0][0]))
         ],
-        "y" : [
+        'y' : [
             uData[iTime][2][iLat][iLon]
             for iLat in range(len(uData[iTime][0]))
             for iLon in range(len(uData[iTime][0][0]))
         ],
-        "v" : [
+        'v' : [
             [
                 uData[iTime][0][iLat][iLon],
                 vData[iTime][0][iLat][iLon]
@@ -51,12 +50,12 @@ timeSlices = [
             for iLat in range(len(uData[iTime][0]))
             for iLon in range(len(uData[iTime][0][0]))
         ],
-        "data" : [
+        'data' : [
             {
-                "y": uData[iTime][1][iLat][iLon],
-                "x": uData[iTime][2][iLat][iLon],
-                "u": uData[iTime][0][iLat][iLon],
-                "v": vData[iTime][0][iLat][iLon],
+                'y': uData[iTime][1][iLat][iLon],
+                'x': uData[iTime][2][iLat][iLon],
+                'u': uData[iTime][0][iLat][iLon],
+                'v': vData[iTime][0][iLat][iLon],
             }
             for iLat in range(len(uData[iTime][0]))
             for iLon in range(len(uData[iTime][0][0]))
@@ -112,22 +111,26 @@ def encodeForJson(contour):
                 [round(line[0], 5), round(line[1], 5)]
                 for line in polygon
             ]
-            for polygon in lineSet
+            for polygon in polygons
         ]
-        for lineSet in contour
+        for polygons in contour
     ]
     return encoded
 
 outputFile = sys.stdout
 if (len(sys.argv) > 2):
-    outputFile = open(sys.argv[2], "w")
+    outputFile = open(sys.argv[2], 'w')
 
 json.dump(
     [
         {
-            "timestamp": timeSlice['timestamp'],
-            "levels" : bft,
-            "contours": encodeForJson(makeContours(timeSlice)),
+            'timestamp': timeSlice['timestamp'],
+            'levels' : bft,
+            'lat1': min(timeSlice['y']),
+            'lng1': min(timeSlice['x']),
+            'lat2': max(timeSlice['y']),
+            'lng2': max(timeSlice['x']),
+            'contours': encodeForJson(makeContours(timeSlice)),
         }
         for timeSlice in timeSlices
     ],

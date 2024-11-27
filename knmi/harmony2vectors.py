@@ -44,3 +44,5 @@ json.dump(
     ],
     outputFile
 )
+
+exit(0)

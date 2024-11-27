@@ -167,3 +167,16 @@ model Ship {
   lastFetchOfPolarData DateTime @default("2024-10-10T16:39:57+01:00")
   plans                Plan[]
 }
+
+model WindContours {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  timestamp DateTime
+  lat1      Float
+  lng1      Float
+  lat2      Float
+  lng2      Float
+  levels    Json
+  contours  Json
+}
