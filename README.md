@@ -4,7 +4,7 @@
 
 You'll need a `.env` file in the project root containing the following keys
 
-```env
+````env
 MYSQL_ROOT_PASSWORD=evenmoresecret
 MYSQL_USER=24uzr
 MYSQL_PASSWORD=totallysecret
@@ -23,8 +23,9 @@ NODE_ENV=development
 ROUTE_API_URL=localhost
 ROUTE_API_PORT=3002
 NEXT_PUBLIC_API_URL=http://localhost:3000
-PARSE_GRIB_CMD=/Users/stuart/dev/24uzr-2024/24uzr-v3/knmi/parseHarmony.py
-```
+GRIB_LOCATION=/Users/stuart/dev/24uzr-2024/24uzr-v3/grib-cache
+PARSE_GRIB_CMD=/Users/stuart/dev/24uzr-2024/24uzr-v3/knmi/harmony2vectors.py
+PARSE_GRIB_CONTOURS_CMD=/Users/stuart/dev/24uzr-2024/24uzr-v3/knmi/harmony2contours.py```
 
 The api and web servers also need a bit of environment to work properly. Make sure you
 have the following two files
@@ -33,7 +34,7 @@ have the following two files
 
 ```env
 DATABASE_URL="mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB_NAME}"
-```
+````
 
 `web/.env`
 
@@ -108,7 +109,7 @@ npx prisma generate
 
 Wind is fetched every 15 minutes from the KNMI and written to the database.
 
-The wind data is produced by the Harmonie model.
+The wind data is produced by the Harmony model.
 
 https://hirlam.github.io/HarmonieSystemDocumentation/dev/ForecastModel/Outputlist/
 
