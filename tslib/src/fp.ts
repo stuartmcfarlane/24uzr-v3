@@ -111,7 +111,6 @@ export const findNearestIndex = (haystack: number[], needle: number) => {
   const idx = diffs.findIndex(equal(minDiff))
   return idx
 }
-export const reverse = <T>(xs: T[]) => [...xs].reverse()
 export const findNearest = (haystack: number[], needle: number) => {
   return haystack[findNearestIndex(haystack, needle)]
 }

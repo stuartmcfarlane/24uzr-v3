@@ -1,5 +1,5 @@
 import { fmtScalarField, Raster, removePolygonFromScalarField, Scalar, ScalarField } from "./field"
-import { reverse } from "./fp"
+import { reverse } from "./array"
 import { makePoint, Point } from "./graph"
 import { Polygon } from "./polygon"
 
